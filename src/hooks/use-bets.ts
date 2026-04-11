@@ -118,6 +118,47 @@ export function useCreateBet() {
     mutationFn: async (input: BetInput) => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
+
+      // Free limit check - načti profil a count sázek
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('subscription_status, subscription_until, trial_ends_at, subscription_plan')
+        .eq('id', user.id)
+        .single();
+
+      const now = new Date();
+      let isPro = false;
+
+      if (profile) {
+        // Lifetime
+        if (profile.subscription_status === 'pro' && profile.subscription_plan === 'lifetime') {
+          isPro = true;
+        }
+        // Time-limited pro
+        else if (
+          profile.subscription_status === 'pro' &&
+          profile.subscription_until &&
+          new Date(profile.subscription_until) > now
+        ) {
+          isPro = true;
+        }
+        // Trial
+        else if (profile.trial_ends_at && new Date(profile.trial_ends_at) > now) {
+          isPro = true;
+        }
+      }
+
+      if (!isPro) {
+        const { count } = await supabase
+          .from('bets')
+          .select('id', { count: 'exact', head: true })
+          .eq('user_id', user.id);
+
+        if ((count ?? 0) >= 5) {
+          throw new Error('FREE_LIMIT_REACHED');
+        }
+      }
+
       const { data, error } = await supabase
         .from('bets')
         .insert({ ...input, user_id: user.id })
@@ -130,7 +171,13 @@ export function useCreateBet() {
       qc.invalidateQueries({ queryKey: ['bets'] });
       toast.success('Saved');
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => {
+      if (e.message === 'FREE_LIMIT_REACHED') {
+        toast.error('Dosáhl jsi limitu 5 sázek ve Free verzi. Aktivuj Pro pro neomezené sázky.');
+      } else {
+        toast.error(e.message);
+      }
+    },
   });
 }
 

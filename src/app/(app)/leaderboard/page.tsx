@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { Trophy, Medal, Award } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ProGate } from '@/components/subscription/pro-gate';
 import { useLeaderboard } from '@/hooks/use-friends';
 import { formatCurrency, formatNumber, cn } from '@/lib/utils';
 
@@ -14,6 +15,14 @@ const RANK_ICONS = [
 ];
 
 export default function LeaderboardPage() {
+  return (
+    <ProGate feature="Leaderboard">
+      <LeaderboardContent />
+    </ProGate>
+  );
+}
+
+function LeaderboardContent() {
   const t = useTranslations();
   const { data: rows = [], isLoading } = useLeaderboard();
 

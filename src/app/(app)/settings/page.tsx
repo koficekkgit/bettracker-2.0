@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select } from '@/components/ui/select';
 import { CategoriesManager } from '@/components/settings/categories-manager';
+import { SubscriptionPanel } from '@/components/subscription/subscription-panel';
 import { createClient } from '@/lib/supabase/client';
 import { CURRENCIES } from '@/lib/utils';
 import type { Profile } from '@/lib/types';
@@ -145,6 +146,8 @@ export default function SettingsPage() {
           </div>
         </CardContent>
       </Card>
+
+      <SubscriptionPanel />
 
       <CategoriesManager />
     </div>

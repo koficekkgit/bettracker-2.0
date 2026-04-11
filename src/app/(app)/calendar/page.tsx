@@ -6,6 +6,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { StatusBadge } from '@/components/bets/status-badge';
+import { ProGate } from '@/components/subscription/pro-gate';
 import { useBets } from '@/hooks/use-bets';
 import { useProfile } from '@/hooks/use-profile';
 import { calculateBetProfit } from '@/lib/stats';
@@ -23,6 +24,14 @@ interface DayData {
 }
 
 export default function CalendarPage() {
+  return (
+    <ProGate feature="Kalendářové view">
+      <CalendarContent />
+    </ProGate>
+  );
+}
+
+function CalendarContent() {
   const t = useTranslations();
   const { data: bets = [], isLoading } = useBets();
   const { data: profile } = useProfile();

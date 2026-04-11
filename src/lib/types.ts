@@ -9,7 +9,25 @@ export interface Profile {
   starting_bankroll: number;
   preferred_language: string;
   theme: string;
+  trial_ends_at: string | null;
+  subscription_status: 'trial' | 'free' | 'pro';
+  subscription_plan: 'monthly' | 'quarterly' | 'yearly' | 'lifetime' | null;
+  subscription_until: string | null;
+  is_admin: boolean;
   created_at: string;
+}
+
+export type SubscriptionPlan = 'monthly' | 'quarterly' | 'yearly' | 'lifetime';
+
+export interface LicenseCode {
+  code: string;
+  plan: SubscriptionPlan;
+  valid_for_days: number | null;
+  note: string | null;
+  created_at: string;
+  created_by: string | null;
+  redeemed_by: string | null;
+  redeemed_at: string | null;
 }
 
 export interface Category {

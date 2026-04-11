@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select } from '@/components/ui/select';
+import { ProGate } from '@/components/subscription/pro-gate';
 import { formatCurrency, formatNumber, BOOKMAKERS, CURRENCIES } from '@/lib/utils';
 import { cn } from '@/lib/utils';
 
@@ -17,6 +18,14 @@ interface OutcomeRow {
 }
 
 export default function SurebetPage() {
+  return (
+    <ProGate feature="Surebet kalkulačka">
+      <SurebetContent />
+    </ProGate>
+  );
+}
+
+function SurebetContent() {
   const t = useTranslations();
 
   const [outcomeCount, setOutcomeCount] = useState<2 | 3>(2);

@@ -40,6 +40,7 @@ export async function middleware(request: NextRequest) {
                     url.pathname.startsWith('/surebet') || 
                     url.pathname.startsWith('/friends') || 
                     url.pathname.startsWith('/leaderboard') || 
+                    url.pathname.startsWith('/admin') || 
                     url.pathname.startsWith('/settings');
 
   if (!user && isAppPage) {

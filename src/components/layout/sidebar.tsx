@@ -5,9 +5,10 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { LayoutDashboard, ListOrdered, BarChart3, CalendarDays, Calculator, Users, Trophy, Settings, LogOut, Moon, Sun } from 'lucide-react';
+import { LayoutDashboard, ListOrdered, BarChart3, CalendarDays, Calculator, Users, Trophy, Settings, ShieldCheck, LogOut, Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { createClient } from '@/lib/supabase/client';
+import { useProfile } from '@/hooks/use-profile';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 
@@ -17,6 +18,7 @@ export function Sidebar() {
   const router = useRouter();
   const supabase = createClient();
   const { theme, setTheme } = useTheme();
+  const { data: profile } = useProfile();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -32,6 +34,7 @@ export function Sidebar() {
     { href: '/friends', label: t('friends'), icon: Users },
     { href: '/leaderboard', label: t('leaderboard'), icon: Trophy },
     { href: '/settings', label: t('settings'), icon: Settings },
+    ...(profile?.is_admin ? [{ href: '/admin', label: 'Admin', icon: ShieldCheck }] : []),
   ];
 
   async function handleLogout() {

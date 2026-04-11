@@ -1,8 +1,10 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
+import { Lock } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useSubscription } from '@/hooks/use-subscription';
 import { cn } from '@/lib/utils';
 import type { DateRangePreset, CustomRange } from '@/lib/stats';
 
@@ -18,6 +20,9 @@ const PRESETS: DateRangePreset[] = [
   'custom',
 ];
 
+// Free user vidí jen tyto dva
+const FREE_PRESETS: DateRangePreset[] = ['last7days', 'last30days'];
+
 interface Props {
   value: DateRangePreset;
   onChange: (value: DateRangePreset) => void;
@@ -27,27 +32,48 @@ interface Props {
 
 export function PeriodSelector({ value, onChange, custom, onCustomChange }: Props) {
   const t = useTranslations('stats');
+  const sub = useSubscription();
+
+  function isLocked(preset: DateRangePreset): boolean {
+    if (sub.isPro) return false;
+    return !FREE_PRESETS.includes(preset);
+  }
+
+  function handleClick(preset: DateRangePreset) {
+    if (isLocked(preset)) {
+      // Tichý fail, ProGate v UI to vysvětlí
+      return;
+    }
+    onChange(preset);
+  }
 
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap gap-1.5 p-1 bg-secondary rounded-md w-fit">
-        {PRESETS.map((preset) => (
-          <button
-            key={preset}
-            onClick={() => onChange(preset)}
-            className={cn(
-              'px-3 py-1.5 text-xs font-medium rounded transition-colors whitespace-nowrap',
-              value === preset
-                ? 'bg-background text-foreground shadow-sm'
-                : 'text-muted-foreground hover:text-foreground'
-            )}
-          >
-            {t(preset)}
-          </button>
-        ))}
+        {PRESETS.map((preset) => {
+          const locked = isLocked(preset);
+          return (
+            <button
+              key={preset}
+              onClick={() => handleClick(preset)}
+              disabled={locked}
+              className={cn(
+                'px-3 py-1.5 text-xs font-medium rounded transition-colors whitespace-nowrap inline-flex items-center gap-1',
+                value === preset
+                  ? 'bg-background text-foreground shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground',
+                locked && 'opacity-50 cursor-not-allowed hover:text-muted-foreground'
+              )}
+              title={locked ? 'Pro funkce - vyžaduje předplatné' : undefined}
+            >
+              {locked && <Lock className="w-3 h-3" />}
+              {t(preset)}
+            </button>
+          );
+        })}
       </div>
 
-      {value === 'custom' && (
+      {value === 'custom' && sub.isPro && (
         <div className="flex flex-wrap items-end gap-3 p-3 rounded-md border border-border bg-card">
           <div className="space-y-1.5">
             <Label className="text-xs">{t('from')}</Label>

@@ -1,10 +1,14 @@
 import { Sidebar } from '@/components/layout/sidebar';
+import { TrialBanner } from '@/components/subscription/trial-banner';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-background">
       <Sidebar />
-      <main className="flex-1 p-4 md:p-8 max-w-6xl mx-auto w-full">{children}</main>
+      <div className="flex-1 flex flex-col">
+        <TrialBanner />
+        <main className="flex-1 p-4 md:p-8 max-w-6xl mx-auto w-full">{children}</main>
+      </div>
     </div>
   );
 }

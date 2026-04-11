@@ -7,6 +7,7 @@ import { Search, UserPlus, Check, X, Eye, UserMinus } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { ProGate } from '@/components/subscription/pro-gate';
 import {
   useFriends,
   useSearchProfile,
@@ -16,6 +17,14 @@ import {
 } from '@/hooks/use-friends';
 
 export default function FriendsPage() {
+  return (
+    <ProGate feature="Friends">
+      <FriendsContent />
+    </ProGate>
+  );
+}
+
+function FriendsContent() {
   const t = useTranslations();
   const [searchTerm, setSearchTerm] = useState('');
   const [submittedTerm, setSubmittedTerm] = useState('');
