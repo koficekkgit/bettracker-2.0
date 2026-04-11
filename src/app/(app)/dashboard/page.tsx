@@ -10,18 +10,20 @@ import { ProfitChart } from '@/components/stats/profit-chart';
 import { StatusBadge } from '@/components/bets/status-badge';
 import { BetFormDialog } from '@/components/bets/bet-form-dialog';
 import { useBets } from '@/hooks/use-bets';
+import { useProfile } from '@/hooks/use-profile';
 import { calculateStats, calculateProfitTimeline, calculateBetProfit } from '@/lib/stats';
 import { formatCurrency, formatNumber, formatDate } from '@/lib/utils';
 
 export default function DashboardPage() {
   const t = useTranslations();
   const { data: bets = [], isLoading } = useBets();
+  const { data: profile } = useProfile();
   const [formOpen, setFormOpen] = useState(false);
 
   const stats = useMemo(() => calculateStats(bets), [bets]);
   const timeline = useMemo(() => calculateProfitTimeline(bets), [bets]);
   const recent = useMemo(() => bets.slice(0, 5), [bets]);
-  const currency = bets[0]?.currency ?? 'CZK';
+  const currency = profile?.default_currency ?? bets[0]?.currency ?? 'CZK';
 
   if (isLoading) {
     return <div className="text-muted-foreground">{t('common.loading')}</div>;

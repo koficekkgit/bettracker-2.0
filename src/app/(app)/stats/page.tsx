@@ -7,6 +7,7 @@ import { StatCard } from '@/components/stats/stat-card';
 import { PeriodSelector } from '@/components/stats/period-selector';
 import { ProfitChart } from '@/components/stats/profit-chart';
 import { useBets, useCategories } from '@/hooks/use-bets';
+import { useProfile } from '@/hooks/use-profile';
 import {
   calculateStats,
   calculateBetProfit,
@@ -21,6 +22,7 @@ export default function StatsPage() {
   const t = useTranslations();
   const { data: allBets = [], isLoading } = useBets();
   const { data: categories = [] } = useCategories();
+  const { data: profile } = useProfile();
 
   const [period, setPeriod] = useState<DateRangePreset>('last30days');
   const [customRange, setCustomRange] = useState<CustomRange>(() => {
@@ -37,7 +39,7 @@ export default function StatsPage() {
   );
   const stats = useMemo(() => calculateStats(bets), [bets]);
   const timeline = useMemo(() => calculateProfitTimeline(bets), [bets]);
-  const currency = bets[0]?.currency ?? allBets[0]?.currency ?? 'CZK';
+  const currency = profile?.default_currency ?? bets[0]?.currency ?? allBets[0]?.currency ?? 'CZK';
 
   const byCategory = useMemo(() => {
     const map = new Map<string, { name: string; profit: number; count: number }>();

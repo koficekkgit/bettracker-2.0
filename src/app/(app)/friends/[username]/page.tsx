@@ -25,7 +25,7 @@ export default function FriendDashboardPage() {
   const stats = useMemo(() => calculateStats(bets), [bets]);
   const timeline = useMemo(() => calculateProfitTimeline(bets), [bets]);
   const recent = useMemo(() => bets.slice(0, 10), [bets]);
-  const currency = bets[0]?.currency ?? profile?.default_currency ?? 'CZK';
+  const currency = profile?.default_currency ?? bets[0]?.currency ?? 'CZK';
 
   if (loadingProfile) {
     return <div className="text-muted-foreground">{t('common.loading')}</div>;

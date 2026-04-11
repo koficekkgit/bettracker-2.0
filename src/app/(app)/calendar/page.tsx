@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { StatusBadge } from '@/components/bets/status-badge';
 import { useBets } from '@/hooks/use-bets';
+import { useProfile } from '@/hooks/use-profile';
 import { calculateBetProfit } from '@/lib/stats';
 import { formatCurrency, formatNumber, cn } from '@/lib/utils';
 import type { Bet } from '@/lib/types';
@@ -24,13 +25,14 @@ interface DayData {
 export default function CalendarPage() {
   const t = useTranslations();
   const { data: bets = [], isLoading } = useBets();
+  const { data: profile } = useProfile();
   const [currentMonth, setCurrentMonth] = useState(() => {
     const now = new Date();
     return new Date(now.getFullYear(), now.getMonth(), 1);
   });
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
 
-  const currency = bets[0]?.currency ?? 'CZK';
+  const currency = profile?.default_currency ?? bets[0]?.currency ?? 'CZK';
 
   // Mapa den -> data
   const dayMap = useMemo(() => {

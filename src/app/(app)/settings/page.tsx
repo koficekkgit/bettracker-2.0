@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 import { useTheme } from 'next-themes';
+import { useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -20,6 +21,7 @@ export default function SettingsPage() {
   const router = useRouter();
   const supabase = createClient();
   const { theme, setTheme } = useTheme();
+  const queryClient = useQueryClient();
 
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -53,6 +55,7 @@ export default function SettingsPage() {
       return;
     }
     document.cookie = `NEXT_LOCALE=${profile.preferred_language}; path=/; max-age=31536000`;
+    queryClient.invalidateQueries({ queryKey: ['profile'] });
     toast.success(t('settings.saved'));
     router.refresh();
   }
