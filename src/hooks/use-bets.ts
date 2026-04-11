@@ -32,6 +32,76 @@ export function useCategories() {
   });
 }
 
+export function useCreateCategory() {
+  const qc = useQueryClient();
+  const supabase = createClient();
+  return useMutation({
+    mutationFn: async (input: { name: string; color?: string }) => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not authenticated');
+      const { data, error } = await supabase
+        .from('categories')
+        .insert({
+          user_id: user.id,
+          name: input.name.trim(),
+          color: input.color ?? '#3b82f6',
+        })
+        .select()
+        .single();
+      if (error) throw error;
+      return data as Category;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['categories'] });
+      toast.success('Kategorie přidána');
+    },
+    onError: (e: Error) => {
+      // Unique constraint violation
+      if (e.message.includes('duplicate') || e.message.includes('unique')) {
+        toast.error('Kategorie s tímto názvem už existuje');
+      } else {
+        toast.error(e.message);
+      }
+    },
+  });
+}
+
+export function useUpdateCategory() {
+  const qc = useQueryClient();
+  const supabase = createClient();
+  return useMutation({
+    mutationFn: async ({ id, name, color }: { id: string; name?: string; color?: string }) => {
+      const patch: { name?: string; color?: string } = {};
+      if (name !== undefined) patch.name = name.trim();
+      if (color !== undefined) patch.color = color;
+      const { error } = await supabase.from('categories').update(patch).eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['categories'] });
+      toast.success('Uloženo');
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+}
+
+export function useDeleteCategory() {
+  const qc = useQueryClient();
+  const supabase = createClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from('categories').delete().eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['categories'] });
+      qc.invalidateQueries({ queryKey: ['bets'] });
+      toast.success('Kategorie smazána');
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+}
+
 export function useCreateBet() {
   const qc = useQueryClient();
   const supabase = createClient();

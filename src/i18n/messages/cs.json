@@ -192,6 +192,11 @@
     "startingBankroll": "Počáteční bankroll",
     "categories": "Kategorie",
     "addCategory": "Přidat kategorii",
+    "categoryName": "Název kategorie",
+    "categoryNamePlaceholder": "např. NHL, eSports, Tenis",
+    "categoryColor": "Barva",
+    "deleteCategoryConfirm": "Opravdu smazat tuto kategorii? Sázky zůstanou, ale ztratí přiřazení.",
+    "noCategoriesYet": "Zatím žádné kategorie",
     "saved": "Uloženo"
   }
 }

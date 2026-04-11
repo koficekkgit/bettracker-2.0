@@ -192,6 +192,11 @@
     "startingBankroll": "Начальный банкролл",
     "categories": "Категории",
     "addCategory": "Добавить категорию",
+    "categoryName": "Название категории",
+    "categoryNamePlaceholder": "напр. НХЛ, киберспорт, теннис",
+    "categoryColor": "Цвет",
+    "deleteCategoryConfirm": "Удалить эту категорию? Ставки останутся, но потеряют привязку.",
+    "noCategoriesYet": "Пока нет категорий",
     "saved": "Сохранено"
   }
 }

@@ -192,6 +192,11 @@
     "startingBankroll": "Starting bankroll",
     "categories": "Categories",
     "addCategory": "Add category",
+    "categoryName": "Category name",
+    "categoryNamePlaceholder": "e.g. NHL, eSports, Tennis",
+    "categoryColor": "Color",
+    "deleteCategoryConfirm": "Really delete this category? Bets will remain but lose their assignment.",
+    "noCategoriesYet": "No categories yet",
     "saved": "Saved"
   }
 }
