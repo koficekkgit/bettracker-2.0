@@ -11,9 +11,9 @@ import { cn } from '@/lib/utils';
 
 const PLANS = [
   { id: 'monthly', name: 'Měsíční', price: 99, period: '/měsíc', popular: false },
-  { id: 'quarterly', name: 'Čtvrtletní', price: 299, period: '/3 měsíce', popular: false, save: 'Ušetři 33 Kč' },
-  { id: 'yearly', name: 'Roční', price: 799, period: '/rok', popular: true, save: 'Ušetři 389 Kč' },
-  { id: 'lifetime', name: 'Lifetime', price: 999, period: 'jednou', popular: false, save: 'Nejlepší cena' },
+  { id: 'quarterly', name: 'Čtvrtletní', price: 249, period: '/3 měsíce', popular: false, save: 'Ušetři 16 %' },
+  { id: 'yearly', name: 'Roční', price: 699, period: '/rok', popular: true, save: 'Ušetři 41 %' },
+  { id: 'lifetime', name: 'Lifetime', price: 1199, period: 'jednou', popular: false, save: 'Nejlepší cena' },
 ];
 
 export function SubscriptionPanel() {

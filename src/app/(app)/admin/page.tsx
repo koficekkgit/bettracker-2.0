@@ -19,9 +19,9 @@ import { toast } from 'sonner';
 
 const PLAN_LABELS: Record<SubscriptionPlan, string> = {
   monthly: 'Měsíční (99 Kč)',
-  quarterly: 'Čtvrtletní (299 Kč)',
-  yearly: 'Roční (799 Kč)',
-  lifetime: 'Lifetime (999 Kč)',
+  quarterly: 'Čtvrtletní (249 Kč)',
+  yearly: 'Roční (699 Kč)',
+  lifetime: 'Lifetime (1 199 Kč)',
 };
 
 export default function AdminPage() {
