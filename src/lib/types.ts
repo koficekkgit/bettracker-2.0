@@ -30,6 +30,19 @@ export interface LicenseCode {
   redeemed_at: string | null;
 }
 
+export interface PendingPayment {
+  id: number;
+  user_id: string;
+  variable_symbol: number;
+  plan: SubscriptionPlan;
+  amount: number;
+  currency: string;
+  status: 'pending' | 'matched' | 'expired' | 'cancelled';
+  matched_at: string | null;
+  expires_at: string;
+  created_at: string;
+}
+
 export interface Category {
   id: string;
   user_id: string;

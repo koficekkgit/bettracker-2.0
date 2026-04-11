@@ -1,13 +1,16 @@
 'use client';
 
 import { useState } from 'react';
-import { Sparkles, Check, Crown } from 'lucide-react';
+import { Sparkles, Check, Crown, QrCode } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useSubscription, useRedeemCode } from '@/hooks/use-subscription';
+import { useMyPendingPayment } from '@/hooks/use-payments';
+import { PaymentDialog } from '@/components/subscription/payment-dialog';
 import { cn } from '@/lib/utils';
+import type { PlanId } from '@/lib/payments';
 
 const PLANS = [
   { id: 'monthly', name: 'Měsíční', price: 99, period: '/měsíc', popular: false },
@@ -19,7 +22,15 @@ const PLANS = [
 export function SubscriptionPanel() {
   const sub = useSubscription();
   const redeemCode = useRedeemCode();
+  const { data: pendingPayment } = useMyPendingPayment();
   const [code, setCode] = useState('');
+  const [paymentOpen, setPaymentOpen] = useState(false);
+  const [paymentInitialPlan, setPaymentInitialPlan] = useState<PlanId>('lifetime');
+
+  function openPayment(plan: PlanId) {
+    setPaymentInitialPlan(plan);
+    setPaymentOpen(true);
+  }
 
   async function handleRedeem(e: React.FormEvent) {
     e.preventDefault();
@@ -84,7 +95,7 @@ export function SubscriptionPanel() {
                 <div
                   key={plan.id}
                   className={cn(
-                    'relative rounded-lg border p-4 transition-colors',
+                    'relative rounded-lg border p-4 transition-colors flex flex-col',
                     plan.popular ? 'border-foreground border-2' : 'border-border'
                   )}
                 >
@@ -101,6 +112,14 @@ export function SubscriptionPanel() {
                   {plan.save && (
                     <p className="text-xs text-success mt-2">{plan.save}</p>
                   )}
+                  <Button
+                    size="sm"
+                    variant={plan.popular ? 'default' : 'outline'}
+                    className="mt-3 w-full"
+                    onClick={() => openPayment(plan.id as PlanId)}
+                  >
+                    Koupit
+                  </Button>
                 </div>
               ))}
             </div>
@@ -108,12 +127,28 @@ export function SubscriptionPanel() {
             <div className="rounded-lg bg-secondary p-4 space-y-2 text-sm">
               <p className="font-medium">Jak to funguje:</p>
               <ol className="space-y-1 text-muted-foreground list-decimal list-inside">
-                <li>Vyber si plán a kontaktuj mě (Discord/FB/email)</li>
-                <li>Pošli platbu - QR kód / číslo účtu ti pošlu</li>
-                <li>Obdržíš aktivační kód</li>
-                <li>Zadej kód níže a Pro se aktivuje okamžitě</li>
+                <li>Klikni na <strong>Koupit</strong> u plánu, který chceš</li>
+                <li>Naskenuj QR kód v bankovní aplikaci</li>
+                <li>Pošli platbu - aktivace proběhne automaticky do 1 hodiny</li>
+                <li>Nebo pokud máš aktivační kód, zadej ho níže</li>
               </ol>
             </div>
+
+            {/* Aktivní pending payment - prominentní notifikace */}
+            {pendingPayment && (
+              <div className="rounded-lg border border-amber-500/50 bg-amber-500/5 p-4 flex items-start gap-3">
+                <QrCode className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                <div className="flex-1 space-y-1">
+                  <p className="text-sm font-medium">Čeká platba {pendingPayment.amount} Kč</p>
+                  <p className="text-xs text-muted-foreground">
+                    VS: <span className="font-mono">{pendingPayment.variable_symbol}</span>
+                  </p>
+                </div>
+                <Button size="sm" variant="outline" onClick={() => setPaymentOpen(true)}>
+                  Zobrazit QR
+                </Button>
+              </div>
+            )}
           </>
         )}
 
@@ -177,6 +212,12 @@ export function SubscriptionPanel() {
           </ul>
         </div>
       </CardContent>
+
+      <PaymentDialog
+        open={paymentOpen}
+        onClose={() => setPaymentOpen(false)}
+        initialPlan={paymentInitialPlan}
+      />
     </Card>
   );
 }
