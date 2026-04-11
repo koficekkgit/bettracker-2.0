@@ -10,9 +10,12 @@ export function useBets() {
   return useQuery({
     queryKey: ['bets'],
     queryFn: async (): Promise<Bet[]> => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return [];
       const { data, error } = await supabase
         .from('bets')
         .select('*')
+        .eq('user_id', user.id)
         .order('placed_at', { ascending: false });
       if (error) throw error;
       return data as Bet[];
@@ -25,7 +28,13 @@ export function useCategories() {
   return useQuery({
     queryKey: ['categories'],
     queryFn: async (): Promise<Category[]> => {
-      const { data, error } = await supabase.from('categories').select('*').order('name');
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return [];
+      const { data, error } = await supabase
+        .from('categories')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('name');
       if (error) throw error;
       return data as Category[];
     },
