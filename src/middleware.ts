@@ -29,7 +29,10 @@ export async function middleware(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
 
   const url = request.nextUrl;
-  const isAuthPage = url.pathname === '/login' || url.pathname === '/register';
+  const isAuthPage = url.pathname === '/login' || 
+                     url.pathname === '/register' || 
+                     url.pathname === '/forgot-password' || 
+                     url.pathname === '/reset-password';
   const isAppPage = url.pathname.startsWith('/dashboard') || 
                     url.pathname.startsWith('/bets') || 
                     url.pathname.startsWith('/stats') || 
@@ -43,7 +46,9 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
 
-  if (user && isAuthPage) {
+  // Reset-password je výjimka - uživatel tam přijde s dočasnou recovery session
+  // a NESMÍ ho to redirectnout na dashboard, protože tam má dokončit změnu hesla
+  if (user && isAuthPage && url.pathname !== '/reset-password') {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 

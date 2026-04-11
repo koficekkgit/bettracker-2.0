@@ -68,6 +68,11 @@ export default function LoginPage() {
           <Button type="submit" className="w-full" disabled={loading}>
             {loading ? t('common.loading') : t('auth.login')}
           </Button>
+          <div className="text-center">
+            <Link href="/forgot-password" className="text-sm text-muted-foreground hover:text-foreground">
+              {t('auth.forgotPassword')}
+            </Link>
+          </div>
           <p className="text-center text-sm text-muted-foreground">
             {t('auth.noAccount')}{' '}
             <Link href="/register" className="text-foreground font-medium hover:underline">

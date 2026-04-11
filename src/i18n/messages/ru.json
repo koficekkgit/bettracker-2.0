@@ -27,7 +27,21 @@
     "loginTitle": "С возвращением",
     "registerTitle": "Создайте аккаунт",
     "loginError": "Неверный email или пароль",
-    "registerSuccess": "Аккаунт создан, можно войти"
+    "registerSuccess": "Аккаунт создан, можно войти",
+    "forgotPassword": "Забыли пароль?",
+    "forgotPasswordTitle": "Сброс пароля",
+    "forgotPasswordSubtitle": "Мы отправим вам письмо со ссылкой для сброса",
+    "sendResetLink": "Отправить ссылку",
+    "resetLinkSent": "Если аккаунт с этим email существует, мы отправили ссылку. Проверьте также спам.",
+    "backToLogin": "Назад к входу",
+    "newPassword": "Новый пароль",
+    "newPasswordTitle": "Установите новый пароль",
+    "newPasswordConfirm": "Подтвердите пароль",
+    "passwordsDoNotMatch": "Пароли не совпадают",
+    "passwordTooShort": "Пароль должен содержать минимум 6 символов",
+    "passwordUpdated": "Пароль обновлён, можно войти",
+    "savePassword": "Сохранить пароль",
+    "invalidResetLink": "Эта ссылка недействительна или истекла"
   },
   "nav": {
     "dashboard": "Главная",

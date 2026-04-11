@@ -27,7 +27,21 @@
     "loginTitle": "Vítej zpět",
     "registerTitle": "Vytvoř si účet",
     "loginError": "Špatný email nebo heslo",
-    "registerSuccess": "Účet vytvořen, můžeš se přihlásit"
+    "registerSuccess": "Účet vytvořen, můžeš se přihlásit",
+    "forgotPassword": "Zapomenuté heslo?",
+    "forgotPasswordTitle": "Reset hesla",
+    "forgotPasswordSubtitle": "Pošleme ti email s odkazem na obnovení hesla",
+    "sendResetLink": "Poslat reset link",
+    "resetLinkSent": "Pokud existuje účet s tímto emailem, poslali jsme ti reset link. Zkontroluj i složku spam.",
+    "backToLogin": "Zpět na přihlášení",
+    "newPassword": "Nové heslo",
+    "newPasswordTitle": "Nastav si nové heslo",
+    "newPasswordConfirm": "Potvrď heslo",
+    "passwordsDoNotMatch": "Hesla se neshodují",
+    "passwordTooShort": "Heslo musí mít alespoň 6 znaků",
+    "passwordUpdated": "Heslo bylo změněno, můžeš se přihlásit",
+    "savePassword": "Uložit heslo",
+    "invalidResetLink": "Tento reset link je neplatný nebo vypršel"
   },
   "nav": {
     "dashboard": "Přehled",

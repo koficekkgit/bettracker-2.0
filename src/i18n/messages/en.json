@@ -27,7 +27,21 @@
     "loginTitle": "Welcome back",
     "registerTitle": "Create your account",
     "loginError": "Wrong email or password",
-    "registerSuccess": "Account created, you can sign in"
+    "registerSuccess": "Account created, you can sign in",
+    "forgotPassword": "Forgot password?",
+    "forgotPasswordTitle": "Reset password",
+    "forgotPasswordSubtitle": "We will send you an email with a reset link",
+    "sendResetLink": "Send reset link",
+    "resetLinkSent": "If an account with this email exists, we sent you a reset link. Check spam folder too.",
+    "backToLogin": "Back to login",
+    "newPassword": "New password",
+    "newPasswordTitle": "Set a new password",
+    "newPasswordConfirm": "Confirm password",
+    "passwordsDoNotMatch": "Passwords do not match",
+    "passwordTooShort": "Password must be at least 6 characters",
+    "passwordUpdated": "Password updated, you can sign in",
+    "savePassword": "Save password",
+    "invalidResetLink": "This reset link is invalid or expired"
   },
   "nav": {
     "dashboard": "Dashboard",
