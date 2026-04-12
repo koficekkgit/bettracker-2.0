@@ -12,6 +12,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
+const USERNAME_REGEX = /^[a-zA-Z0-9_.\-]{3,20}$/;
+
 export default function RegisterPage() {
   const t = useTranslations();
   const router = useRouter();
@@ -23,7 +25,29 @@ export default function RegisterPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+
+    if (!USERNAME_REGEX.test(username)) {
+      toast.error(t('auth.usernameInvalidFormat'));
+      return;
+    }
+
     setLoading(true);
+
+    // Pre-check dostupnosti, ať registrace nespadne až na trigger DB
+    const { data: available, error: checkErr } = await supabase.rpc('is_username_available', {
+      p_username: username,
+    });
+    if (checkErr) {
+      setLoading(false);
+      toast.error(t('common.errorGeneric'));
+      return;
+    }
+    if (!available) {
+      setLoading(false);
+      toast.error(t('auth.usernameTaken'));
+      return;
+    }
+
     const { error } = await supabase.auth.signUp({
       email,
       password,
@@ -55,15 +79,18 @@ export default function RegisterPage() {
               id="username"
               required
               minLength={3}
+              maxLength={20}
               value={username}
               onChange={(e) => setUsername(e.target.value)}
             />
+            <p className="text-xs text-muted-foreground">{t('auth.usernameHint')}</p>
           </div>
           <div className="space-y-2">
             <Label htmlFor="email">{t('auth.email')}</Label>
             <Input
               id="email"
               type="email"
+              autoComplete="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -74,6 +101,7 @@ export default function RegisterPage() {
             <Input
               id="password"
               type="password"
+              autoComplete="new-password"
               required
               minLength={6}
               value={password}

@@ -12,7 +12,8 @@
     "filter": "Filter",
     "all": "All",
     "yes": "Yes",
-    "no": "No"
+    "no": "No",
+    "errorGeneric": "Something went wrong"
   },
   "auth": {
     "login": "Sign in",
@@ -41,7 +42,15 @@
     "passwordTooShort": "Password must be at least 6 characters",
     "passwordUpdated": "Password updated, you can sign in",
     "savePassword": "Save password",
-    "invalidResetLink": "This reset link is invalid or expired"
+    "invalidResetLink": "This reset link is invalid or expired",
+    "emailOrUsername": "Email or username",
+    "usernameHint": "3–20 characters, letters, digits, _ . -",
+    "usernameInvalidFormat": "Invalid username format",
+    "usernameTaken": "This username is already taken",
+    "usernameAvailable": "Username is available",
+    "usernameSet": "Username has been set",
+    "chooseUsernameTitle": "Choose your username",
+    "chooseUsernameDescription": "Please choose a username to continue. You'll be able to use it to sign in instead of your email."
   },
   "nav": {
     "dashboard": "Dashboard",

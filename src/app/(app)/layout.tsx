@@ -1,5 +1,6 @@
 import { Sidebar } from '@/components/layout/sidebar';
 import { TrialBanner } from '@/components/subscription/trial-banner';
+import { UsernameOnboardingDialog } from '@/components/auth/username-onboarding-dialog';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -9,6 +10,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         <TrialBanner />
         <main className="flex-1 p-4 md:p-8 max-w-6xl mx-auto w-full">{children}</main>
       </div>
+      <UsernameOnboardingDialog />
     </div>
   );
 }

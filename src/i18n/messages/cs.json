@@ -12,7 +12,8 @@
     "filter": "Filtr",
     "all": "Vše",
     "yes": "Ano",
-    "no": "Ne"
+    "no": "Ne",
+    "errorGeneric": "Něco se nepovedlo"
   },
   "auth": {
     "login": "Přihlásit se",
@@ -41,7 +42,15 @@
     "passwordTooShort": "Heslo musí mít alespoň 6 znaků",
     "passwordUpdated": "Heslo bylo změněno, můžeš se přihlásit",
     "savePassword": "Uložit heslo",
-    "invalidResetLink": "Tento reset link je neplatný nebo vypršel"
+    "invalidResetLink": "Tento reset link je neplatný nebo vypršel",
+    "emailOrUsername": "Email nebo uživatelské jméno",
+    "usernameHint": "3–20 znaků, písmena, číslice, _ . -",
+    "usernameInvalidFormat": "Neplatný formát uživatelského jména",
+    "usernameTaken": "Toto uživatelské jméno je již obsazené",
+    "usernameAvailable": "Uživatelské jméno je dostupné",
+    "usernameSet": "Uživatelské jméno bylo nastaveno",
+    "chooseUsernameTitle": "Zvolte si uživatelské jméno",
+    "chooseUsernameDescription": "Pro pokračování si prosím zvolte uživatelské jméno. Budete se s ním moci přihlašovat místo emailu."
   },
   "nav": {
     "dashboard": "Přehled",

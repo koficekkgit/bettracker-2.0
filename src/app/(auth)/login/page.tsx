@@ -16,13 +16,29 @@ export default function LoginPage() {
   const t = useTranslations();
   const router = useRouter();
   const supabase = createClient();
-  const [email, setEmail] = useState('');
+  const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
+
+    let email = identifier.trim();
+
+    // Pokud to nevypadá jako email, zkusíme username lookup
+    if (!email.includes('@')) {
+      const { data, error: rpcError } = await supabase.rpc('get_email_by_username', {
+        p_username: email,
+      });
+      if (rpcError || !data) {
+        setLoading(false);
+        toast.error(t('auth.loginError'));
+        return;
+      }
+      email = data as string;
+    }
+
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     setLoading(false);
     if (error) {
@@ -45,13 +61,14 @@ export default function LoginPage() {
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="email">{t('auth.email')}</Label>
+            <Label htmlFor="identifier">{t('auth.emailOrUsername')}</Label>
             <Input
-              id="email"
-              type="email"
+              id="identifier"
+              type="text"
+              autoComplete="username"
               required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={identifier}
+              onChange={(e) => setIdentifier(e.target.value)}
             />
           </div>
           <div className="space-y-2">
@@ -59,6 +76,7 @@ export default function LoginPage() {
             <Input
               id="password"
               type="password"
+              autoComplete="current-password"
               required
               minLength={6}
               value={password}

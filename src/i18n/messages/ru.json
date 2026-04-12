@@ -12,7 +12,8 @@
     "filter": "Фильтр",
     "all": "Все",
     "yes": "Да",
-    "no": "Нет"
+    "no": "Нет",
+    "errorGeneric": "Что-то пошло не так"
   },
   "auth": {
     "login": "Войти",
@@ -41,7 +42,15 @@
     "passwordTooShort": "Пароль должен содержать минимум 6 символов",
     "passwordUpdated": "Пароль обновлён, можно войти",
     "savePassword": "Сохранить пароль",
-    "invalidResetLink": "Эта ссылка недействительна или истекла"
+    "invalidResetLink": "Эта ссылка недействительна или истекла",
+    "emailOrUsername": "Email или имя пользователя",
+    "usernameHint": "3–20 символов, буквы, цифры, _ . -",
+    "usernameInvalidFormat": "Неверный формат имени пользователя",
+    "usernameTaken": "Это имя пользователя уже занято",
+    "usernameAvailable": "Имя пользователя доступно",
+    "usernameSet": "Имя пользователя установлено",
+    "chooseUsernameTitle": "Выберите имя пользователя",
+    "chooseUsernameDescription": "Для продолжения выберите имя пользователя. Вы сможете использовать его для входа вместо email."
   },
   "nav": {
     "dashboard": "Главная",

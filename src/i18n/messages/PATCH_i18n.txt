@@ -1,0 +1,44 @@
+// PATCH i18n stringů — přidat tyto klíče do "auth" sekce
+// v src/i18n/messages/cs.json, en.json a ru.json
+
+// === cs.json — přidat do "auth": ===
+{
+  "emailOrUsername": "Email nebo uživatelské jméno",
+  "usernameHint": "3–20 znaků, písmena, číslice, _ . -",
+  "usernameInvalidFormat": "Neplatný formát uživatelského jména",
+  "usernameTaken": "Toto uživatelské jméno je již obsazené",
+  "usernameAvailable": "Uživatelské jméno je dostupné",
+  "usernameSet": "Uživatelské jméno bylo nastaveno",
+  "chooseUsernameTitle": "Zvolte si uživatelské jméno",
+  "chooseUsernameDescription": "Pro pokračování si prosím zvolte uživatelské jméno. Budete se s ním moci přihlašovat místo emailu."
+}
+
+// === en.json — přidat do "auth": ===
+{
+  "emailOrUsername": "Email or username",
+  "usernameHint": "3–20 characters, letters, digits, _ . -",
+  "usernameInvalidFormat": "Invalid username format",
+  "usernameTaken": "This username is already taken",
+  "usernameAvailable": "Username is available",
+  "usernameSet": "Username has been set",
+  "chooseUsernameTitle": "Choose your username",
+  "chooseUsernameDescription": "Please choose a username to continue. You'll be able to use it to sign in instead of your email."
+}
+
+// === ru.json — přidat do "auth": ===
+{
+  "emailOrUsername": "Email или имя пользователя",
+  "usernameHint": "3–20 символов, буквы, цифры, _ . -",
+  "usernameInvalidFormat": "Неверный формат имени пользователя",
+  "usernameTaken": "Это имя пользователя уже занято",
+  "usernameAvailable": "Имя пользователя доступно",
+  "usernameSet": "Имя пользователя установлено",
+  "chooseUsernameTitle": "Выберите имя пользователя",
+  "chooseUsernameDescription": "Для продолжения выберите имя пользователя. Вы сможете использовать его для входа вместо email."
+}
+
+// POZNÁMKA: Pokud klíče common.errorGeneric a common.save ještě nemáš,
+// přidej je také do "common" sekce ve všech třech jazycích:
+//   cs:  "errorGeneric": "Něco se nepovedlo", "save": "Uložit"
+//   en:  "errorGeneric": "Something went wrong", "save": "Save"
+//   ru:  "errorGeneric": "Что-то пошло не так", "save": "Сохранить"
