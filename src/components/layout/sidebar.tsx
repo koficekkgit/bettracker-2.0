@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { LayoutDashboard, ListOrdered, BarChart3, CalendarDays, Calculator, Users, Trophy, Settings, ShieldCheck, LogOut, Moon, Sun } from 'lucide-react';
+import { LayoutDashboard, ListOrdered, BarChart3, CalendarDays, Calculator, Users, Trophy, Wallet, Settings, ShieldCheck, LogOut, Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { createClient } from '@/lib/supabase/client';
 import { useProfile } from '@/hooks/use-profile';
@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button';
 
 export function Sidebar() {
   const t = useTranslations('nav');
+  const tPayouts = useTranslations('payouts');
   const pathname = usePathname();
   const router = useRouter();
   const supabase = createClient();
@@ -33,6 +34,7 @@ export function Sidebar() {
     { href: '/surebet', label: t('surebet'), icon: Calculator },
     { href: '/friends', label: t('friends'), icon: Users },
     { href: '/leaderboard', label: t('leaderboard'), icon: Trophy },
+    ...(profile?.payouts_enabled ? [{ href: '/payouts', label: tPayouts('title'), icon: Wallet }] : []),
     { href: '/settings', label: t('settings'), icon: Settings },
     ...(profile?.is_admin ? [{ href: '/admin', label: 'Admin', icon: ShieldCheck }] : []),
   ];
