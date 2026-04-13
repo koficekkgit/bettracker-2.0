@@ -32,11 +32,17 @@ export function useTogglePayoutsEnabled() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (input: { user_id: string; enabled: boolean }) => {
-      const { error } = await supabase
+      // .select() vrací updatované řádky, takže můžeme ověřit, že se něco reálně změnilo
+      const { data, error } = await supabase
         .from('profiles')
         .update({ payouts_enabled: input.enabled })
-        .eq('id', input.user_id);
+        .eq('id', input.user_id)
+        .select('id');
       if (error) throw error;
+      if (!data || data.length === 0) {
+        // RLS tichý fail — update prošel, ale neaktualizoval žádný řádek
+        throw new Error('rls_blocked');
+      }
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ['admin-users'] }),
   });
