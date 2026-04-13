@@ -91,7 +91,7 @@ export interface BetStats {
   roi: number;          // % - profit / staked
   yield: number;        // alias pro ROI
   winRate: number;      // % wins / settled
-  avgOdds: number;      // průměrný kurz vyhraných sázek
+  avgOdds: number;      // prostý průměr kurzu všech sázek (vyhodnocených i pendingů)
   longestWinStreak: number;
   longestLossStreak: number;
   bestWin: number;
@@ -138,7 +138,7 @@ export function calculateStats(bets: Bet[]): BetStats {
 
   const roi = totalStaked > 0 ? (totalProfit / totalStaked) * 100 : 0;
   const winRate = settled.length > 0 ? (won.length / settled.length) * 100 : 0;
-  const avgOdds = won.length > 0 ? won.reduce((s, b) => s + Number(b.odds), 0) / won.length : 0;
+  const avgOdds = bets.length > 0 ? bets.reduce((s, b) => s + Number(b.odds), 0) / bets.length : 0;
 
   // Streaks
   const sortedSettled = [...settled].sort(
