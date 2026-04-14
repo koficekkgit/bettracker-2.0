@@ -13,6 +13,7 @@ import { useBets } from '@/hooks/use-bets';
 import { useProfile } from '@/hooks/use-profile';
 import { calculateStats, calculateProfitTimeline, calculateBetProfit } from '@/lib/stats';
 import { formatCurrency, formatNumber, formatDate } from '@/lib/utils';
+import { StreakCard } from '@/components/achievements/streak-card';
 
 export default function DashboardPage() {
   const t = useTranslations();
@@ -65,6 +66,8 @@ export default function DashboardPage() {
           hint={t('dashboard.avgOdds')}
         />
       </div>
+
+      <StreakCard />
 
       <Card>
         <CardHeader>

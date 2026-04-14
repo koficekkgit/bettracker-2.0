@@ -14,7 +14,8 @@
     "yes": "Да",
     "no": "Нет",
     "optional": "необязательно",
-    "none": "нет"
+    "none": "нет",
+    "close": "Закрыть"
   },
   "auth": {
     "login": "Войти",
@@ -258,10 +259,177 @@
     "paid": "Выплачено",
     "withdraw": "Вывести",
     "withdrawnAmount": "Выведено",
-    "nothingToWithdraw": "Нечего выводить",
-    "referrerUpdated": "Реферер обновлён",
-    "deleteGroup": "Удалить группу",
-    "deleteGroupConfirm": "Действительно удалить группу \"{name}\"? Все участники, история периодов и балансы рефереров будут удалены. Это нельзя отменить.",
-    "groupDeleted": "Группа удалена"
+    "nothingToWithdraw": "Нечего выводить"
+  },
+  "bankroll": {
+    "title": "Банкролл",
+    "newAccount": "Новый счёт",
+    "noAccounts": "Пока нет счетов. Добавьте первого букмекера.",
+    "totalBalance": "Общий баланс",
+    "template": "Букмекер (шаблон)",
+    "customBookmaker": "Свой",
+    "accountName": "Название счёта",
+    "currency": "Валюта",
+    "accountCreated": "Счёт создан",
+    "lowBalanceThreshold": "Оповещение о низком балансе",
+    "lowBalanceHint": "Красный значок при падении ниже этой суммы.",
+    "hardLimit": "Жёсткий лимит (блокировать ставки сверх баланса)",
+    "hardLimitHint": "Блокирует сохранение ставки. Без галочки только предупреждение.",
+    "balance": "Баланс",
+    "deposit": "Пополнение",
+    "withdraw": "Вывод",
+    "amount": "Сумма",
+    "notes": "Заметка",
+    "depositSaved": "Пополнение сохранено",
+    "withdrawalSaved": "Вывод сохранён",
+    "invalidAmount": "Неверная сумма",
+    "settings": "Настройки",
+    "archive": "Архив",
+    "archiveConfirm": "Архивировать счёт \"{name}\"? История сохранится.",
+    "archived": "Счёт архивирован",
+    "accountSettings": "Настройки счёта",
+    "settingsSaved": "Настройки сохранены",
+    "transactionHistory": "История операций",
+    "noTransactions": "Нет операций",
+    "lowBalanceAlert": "Низкий баланс",
+    "balanceChart": "Динамика баланса",
+    "allAccounts": "Все счета",
+    "noChartData": "Пока нет данных для графика",
+    "txKind": {
+      "deposit": "Пополнение",
+      "withdrawal": "Вывод",
+      "bonus": "Бонус",
+      "adjustment": "Корректировка",
+      "bet_placed": "Ставка сделана",
+      "bet_settled": "Ставка закрыта"
+    },
+    "setCurrentBalance": "Установить текущий баланс",
+    "currentBalance": "Текущий баланс",
+    "setBalanceHint": "Введите, сколько у вас реально сейчас на этом букмекере. Приложение пересчитает и будет отслеживать всё автоматически.",
+    "balanceSet": "Баланс установлен",
+    "onboardingTitle": "Добро пожаловать в Bankroll tracker!",
+    "onboardingDescription": "Для точного учёта укажите текущий баланс по каждому букмекеру. С этого момента приложение будет отслеживать все ставки, депозиты и выводы автоматически.",
+    "onboardingSkip": "Пропустить",
+    "onboardingFinish": "Готово",
+    "expectedBalance": "Ожидаемый баланс",
+    "pendingWithdrawals": "Ожидающие выводы",
+    "pending": "ожидает",
+    "confirm": "Подтвердить",
+    "withdrawalConfirmed": "Вывод подтверждён"
+  },
+  "achievements": {
+    "title": "Достижения",
+    "subtitle": "Получайте значки за свои успехи",
+    "streaks": "Серии",
+    "viewAll": "Показать все",
+    "currentWin": "Текущая",
+    "currentLoss": "Проигрыши",
+    "bestStreak": "Рекорд",
+    "level": "Уровень",
+    "earned": "Получено",
+    "earnedCount": "получено",
+    "categories": {
+      "streaks": "Серии побед",
+      "volume": "Количество",
+      "profit": "Прибыль",
+      "skill": "Навыки"
+    },
+    "firstWin": {
+      "name": "Первая победа",
+      "desc": "Выиграй свою первую ставку"
+    },
+    "hotStreak3": {
+      "name": "Горячая серия",
+      "desc": "3 победы подряд"
+    },
+    "onFire5": {
+      "name": "В огне",
+      "desc": "5 побед подряд"
+    },
+    "unstoppable10": {
+      "name": "Непобедимый",
+      "desc": "10 побед подряд"
+    },
+    "legendary20": {
+      "name": "Легенда",
+      "desc": "20 побед подряд"
+    },
+    "rookie10": {
+      "name": "Новичок",
+      "desc": "10 ставок"
+    },
+    "experienced100": {
+      "name": "Опытный",
+      "desc": "100 ставок"
+    },
+    "veteran500": {
+      "name": "Ветеран",
+      "desc": "500 ставок"
+    },
+    "master1000": {
+      "name": "Мастер",
+      "desc": "1000 ставок"
+    },
+    "firstGrand": {
+      "name": "Первая тысяча",
+      "desc": "+1 000 прибыли"
+    },
+    "fiveK": {
+      "name": "Пятёрка",
+      "desc": "+5 000 прибыли"
+    },
+    "tenK": {
+      "name": "Десятка",
+      "desc": "+10 000 прибыли"
+    },
+    "fiftyK": {
+      "name": "Полтинник",
+      "desc": "+50 000 прибыли"
+    },
+    "sharpShooter": {
+      "name": "Меткий стрелок",
+      "desc": "Winrate ≥ 60% минимум 50 ставок"
+    },
+    "underdogLover": {
+      "name": "Любитель аутсайдеров",
+      "desc": "3 победы на кэфе ≥ 5.0"
+    },
+    "jackpot": {
+      "name": "Джекпот",
+      "desc": "Одна победа более 10 000"
+    },
+    "consistent": {
+      "name": "Стабильный",
+      "desc": "3 прибыльных месяца подряд"
+    }
+  },
+  "insights": {
+    "title": "Инсайты",
+    "notEnoughData": "Пока мало данных. Нужно минимум 10 завершённых ставок.",
+    "bestCategory": "💚 Лучшая категория: {name} ({roi}% ROI, ставок: {count})",
+    "worstCategory": "💔 Худшая категория: {name} ({roi}% ROI, ставок: {count})",
+    "bestOdds": "🎯 Лучший диапазон кэфов: {range} ({roi}% ROI)",
+    "bestDay": "📅 Лучший день: {day} ({winRate}% winrate)",
+    "bestBookmaker": "🏠 Лучший букмекер: {name} ({roi}% ROI)",
+    "byCategory": "По категории",
+    "byBookmaker": "По букмекеру",
+    "byOddsRange": "По кэфу",
+    "byWeekday": "По дню недели",
+    "col": {
+      "label": "Категория",
+      "bets": "Ставки",
+      "winRate": "Winrate",
+      "profit": "Прибыль",
+      "roi": "ROI"
+    },
+    "weekdays": {
+      "mon": "Пн",
+      "tue": "Вт",
+      "wed": "Ср",
+      "thu": "Чт",
+      "fri": "Пт",
+      "sat": "Сб",
+      "sun": "Вс"
+    }
   }
 }

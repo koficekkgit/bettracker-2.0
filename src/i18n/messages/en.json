@@ -14,7 +14,8 @@
     "yes": "Yes",
     "no": "No",
     "optional": "optional",
-    "none": "none"
+    "none": "none",
+    "close": "Close"
   },
   "auth": {
     "login": "Sign in",
@@ -258,10 +259,177 @@
     "paid": "Paid",
     "withdraw": "Withdraw",
     "withdrawnAmount": "Withdrawn",
-    "nothingToWithdraw": "Nothing to withdraw",
-    "referrerUpdated": "Referrer updated",
-    "deleteGroup": "Delete group",
-    "deleteGroupConfirm": "Really delete group \"{name}\"? All members, period history and referrer balances will be deleted. This cannot be undone.",
-    "groupDeleted": "Group deleted"
+    "nothingToWithdraw": "Nothing to withdraw"
+  },
+  "bankroll": {
+    "title": "Bankroll",
+    "newAccount": "New account",
+    "noAccounts": "No accounts yet. Add your first bookmaker.",
+    "totalBalance": "Total balance",
+    "template": "Bookmaker (template)",
+    "customBookmaker": "Custom",
+    "accountName": "Account name",
+    "currency": "Currency",
+    "accountCreated": "Account created",
+    "lowBalanceThreshold": "Low balance alert",
+    "lowBalanceHint": "Red badge shows when balance drops below this.",
+    "hardLimit": "Hard limit (block bets over balance)",
+    "hardLimitHint": "Blocks bet saving when over balance. Unchecked = warning only.",
+    "balance": "Balance",
+    "deposit": "Deposit",
+    "withdraw": "Withdraw",
+    "amount": "Amount",
+    "notes": "Notes",
+    "depositSaved": "Deposit saved",
+    "withdrawalSaved": "Withdrawal saved",
+    "invalidAmount": "Invalid amount",
+    "settings": "Settings",
+    "archive": "Archive",
+    "archiveConfirm": "Archive account \"{name}\"? History will be preserved.",
+    "archived": "Account archived",
+    "accountSettings": "Account settings",
+    "settingsSaved": "Settings saved",
+    "transactionHistory": "Transaction history",
+    "noTransactions": "No transactions",
+    "lowBalanceAlert": "Low balance",
+    "balanceChart": "Balance over time",
+    "allAccounts": "All accounts",
+    "noChartData": "No chart data yet",
+    "txKind": {
+      "deposit": "Deposit",
+      "withdrawal": "Withdrawal",
+      "bonus": "Bonus",
+      "adjustment": "Adjustment",
+      "bet_placed": "Bet placed",
+      "bet_settled": "Bet settled"
+    },
+    "setCurrentBalance": "Set current balance",
+    "currentBalance": "Current balance",
+    "setBalanceHint": "Enter how much you really have on this bookmaker right now. The app will adjust and track every change from now on.",
+    "balanceSet": "Balance set",
+    "onboardingTitle": "Welcome to Bankroll tracker!",
+    "onboardingDescription": "For accurate tracking, please set the current balance for each bookmaker. From now on the app will track every bet, deposit and withdrawal automatically.",
+    "onboardingSkip": "Skip and set later",
+    "onboardingFinish": "Done",
+    "expectedBalance": "Expected balance",
+    "pendingWithdrawals": "Pending withdrawals",
+    "pending": "pending",
+    "confirm": "Confirm",
+    "withdrawalConfirmed": "Withdrawal confirmed"
+  },
+  "achievements": {
+    "title": "Achievements",
+    "subtitle": "Earn badges for your accomplishments and track your progress",
+    "streaks": "Streaks",
+    "viewAll": "View all",
+    "currentWin": "Current",
+    "currentLoss": "Losses",
+    "bestStreak": "Best",
+    "level": "Level",
+    "earned": "Earned",
+    "earnedCount": "badges earned",
+    "categories": {
+      "streaks": "Win streaks",
+      "volume": "Volume",
+      "profit": "Profit",
+      "skill": "Skills"
+    },
+    "firstWin": {
+      "name": "First win",
+      "desc": "Win your first bet"
+    },
+    "hotStreak3": {
+      "name": "Hot streak",
+      "desc": "3 wins in a row"
+    },
+    "onFire5": {
+      "name": "On fire",
+      "desc": "5 wins in a row"
+    },
+    "unstoppable10": {
+      "name": "Unstoppable",
+      "desc": "10 wins in a row"
+    },
+    "legendary20": {
+      "name": "Legendary",
+      "desc": "20 wins in a row"
+    },
+    "rookie10": {
+      "name": "Rookie",
+      "desc": "Place 10 bets"
+    },
+    "experienced100": {
+      "name": "Experienced",
+      "desc": "Place 100 bets"
+    },
+    "veteran500": {
+      "name": "Veteran",
+      "desc": "Place 500 bets"
+    },
+    "master1000": {
+      "name": "Master",
+      "desc": "Place 1000 bets"
+    },
+    "firstGrand": {
+      "name": "First grand",
+      "desc": "Reach +1,000 profit"
+    },
+    "fiveK": {
+      "name": "Five K",
+      "desc": "Reach +5,000 profit"
+    },
+    "tenK": {
+      "name": "Ten K",
+      "desc": "Reach +10,000 profit"
+    },
+    "fiftyK": {
+      "name": "Fifty K",
+      "desc": "Reach +50,000 profit"
+    },
+    "sharpShooter": {
+      "name": "Sharp shooter",
+      "desc": "Winrate ≥ 60% from min 50 bets"
+    },
+    "underdogLover": {
+      "name": "Underdog lover",
+      "desc": "3 wins at odds ≥ 5.0"
+    },
+    "jackpot": {
+      "name": "Jackpot",
+      "desc": "Single win over 10,000"
+    },
+    "consistent": {
+      "name": "Consistent",
+      "desc": "3 profitable months in a row"
+    }
+  },
+  "insights": {
+    "title": "Insights",
+    "notEnoughData": "Not enough data yet. Need at least 10 settled bets in a category.",
+    "bestCategory": "💚 Best category: {name} ({roi}% ROI, {count} bets)",
+    "worstCategory": "💔 Worst category: {name} ({roi}% ROI, {count} bets)",
+    "bestOdds": "🎯 Best odds range for you: {range} ({roi}% ROI)",
+    "bestDay": "📅 Best day: {day} ({winRate}% winrate)",
+    "bestBookmaker": "🏠 Best bookmaker: {name} ({roi}% ROI)",
+    "byCategory": "By category",
+    "byBookmaker": "By bookmaker",
+    "byOddsRange": "By odds range",
+    "byWeekday": "By weekday",
+    "col": {
+      "label": "Label",
+      "bets": "Bets",
+      "winRate": "Winrate",
+      "profit": "Profit",
+      "roi": "ROI"
+    },
+    "weekdays": {
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri",
+      "sat": "Sat",
+      "sun": "Sun"
+    }
   }
 }

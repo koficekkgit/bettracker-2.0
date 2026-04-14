@@ -17,6 +17,7 @@ import {
   type CustomRange,
 } from '@/lib/stats';
 import { formatCurrency, formatNumber, BOOKMAKERS } from '@/lib/utils';
+import { InsightsPanel } from '@/components/stats/insights-panel';
 
 export default function StatsPage() {
   const t = useTranslations();
@@ -240,6 +241,8 @@ export default function StatsPage() {
           )}
         </>
       )}
+
+      <InsightsPanel bets={allBets} />
     </div>
   );
 }

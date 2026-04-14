@@ -14,7 +14,8 @@
     "yes": "Ano",
     "no": "Ne",
     "optional": "volitelné",
-    "none": "žádný"
+    "none": "žádný",
+    "close": "Zavřít"
   },
   "auth": {
     "login": "Přihlásit se",
@@ -258,10 +259,177 @@
     "paid": "Vyplaceno",
     "withdraw": "Vybrat",
     "withdrawnAmount": "Vybráno",
-    "nothingToWithdraw": "Nic k vybrání",
-    "referrerUpdated": "Refer aktualizován",
-    "deleteGroup": "Smazat skupinu",
-    "deleteGroupConfirm": "Opravdu smazat skupinu \"{name}\"? Smažou se i všichni členové, historie období a refer balance. Tato akce je nevratná.",
-    "groupDeleted": "Skupina smazána"
+    "nothingToWithdraw": "Nic k vybrání"
+  },
+  "bankroll": {
+    "title": "Bankroll",
+    "newAccount": "Nový účet",
+    "noAccounts": "Zatím žádné účty. Přidej si svou první sázkovku.",
+    "totalBalance": "Celkový balance",
+    "template": "Sázkovka (šablona)",
+    "customBookmaker": "Vlastní",
+    "accountName": "Název účtu",
+    "currency": "Měna",
+    "accountCreated": "Účet vytvořen",
+    "lowBalanceThreshold": "Alert při nízkém balance",
+    "lowBalanceHint": "Červený badge se zobrazí, když balance klesne pod tuto hodnotu.",
+    "hardLimit": "Tvrdý limit (blokovat sázky přes balance)",
+    "hardLimitHint": "Při vsazení nad balance nepůjde sázku uložit. Bez zaškrtnutí jen warning.",
+    "balance": "Balance",
+    "deposit": "Vklad",
+    "withdraw": "Výběr",
+    "amount": "Částka",
+    "notes": "Poznámka",
+    "depositSaved": "Vklad uložen",
+    "withdrawalSaved": "Výběr uložen",
+    "invalidAmount": "Neplatná částka",
+    "settings": "Nastavení",
+    "archive": "Archivovat",
+    "archiveConfirm": "Archivovat účet \"{name}\"? Historie zůstane zachována.",
+    "archived": "Účet archivován",
+    "accountSettings": "Nastavení účtu",
+    "settingsSaved": "Nastavení uloženo",
+    "transactionHistory": "Historie transakcí",
+    "noTransactions": "Žádné transakce",
+    "lowBalanceAlert": "Nízký balance",
+    "balanceChart": "Vývoj balance",
+    "allAccounts": "Všechny účty",
+    "noChartData": "Zatím nejsou data pro graf",
+    "txKind": {
+      "deposit": "Vklad",
+      "withdrawal": "Výběr",
+      "bonus": "Bonus",
+      "adjustment": "Úprava",
+      "bet_placed": "Vsazená sázka",
+      "bet_settled": "Vyhodnocená sázka"
+    },
+    "setCurrentBalance": "Nastavit aktuální balance",
+    "currentBalance": "Aktuální balance",
+    "setBalanceHint": "Zadej, kolik reálně máš teď na této sázkovce. Appka si to dopočítá a od této chvíle bude sledovat každou změnu.",
+    "balanceSet": "Balance nastaven",
+    "onboardingTitle": "Vítej v Bankroll trackeru!",
+    "onboardingDescription": "Pro přesný výpočet prosím nastav aktuální balance na každé sázkovce. Od této chvíle appka bude sledovat každou sázku, vklad i výběr automaticky.",
+    "onboardingSkip": "Přeskočit a nastavit později",
+    "onboardingFinish": "Hotovo",
+    "expectedBalance": "Očekávaný balance",
+    "pendingWithdrawals": "Čekající výběry",
+    "pending": "čeká",
+    "confirm": "Potvrdit",
+    "withdrawalConfirmed": "Výběr potvrzen"
+  },
+  "achievements": {
+    "title": "Úspěchy",
+    "subtitle": "Získávej badges za své úspěchy a sleduj svůj progress",
+    "streaks": "Série",
+    "viewAll": "Zobrazit vše",
+    "currentWin": "Aktuální",
+    "currentLoss": "Prohry",
+    "bestStreak": "Rekord",
+    "level": "Level",
+    "earned": "Získáno",
+    "earnedCount": "získaných badges",
+    "categories": {
+      "streaks": "Série výher",
+      "volume": "Počet sázek",
+      "profit": "Profit",
+      "skill": "Dovednosti"
+    },
+    "firstWin": {
+      "name": "První výhra",
+      "desc": "Vyhraj svou první sázku"
+    },
+    "hotStreak3": {
+      "name": "Horká série",
+      "desc": "3 výhry v řadě"
+    },
+    "onFire5": {
+      "name": "Na vlně",
+      "desc": "5 výher v řadě"
+    },
+    "unstoppable10": {
+      "name": "Neporazitelný",
+      "desc": "10 výher v řadě"
+    },
+    "legendary20": {
+      "name": "Legendární",
+      "desc": "20 výher v řadě"
+    },
+    "rookie10": {
+      "name": "Nováček",
+      "desc": "Zadej 10 sázek"
+    },
+    "experienced100": {
+      "name": "Zkušený",
+      "desc": "Zadej 100 sázek"
+    },
+    "veteran500": {
+      "name": "Veterán",
+      "desc": "Zadej 500 sázek"
+    },
+    "master1000": {
+      "name": "Mistr",
+      "desc": "Zadej 1000 sázek"
+    },
+    "firstGrand": {
+      "name": "První tisícovka",
+      "desc": "Dosáhni profitu +1 000 Kč"
+    },
+    "fiveK": {
+      "name": "Pětka",
+      "desc": "Dosáhni profitu +5 000 Kč"
+    },
+    "tenK": {
+      "name": "Desítka",
+      "desc": "Dosáhni profitu +10 000 Kč"
+    },
+    "fiftyK": {
+      "name": "Padesátka",
+      "desc": "Dosáhni profitu +50 000 Kč"
+    },
+    "sharpShooter": {
+      "name": "Přesný střelec",
+      "desc": "Winrate ≥ 60% z min. 50 sázek"
+    },
+    "underdogLover": {
+      "name": "Favorit outsiderů",
+      "desc": "3 výhry s kurzem ≥ 5.0"
+    },
+    "jackpot": {
+      "name": "Jackpot",
+      "desc": "Jedna výhra nad 10 000 Kč"
+    },
+    "consistent": {
+      "name": "Konzistentní",
+      "desc": "3 ziskové měsíce v řadě"
+    }
+  },
+  "insights": {
+    "title": "Insights",
+    "notEnoughData": "Zatím málo dat pro smysluplné insights. Potřebuješ alespoň 10 vyhodnocených sázek v dané kategorii.",
+    "bestCategory": "💚 Nejlepší kategorie: {name} ({roi}% ROI, {count} sázek)",
+    "worstCategory": "💔 Nejhorší kategorie: {name} ({roi}% ROI, {count} sázek)",
+    "bestOdds": "🎯 Nejlíp ti vychází kurzy {range} ({roi}% ROI)",
+    "bestDay": "📅 Nejlepší den: {day} ({winRate}% winrate)",
+    "bestBookmaker": "🏠 Nejlepší sázkovka: {name} ({roi}% ROI)",
+    "byCategory": "Podle kategorie",
+    "byBookmaker": "Podle sázkovky",
+    "byOddsRange": "Podle kurzu",
+    "byWeekday": "Podle dne v týdnu",
+    "col": {
+      "label": "Kategorie",
+      "bets": "Sázky",
+      "winRate": "Winrate",
+      "profit": "Profit",
+      "roi": "ROI"
+    },
+    "weekdays": {
+      "mon": "Po",
+      "tue": "Út",
+      "wed": "St",
+      "thu": "Čt",
+      "fri": "Pá",
+      "sat": "So",
+      "sun": "Ne"
+    }
   }
 }
