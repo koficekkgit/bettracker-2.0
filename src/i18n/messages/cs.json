@@ -322,7 +322,8 @@
       "title": "Nastav si bankroll!",
       "description": "Pro přesný výpočet zůstatků si nastav aktuální balance na svých sázkovkách.",
       "cta": "Nastavit teď"
-    }
+    },
+    "totalHidden": "Celkový balance se zobrazí, jakmile dokončíš nastavení účtů (klikni \"Nastavit balance\" nahoře)."
   },
   "achievements": {
     "title": "Úspěchy",

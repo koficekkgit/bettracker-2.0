@@ -322,7 +322,8 @@
       "title": "Set up your bankroll!",
       "description": "For accurate balance tracking, set the current balance on each of your bookmakers.",
       "cta": "Set up now"
-    }
+    },
+    "totalHidden": "Total balance will appear once you complete account setup (click \"Setup balances\" above)."
   },
   "achievements": {
     "title": "Achievements",

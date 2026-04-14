@@ -109,22 +109,28 @@ function BankrollContent() {
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <h1 className="text-3xl font-bold">{t('bankroll.title')}</h1>
-          <div className="text-sm text-muted-foreground mt-1 space-y-0.5">
-            <div>
-              {t('bankroll.totalBalance')}:{' '}
-              <span className={totalBalance >= 0 ? 'text-emerald-500 font-semibold' : 'text-destructive font-semibold'}>
-                {totalBalance.toFixed(2)} Kč
-              </span>
-            </div>
-            {totalExpected !== totalBalance && (
-              <div className="text-xs">
-                {t('bankroll.expectedBalance')}:{' '}
-                <span className={totalExpected >= 0 ? 'text-emerald-500/70' : 'text-destructive/70'}>
-                  {totalExpected.toFixed(2)} Kč
+          {profile?.bankroll_onboarded_at ? (
+            <div className="text-sm text-muted-foreground mt-1 space-y-0.5">
+              <div>
+                {t('bankroll.totalBalance')}:{' '}
+                <span className={totalBalance >= 0 ? 'text-emerald-500 font-semibold' : 'text-destructive font-semibold'}>
+                  {totalBalance.toFixed(2)} Kč
                 </span>
               </div>
-            )}
-          </div>
+              {totalExpected !== totalBalance && (
+                <div className="text-xs">
+                  {t('bankroll.expectedBalance')}:{' '}
+                  <span className={totalExpected >= 0 ? 'text-emerald-500/70' : 'text-destructive/70'}>
+                    {totalExpected.toFixed(2)} Kč
+                  </span>
+                </div>
+              )}
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground mt-1">
+              {t('bankroll.totalHidden')}
+            </p>
+          )}
         </div>
         <div className="flex gap-2 flex-wrap">
           {accounts && accounts.length > 0 && (
