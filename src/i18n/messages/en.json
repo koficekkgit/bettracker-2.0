@@ -169,7 +169,8 @@
     "statusHalfLost": "Half lost",
     "result": "Result",
     "noBets": "No bets",
-    "deleteConfirm": "Really delete this bet?"
+    "deleteConfirm": "Really delete this bet?",
+    "duplicateBet": "Duplicate bet"
   },
   "stats": {
     "title": "Statistics",
@@ -315,7 +316,13 @@
     "pendingWithdrawals": "Pending withdrawals",
     "pending": "pending",
     "confirm": "Confirm",
-    "withdrawalConfirmed": "Withdrawal confirmed"
+    "withdrawalConfirmed": "Withdrawal confirmed",
+    "setupBalances": "Setup balances",
+    "banner": {
+      "title": "Set up your bankroll!",
+      "description": "For accurate balance tracking, set the current balance on each of your bookmakers.",
+      "cta": "Set up now"
+    }
   },
   "achievements": {
     "title": "Achievements",

@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
-import { Plus, Pencil, Trash2, Search } from 'lucide-react';
+import { Plus, Pencil, Trash2, Search, Copy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -21,6 +21,7 @@ export default function BetsPage() {
 
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<Bet | null>(null);
+  const [formMode, setFormMode] = useState<'edit' | 'duplicate'>('edit');
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<BetStatus | 'all'>('all');
   const [tagFilter, setTagFilter] = useState<string>('all');
@@ -54,11 +55,19 @@ export default function BetsPage() {
 
   function handleEdit(bet: Bet) {
     setEditing(bet);
+    setFormMode('edit');
+    setFormOpen(true);
+  }
+
+  function handleDuplicate(bet: Bet) {
+    setEditing(bet);
+    setFormMode('duplicate');
     setFormOpen(true);
   }
 
   function handleNew() {
     setEditing(null);
+    setFormMode('edit');
     setFormOpen(true);
   }
 
@@ -160,6 +169,9 @@ export default function BetsPage() {
                         </td>
                         <td className="p-3">
                           <div className="flex gap-1 justify-end">
+                            <Button variant="ghost" size="icon" onClick={() => handleDuplicate(bet)} title={t('bets.duplicateBet')}>
+                              <Copy className="w-3.5 h-3.5" />
+                            </Button>
                             <Button variant="ghost" size="icon" onClick={() => handleEdit(bet)}>
                               <Pencil className="w-3.5 h-3.5" />
                             </Button>
@@ -178,7 +190,7 @@ export default function BetsPage() {
         </CardContent>
       </Card>
 
-      <BetFormDialog open={formOpen} onClose={() => setFormOpen(false)} initial={editing} />
+      <BetFormDialog open={formOpen} onClose={() => setFormOpen(false)} initial={editing} mode={formMode} />
     </div>
   );
 }

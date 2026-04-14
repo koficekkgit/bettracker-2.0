@@ -14,6 +14,7 @@ import { useProfile } from '@/hooks/use-profile';
 import { calculateStats, calculateProfitTimeline, calculateBetProfit } from '@/lib/stats';
 import { formatCurrency, formatNumber, formatDate } from '@/lib/utils';
 import { StreakCard } from '@/components/achievements/streak-card';
+import { BankrollOnboardingBanner } from '@/components/bankroll/bankroll-onboarding-banner';
 
 export default function DashboardPage() {
   const t = useTranslations();
@@ -42,6 +43,8 @@ export default function DashboardPage() {
           {t('dashboard.addBet')}
         </Button>
       </div>
+
+      <BankrollOnboardingBanner />
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <StatCard

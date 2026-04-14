@@ -169,7 +169,8 @@
     "statusHalfLost": "Полупроигрыш",
     "result": "Результат",
     "noBets": "Нет ставок",
-    "deleteConfirm": "Действительно удалить эту ставку?"
+    "deleteConfirm": "Действительно удалить эту ставку?",
+    "duplicateBet": "Дублировать ставку"
   },
   "stats": {
     "title": "Статистика",
@@ -315,7 +316,13 @@
     "pendingWithdrawals": "Ожидающие выводы",
     "pending": "ожидает",
     "confirm": "Подтвердить",
-    "withdrawalConfirmed": "Вывод подтверждён"
+    "withdrawalConfirmed": "Вывод подтверждён",
+    "setupBalances": "Настроить балансы",
+    "banner": {
+      "title": "Настройте свой банкролл!",
+      "description": "Для точного учёта установите текущий баланс по каждому букмекеру.",
+      "cta": "Настроить"
+    }
   },
   "achievements": {
     "title": "Достижения",

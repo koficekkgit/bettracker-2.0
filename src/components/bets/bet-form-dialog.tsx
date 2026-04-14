@@ -15,13 +15,17 @@ interface Props {
   open: boolean;
   onClose: () => void;
   initial?: Bet | null;
+  mode?: 'edit' | 'duplicate';
 }
 
-export function BetFormDialog({ open, onClose, initial }: Props) {
+export function BetFormDialog({ open, onClose, initial, mode = 'edit' }: Props) {
   const t = useTranslations();
   const create = useCreateBet();
   const update = useUpdateBet();
   const { data: categories = [] } = useCategories();
+
+  const isDuplicate = mode === 'duplicate' && !!initial;
+  const isEdit = mode === 'edit' && !!initial;
 
   const [form, setForm] = useState<BetInput>({
     placed_at: new Date().toISOString().slice(0, 10),
@@ -41,15 +45,17 @@ export function BetFormDialog({ open, onClose, initial }: Props) {
   useEffect(() => {
     if (initial) {
       setForm({
-        placed_at: initial.placed_at,
+        // Při duplikaci dáme dnešní datum, jinak originál
+        placed_at: mode === 'duplicate' ? new Date().toISOString().slice(0, 10) : initial.placed_at,
         description: initial.description,
         bet_type: initial.bet_type,
         pick: initial.pick ?? '',
         stake: Number(initial.stake),
         odds: Number(initial.odds),
         currency: initial.currency,
-        status: initial.status,
-        payout: initial.payout ?? undefined,
+        // Při duplikaci vždy pending, payout vynulovat
+        status: mode === 'duplicate' ? 'pending' : initial.status,
+        payout: mode === 'duplicate' ? undefined : (initial.payout ?? undefined),
         bookmaker: initial.bookmaker,
         category_id: initial.category_id,
         tags: initial.tags ?? [],
@@ -71,15 +77,16 @@ export function BetFormDialog({ open, onClose, initial }: Props) {
         notes: '',
       });
     }
-  }, [initial, open]);
+  }, [initial, open, mode]);
 
   if (!open) return null;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (initial) {
-      await update.mutateAsync({ id: initial.id, ...form });
+    if (isEdit) {
+      await update.mutateAsync({ id: initial!.id, ...form });
     } else {
+      // Nová sázka NEBO duplikát — oboje voláme create
       await create.mutateAsync(form);
     }
     onClose();
@@ -99,7 +106,7 @@ export function BetFormDialog({ open, onClose, initial }: Props) {
     <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 overflow-y-auto">
       <div className="bg-card border border-border rounded-lg w-full max-w-2xl my-8">
         <div className="flex items-center justify-between p-5 border-b border-border">
-          <h2 className="text-lg font-semibold">{initial ? t('bets.editBet') : t('bets.addBet')}</h2>
+          <h2 className="text-lg font-semibold">{isEdit ? t('bets.editBet') : isDuplicate ? t('bets.duplicateBet') : t('bets.addBet')}</h2>
           <Button variant="ghost" size="icon" onClick={onClose}>
             <X className="w-4 h-4" />
           </Button>

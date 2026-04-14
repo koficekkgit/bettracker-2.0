@@ -169,7 +169,8 @@
     "statusHalfLost": "Polovina prohrála",
     "result": "Výsledek",
     "noBets": "Žádné sázky",
-    "deleteConfirm": "Opravdu smazat tuto sázku?"
+    "deleteConfirm": "Opravdu smazat tuto sázku?",
+    "duplicateBet": "Duplikovat sázku"
   },
   "stats": {
     "title": "Statistiky",
@@ -315,7 +316,13 @@
     "pendingWithdrawals": "Čekající výběry",
     "pending": "čeká",
     "confirm": "Potvrdit",
-    "withdrawalConfirmed": "Výběr potvrzen"
+    "withdrawalConfirmed": "Výběr potvrzen",
+    "setupBalances": "Nastavit balance",
+    "banner": {
+      "title": "Nastav si bankroll!",
+      "description": "Pro přesný výpočet zůstatků si nastav aktuální balance na svých sázkovkách.",
+      "cta": "Nastavit teď"
+    }
   },
   "achievements": {
     "title": "Úspěchy",

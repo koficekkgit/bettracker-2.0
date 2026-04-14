@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
-import { Plus, Wallet, AlertTriangle, Archive, Settings2, ArrowUpCircle, ArrowDownCircle, Edit3, Clock, Check } from 'lucide-react';
+import { Plus, Wallet, AlertTriangle, Archive, Settings2, ArrowUpCircle, ArrowDownCircle, Edit3, Clock, Check, Rocket } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ProGate } from '@/components/subscription/pro-gate';
@@ -126,10 +126,18 @@ function BankrollContent() {
             )}
           </div>
         </div>
-        <Button onClick={() => setCreateOpen(true)}>
-          <Plus className="w-4 h-4 mr-2" />
-          {t('bankroll.newAccount')}
-        </Button>
+        <div className="flex gap-2 flex-wrap">
+          {accounts && accounts.length > 0 && (
+            <Button variant="outline" onClick={() => setOnboardingOpen(true)}>
+              <Rocket className="w-4 h-4 mr-2" />
+              {t('bankroll.setupBalances')}
+            </Button>
+          )}
+          <Button onClick={() => setCreateOpen(true)}>
+            <Plus className="w-4 h-4 mr-2" />
+            {t('bankroll.newAccount')}
+          </Button>
+        </div>
       </div>
 
       {!accounts?.length && (
