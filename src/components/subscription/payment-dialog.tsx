@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { X, Copy, Check, Loader2, QrCode } from 'lucide-react';
+import { X, Copy, Check, Loader2, QrCode, Smartphone } from 'lucide-react';
 import QRCode from 'qrcode';
 import { Button } from '@/components/ui/button';
 import { generateSpayd, SUBSCRIPTION_PLANS, type PlanId } from '@/lib/payments';
@@ -114,6 +114,9 @@ export function PaymentDialog({ open, onClose, initialPlan = 'lifetime' }: Props
         </div>
 
         <div className="p-5 space-y-5">
+          {/* Revolut alternativa — dočasné, než bude Fio API */}
+          <RevolutBox copyText={copyText} copied={copied} />
+
           {/* Krok 1: Výběr plánu (jen pokud nemáme aktivní pending) */}
           {!pendingPayment && (
             <>
@@ -237,6 +240,91 @@ function PaymentRow({
           {copied ? <Check className="w-3.5 h-3.5 text-success" /> : <Copy className="w-3.5 h-3.5" />}
         </button>
       </div>
+    </div>
+  );
+}
+
+function RevolutBox({
+  copyText,
+  copied,
+}: {
+  copyText: (text: string, label: string) => void;
+  copied: string | null;
+}) {
+  const [expanded, setExpanded] = useState(false);
+  const REVOLUT_TAG = '@adahonza';
+
+  return (
+    <div className="rounded-lg border border-blue-500/30 bg-blue-500/5 overflow-hidden">
+      <button
+        onClick={() => setExpanded(!expanded)}
+        className="w-full flex items-center gap-3 p-3 text-left hover:bg-blue-500/10 transition-colors"
+      >
+        <div className="w-9 h-9 rounded-md bg-blue-500/20 flex items-center justify-center flex-shrink-0">
+          <Smartphone className="w-4 h-4 text-blue-400" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="text-sm font-semibold">Poslat přes Revolut</div>
+          <div className="text-xs text-muted-foreground">
+            Rychlá alternativa — klikni pro detail
+          </div>
+        </div>
+        <div className="text-xs text-blue-400 flex-shrink-0">
+          {expanded ? 'Skrýt' : 'Zobrazit'}
+        </div>
+      </button>
+
+      {expanded && (
+        <div className="border-t border-blue-500/20 p-4 space-y-3">
+          <div className="text-xs text-muted-foreground">
+            Do vyřešení automatického párování plateb přes Fio API můžeš
+            zaplatit i přes Revolut. Po platbě napiš Honzovi, aktivuje ti Pro ručně.
+          </div>
+
+          <div className="flex items-center justify-between bg-background/50 rounded-md p-2">
+            <div>
+              <div className="text-xs text-muted-foreground">Revolut tag</div>
+              <div className="font-mono text-sm font-semibold">{REVOLUT_TAG}</div>
+            </div>
+            <button
+              onClick={() => copyText(REVOLUT_TAG, 'revolut')}
+              className="text-muted-foreground hover:text-foreground p-1.5"
+              title="Kopírovat"
+            >
+              {copied === 'revolut' ? (
+                <Check className="w-4 h-4 text-success" />
+              ) : (
+                <Copy className="w-4 h-4" />
+              )}
+            </button>
+          </div>
+
+          <div className="flex justify-center">
+            <div className="bg-white p-3 rounded-lg">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/revolut-qr.png"
+                alt="Revolut QR kód"
+                width={220}
+                height={220}
+                className="block"
+              />
+            </div>
+          </div>
+
+          <div className="text-xs text-muted-foreground text-center">
+            Naskenuj QR kód v Revolut appce, nebo pošli na <span className="font-mono font-semibold text-foreground">{REVOLUT_TAG}</span>
+          </div>
+
+          <div className="rounded-md bg-amber-500/10 border border-amber-500/30 p-2.5 text-xs">
+            <span className="font-medium text-amber-600">Důležité:</span>{' '}
+            <span className="text-muted-foreground">
+              Po platbě přes Revolut kontaktuj Honzu, aby ti Pro aktivoval ručně.
+              Automatické párování funguje jen u QR platby přes banku.
+            </span>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
