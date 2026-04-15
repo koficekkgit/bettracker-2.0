@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
-import { X } from 'lucide-react';
+import { X, Plus, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -10,6 +10,8 @@ import { Select } from '@/components/ui/select';
 import { useCreateBet, useUpdateBet, useCategories } from '@/hooks/use-bets';
 import { CURRENCIES, BOOKMAKERS } from '@/lib/utils';
 import type { Bet, BetInput, BetStatus, BetType } from '@/lib/types';
+
+const MATCH_SEP = ' | ';
 
 interface Props {
   open: boolean;
@@ -42,13 +44,18 @@ export function BetFormDialog({ open, onClose, initial, mode = 'edit' }: Props) 
     notes: '',
   });
 
+  // For accumulator bets: individual match rows
+  const [matches, setMatches] = useState<string[]>(['', '']);
+
   useEffect(() => {
     if (initial) {
+      const betType = initial.bet_type;
+      const desc = initial.description;
       setForm({
         // Při duplikaci dáme dnešní datum, jinak originál
         placed_at: mode === 'duplicate' ? new Date().toISOString().slice(0, 10) : initial.placed_at,
-        description: initial.description,
-        bet_type: initial.bet_type,
+        description: desc,
+        bet_type: betType,
         pick: initial.pick ?? '',
         stake: Number(initial.stake),
         odds: Number(initial.odds),
@@ -61,6 +68,12 @@ export function BetFormDialog({ open, onClose, initial, mode = 'edit' }: Props) 
         tags: initial.tags ?? [],
         notes: initial.notes ?? '',
       });
+      if (betType === 'accumulator') {
+        const parts = desc.split(MATCH_SEP).filter((p) => p.length > 0);
+        setMatches(parts.length >= 2 ? parts : [...parts, ...Array(2 - parts.length).fill('')]);
+      } else {
+        setMatches(['', '']);
+      }
     } else {
       setForm({
         placed_at: new Date().toISOString().slice(0, 10),
@@ -76,18 +89,45 @@ export function BetFormDialog({ open, onClose, initial, mode = 'edit' }: Props) 
         tags: [],
         notes: '',
       });
+      setMatches(['', '']);
     }
   }, [initial, open, mode]);
+
+  function handleBetTypeChange(newType: BetType) {
+    setForm((f) => ({ ...f, bet_type: newType }));
+    if (newType === 'accumulator') {
+      // Pre-populate from current description if possible
+      const parts = form.description.split(MATCH_SEP).filter((p) => p.length > 0);
+      setMatches(parts.length >= 2 ? parts : parts.length === 1 ? [parts[0], ''] : ['', '']);
+    }
+  }
+
+  function updateMatch(idx: number, value: string) {
+    const next = [...matches];
+    next[idx] = value;
+    setMatches(next);
+  }
+
+  function addMatch() {
+    setMatches((m) => [...m, '']);
+  }
+
+  function removeMatch(idx: number) {
+    setMatches((m) => m.filter((_, i) => i !== idx));
+  }
 
   if (!open) return null;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    const finalForm =
+      form.bet_type === 'accumulator'
+        ? { ...form, description: matches.map((m) => m.trim()).filter((m) => m.length > 0).join(MATCH_SEP) }
+        : form;
     if (isEdit) {
-      await update.mutateAsync({ id: initial!.id, ...form });
+      await update.mutateAsync({ id: initial!.id, ...finalForm });
     } else {
-      // Nová sázka NEBO duplikát — oboje voláme create
-      await create.mutateAsync(form);
+      await create.mutateAsync(finalForm);
     }
     onClose();
   }
@@ -127,7 +167,7 @@ export function BetFormDialog({ open, onClose, initial, mode = 'edit' }: Props) 
               <Label>{t('bets.type')}</Label>
               <Select
                 value={form.bet_type}
-                onChange={(e) => setForm({ ...form, bet_type: e.target.value as BetType })}
+                onChange={(e) => handleBetTypeChange(e.target.value as BetType)}
               >
                 <option value="single">{t('bets.single')}</option>
                 <option value="accumulator">{t('bets.accumulator')}</option>
@@ -135,15 +175,53 @@ export function BetFormDialog({ open, onClose, initial, mode = 'edit' }: Props) 
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label>{t('bets.description')}</Label>
-            <Input
-              required
-              placeholder={t('bets.descriptionPlaceholder')}
-              value={form.description}
-              onChange={(e) => setForm({ ...form, description: e.target.value })}
-            />
-          </div>
+          {form.bet_type === 'accumulator' ? (
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label>{t('bets.description')}</Label>
+                <button
+                  type="button"
+                  onClick={addMatch}
+                  className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  <Plus className="w-3 h-3" />
+                  {t('bets.addMatch') as string}
+                </button>
+              </div>
+              <div className="space-y-2">
+                {matches.map((match, idx) => (
+                  <div key={idx} className="flex gap-2 items-center">
+                    <span className="text-xs text-muted-foreground w-4 shrink-0">{idx + 1}.</span>
+                    <Input
+                      required={idx === 0}
+                      placeholder={t('bets.descriptionPlaceholder')}
+                      value={match}
+                      onChange={(e) => updateMatch(idx, e.target.value)}
+                    />
+                    {matches.length > 2 && (
+                      <button
+                        type="button"
+                        onClick={() => removeMatch(idx)}
+                        className="text-muted-foreground hover:text-destructive transition-colors shrink-0"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              <Label>{t('bets.description')}</Label>
+              <Input
+                required
+                placeholder={t('bets.descriptionPlaceholder')}
+                value={form.description}
+                onChange={(e) => setForm({ ...form, description: e.target.value })}
+              />
+            </div>
+          )}
 
           {form.bet_type === 'single' && (
             <div className="space-y-2">

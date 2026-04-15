@@ -142,6 +142,7 @@
     "date": "Datum",
     "description": "Popis / zápas",
     "descriptionPlaceholder": "např. Sparta - Slavia",
+    "addMatch": "+ přidat zápas",
     "type": "Typ",
     "single": "Sólo",
     "accumulator": "AKO",

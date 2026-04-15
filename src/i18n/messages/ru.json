@@ -142,6 +142,7 @@
     "date": "Дата",
     "description": "Описание / матч",
     "descriptionPlaceholder": "напр. Спартак - ЦСКА",
+    "addMatch": "+ добавить матч",
     "type": "Тип",
     "single": "Одиночная",
     "accumulator": "Экспресс",
