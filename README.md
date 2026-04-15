@@ -14,7 +14,7 @@ src/
   i18n/messages/PATCH_i18n.txt                  ← MERGE do cs/en/ru.json
 ```
 
-## Postup nasazení (v tomto pořadí!) typ
+## Postup nasazení (v tomto pořadí!) type
 
 ### 1) Spustit migraci v Supabase
 Otevři Supabase SQL Editor a spusť celý obsah `supabase/migration_username.sql`.
