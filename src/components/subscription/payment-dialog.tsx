@@ -277,8 +277,7 @@ function RevolutBox({
       {expanded && (
         <div className="border-t border-blue-500/20 p-4 space-y-3">
           <div className="text-xs text-muted-foreground">
-            Do vyřešení automatického párování plateb přes Fio API můžeš
-            zaplatit i přes Revolut. Po platbě napiš Honzovi, aktivuje ti Pro ručně.
+            Pokud nechceš platit přes banku, můžeš zaplatit přes Revolut. Po platbě napiš na telegram @koficek nebo instagram @adahonza, aktivuji ti Pro ručně.
           </div>
 
           <div className="flex items-center justify-between bg-background/50 rounded-md p-2">
@@ -303,7 +302,7 @@ function RevolutBox({
             <div className="bg-white p-3 rounded-lg">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/revolut-qr.png"
+                src="/revolut-qr-new.png"
                 alt="Revolut QR kód"
                 width={220}
                 height={220}
