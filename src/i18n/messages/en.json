@@ -22,6 +22,7 @@
     "logout": "Sign out",
     "register": "Sign up",
     "email": "Email",
+    "emailOrUsername": "Email or username",
     "password": "Password",
     "username": "Username",
     "noAccount": "No account?",

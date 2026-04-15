@@ -22,6 +22,7 @@
     "logout": "Выйти",
     "register": "Регистрация",
     "email": "Email",
+    "emailOrUsername": "Email или имя пользователя",
     "password": "Пароль",
     "username": "Имя пользователя",
     "noAccount": "Нет аккаунта?",
