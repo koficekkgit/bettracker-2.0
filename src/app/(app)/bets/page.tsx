@@ -12,6 +12,8 @@ import { BetFormDialog } from '@/components/bets/bet-form-dialog';
 import { useBets, useDeleteBet } from '@/hooks/use-bets';
 import { calculateBetProfit } from '@/lib/stats';
 import { formatCurrency, formatNumber, formatDate } from '@/lib/utils';
+import { parseSurebetLegs } from '@/lib/surebet';
+import { BOOKMAKERS } from '@/lib/utils';
 import type { Bet, BetStatus } from '@/lib/types';
 
 export default function BetsPage() {
@@ -156,9 +158,38 @@ export default function BetsPage() {
                         <td className="p-3">
                           <div className="font-medium">{bet.description}</div>
                           {bet.pick && <div className="text-xs text-muted-foreground">{bet.pick}</div>}
+                          {bet.bet_type === 'surebet' && (() => {
+                            const legs = parseSurebetLegs(bet.notes);
+                            if (!legs) return null;
+                            return (
+                              <div className="mt-1 space-y-0.5">
+                                {legs.map((leg, i) => {
+                                  const bm = BOOKMAKERS.find((b) => b.id === leg.bookmaker);
+                                  return (
+                                    <div key={i} className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                                      <span>{bm?.name ?? (leg.bookmaker || '—')}</span>
+                                      <span className="opacity-50">·</span>
+                                      <span>{formatNumber(leg.odds, 2)}x</span>
+                                      <span className="opacity-50">·</span>
+                                      <span>{formatCurrency(leg.stake, bet.currency)}</span>
+                                      {leg.status !== 'pending' && (
+                                        <span className={leg.status === 'won' ? 'text-success' : 'text-danger'}>
+                                          · {leg.status === 'won' ? t('bets.statusWon') : t('bets.statusLost')}
+                                        </span>
+                                      )}
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            );
+                          })()}
                         </td>
                         <td className="p-3 text-xs text-muted-foreground">
-                          {bet.bet_type === 'accumulator' ? t('bets.accumulator') : t('bets.single')}
+                          {bet.bet_type === 'accumulator'
+                            ? t('bets.accumulator')
+                            : bet.bet_type === 'surebet'
+                            ? t('bets.surebet')
+                            : t('bets.single')}
                         </td>
                         <td className="p-3 text-right">{formatNumber(Number(bet.odds), 2)}</td>
                         <td className="p-3 text-right">{formatCurrency(Number(bet.stake), bet.currency)}</td>

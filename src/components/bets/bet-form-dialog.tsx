@@ -9,7 +9,14 @@ import { Label } from '@/components/ui/label';
 import { Select } from '@/components/ui/select';
 import { useCreateBet, useUpdateBet, useCategories } from '@/hooks/use-bets';
 import { CURRENCIES, BOOKMAKERS } from '@/lib/utils';
-import type { Bet, BetInput, BetStatus, BetType } from '@/lib/types';
+import {
+  serializeSurebetLegs,
+  parseSurebetLegs,
+  computeSurebetStatus,
+  computeSurebetPayout,
+  defaultSurebetLegs,
+} from '@/lib/surebet';
+import type { Bet, BetInput, BetStatus, BetType, SurebetLeg } from '@/lib/types';
 
 const MATCH_SEP = ' | ';
 
@@ -47,12 +54,16 @@ export function BetFormDialog({ open, onClose, initial, mode = 'edit' }: Props) 
   // For accumulator bets: individual match rows
   const [matches, setMatches] = useState<string[]>(['', '']);
 
+  // For surebet: individual leg rows
+  const [sbLegs, setSbLegs] = useState<SurebetLeg[]>(defaultSurebetLegs());
+
   useEffect(() => {
     if (initial) {
       const betType = initial.bet_type;
       const desc = initial.description;
+      const rawNotes = initial.notes ?? '';
+
       setForm({
-        // Při duplikaci dáme dnešní datum, jinak originál
         placed_at: mode === 'duplicate' ? new Date().toISOString().slice(0, 10) : initial.placed_at,
         description: desc,
         bet_type: betType,
@@ -60,19 +71,31 @@ export function BetFormDialog({ open, onClose, initial, mode = 'edit' }: Props) 
         stake: Number(initial.stake),
         odds: Number(initial.odds),
         currency: initial.currency,
-        // Při duplikaci vždy pending, payout vynulovat
         status: mode === 'duplicate' ? 'pending' : initial.status,
         payout: mode === 'duplicate' ? undefined : (initial.payout ?? undefined),
         bookmaker: initial.bookmaker,
         category_id: initial.category_id,
         tags: initial.tags ?? [],
-        notes: initial.notes ?? '',
+        notes: rawNotes,
       });
+
       if (betType === 'accumulator') {
         const parts = desc.split(MATCH_SEP).filter((p) => p.length > 0);
         setMatches(parts.length >= 2 ? parts : [...parts, ...Array(2 - parts.length).fill('')]);
+        setSbLegs(defaultSurebetLegs());
+      } else if (betType === 'surebet') {
+        const parsed = parseSurebetLegs(rawNotes);
+        setSbLegs(
+          parsed && parsed.length >= 2
+            ? mode === 'duplicate'
+              ? parsed.map((l) => ({ ...l, status: 'pending' as const }))
+              : parsed
+            : defaultSurebetLegs()
+        );
+        setMatches(['', '']);
       } else {
         setMatches(['', '']);
+        setSbLegs(defaultSurebetLegs());
       }
     } else {
       setForm({
@@ -90,40 +113,63 @@ export function BetFormDialog({ open, onClose, initial, mode = 'edit' }: Props) 
         notes: '',
       });
       setMatches(['', '']);
+      setSbLegs(defaultSurebetLegs());
     }
   }, [initial, open, mode]);
 
   function handleBetTypeChange(newType: BetType) {
     setForm((f) => ({ ...f, bet_type: newType }));
     if (newType === 'accumulator') {
-      // Pre-populate from current description if possible
       const parts = form.description.split(MATCH_SEP).filter((p) => p.length > 0);
       setMatches(parts.length >= 2 ? parts : parts.length === 1 ? [parts[0], ''] : ['', '']);
     }
   }
 
+  // --- Accumulator helpers ---
   function updateMatch(idx: number, value: string) {
     const next = [...matches];
     next[idx] = value;
     setMatches(next);
   }
+  function addMatch() { setMatches((m) => [...m, '']); }
+  function removeMatch(idx: number) { setMatches((m) => m.filter((_, i) => i !== idx)); }
 
-  function addMatch() {
-    setMatches((m) => [...m, '']);
+  // --- Surebet helpers ---
+  function updateSbLeg(idx: number, patch: Partial<SurebetLeg>) {
+    setSbLegs((prev) => prev.map((l, i) => (i === idx ? { ...l, ...patch } : l)));
   }
-
-  function removeMatch(idx: number) {
-    setMatches((m) => m.filter((_, i) => i !== idx));
-  }
+  function addSbLeg() { setSbLegs((prev) => [...prev, { bookmaker: '', odds: 2.0, stake: 0, status: 'pending' }]); }
+  function removeSbLeg(idx: number) { setSbLegs((prev) => prev.filter((_, i) => i !== idx)); }
 
   if (!open) return null;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const finalForm =
-      form.bet_type === 'accumulator'
-        ? { ...form, description: matches.map((m) => m.trim()).filter((m) => m.length > 0).join(MATCH_SEP) }
-        : form;
+
+    let finalForm: BetInput;
+
+    if (form.bet_type === 'accumulator') {
+      finalForm = {
+        ...form,
+        description: matches.map((m) => m.trim()).filter((m) => m.length > 0).join(MATCH_SEP),
+      };
+    } else if (form.bet_type === 'surebet') {
+      const totalStake = sbLegs.reduce((s, l) => s + (Number(l.stake) || 0), 0);
+      const status = computeSurebetStatus(sbLegs);
+      const payout = computeSurebetPayout(sbLegs);
+      finalForm = {
+        ...form,
+        stake: totalStake,
+        odds: 1,
+        status,
+        payout: payout ?? undefined,
+        bookmaker: null,
+        notes: serializeSurebetLegs(sbLegs),
+      };
+    } else {
+      finalForm = form;
+    }
+
     if (isEdit) {
       await update.mutateAsync({ id: initial!.id, ...finalForm });
     } else {
@@ -142,17 +188,23 @@ export function BetFormDialog({ open, onClose, initial, mode = 'edit' }: Props) 
     { value: 'half_lost', key: 'bets.statusHalfLost' },
   ];
 
+  const isSurebet = form.bet_type === 'surebet';
+  const isAccumulator = form.bet_type === 'accumulator';
+
   return (
     <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 overflow-y-auto">
       <div className="bg-card border border-border rounded-lg w-full max-w-2xl my-8">
         <div className="flex items-center justify-between p-5 border-b border-border">
-          <h2 className="text-lg font-semibold">{isEdit ? t('bets.editBet') : isDuplicate ? t('bets.duplicateBet') : t('bets.addBet')}</h2>
+          <h2 className="text-lg font-semibold">
+            {isEdit ? t('bets.editBet') : isDuplicate ? t('bets.duplicateBet') : t('bets.addBet')}
+          </h2>
           <Button variant="ghost" size="icon" onClick={onClose}>
             <X className="w-4 h-4" />
           </Button>
         </div>
 
         <form onSubmit={handleSubmit} className="p-5 space-y-4">
+          {/* Date + Type */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>{t('bets.date')}</Label>
@@ -171,11 +223,13 @@ export function BetFormDialog({ open, onClose, initial, mode = 'edit' }: Props) 
               >
                 <option value="single">{t('bets.single')}</option>
                 <option value="accumulator">{t('bets.accumulator')}</option>
+                <option value="surebet">{t('bets.surebet')}</option>
               </Select>
             </div>
           </div>
 
-          {form.bet_type === 'accumulator' ? (
+          {/* Description — varies by type */}
+          {isAccumulator ? (
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <Label>{t('bets.description')}</Label>
@@ -223,6 +277,7 @@ export function BetFormDialog({ open, onClose, initial, mode = 'edit' }: Props) 
             </div>
           )}
 
+          {/* Pick — single only */}
           {form.bet_type === 'single' && (
             <div className="space-y-2">
               <Label>{t('bets.pick')}</Label>
@@ -234,29 +289,156 @@ export function BetFormDialog({ open, onClose, initial, mode = 'edit' }: Props) 
             </div>
           )}
 
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            <div className="space-y-2">
-              <Label>{t('bets.stake')}</Label>
-              <Input
-                type="number"
-                step="0.01"
-                min="0"
-                required
-                value={form.stake}
-                onChange={(e) => setForm({ ...form, stake: parseFloat(e.target.value) || 0 })}
-              />
+          {/* Surebet legs */}
+          {isSurebet && (
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <Label>{t('bets.surebetLegs')}</Label>
+                <button
+                  type="button"
+                  onClick={addSbLeg}
+                  className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  <Plus className="w-3 h-3" />
+                  {t('bets.addLeg') as string}
+                </button>
+              </div>
+
+              {sbLegs.map((leg, idx) => (
+                <div key={idx} className="rounded-md border border-border p-3 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-medium text-muted-foreground">
+                      {t('bets.leg')} {idx + 1}
+                    </span>
+                    {sbLegs.length > 2 && (
+                      <button
+                        type="button"
+                        onClick={() => removeSbLeg(idx)}
+                        className="text-muted-foreground hover:text-destructive transition-colors"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="space-y-1">
+                      <Label className="text-xs">{t('bets.bookmaker')}</Label>
+                      <Select
+                        value={leg.bookmaker}
+                        onChange={(e) => updateSbLeg(idx, { bookmaker: e.target.value })}
+                      >
+                        <option value="">—</option>
+                        {BOOKMAKERS.map((b) => (
+                          <option key={b.id} value={b.id}>{b.name}</option>
+                        ))}
+                      </Select>
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-xs">{t('bets.odds')}</Label>
+                      <Input
+                        type="number"
+                        step="0.01"
+                        min="1"
+                        required
+                        value={leg.odds}
+                        onChange={(e) => updateSbLeg(idx, { odds: parseFloat(e.target.value) || 1 })}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="space-y-1">
+                      <Label className="text-xs">{t('bets.stake')}</Label>
+                      <Input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        required
+                        value={leg.stake}
+                        onChange={(e) => updateSbLeg(idx, { stake: parseFloat(e.target.value) || 0 })}
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-xs">{t('bets.result')}</Label>
+                      <Select
+                        value={leg.status}
+                        onChange={(e) => updateSbLeg(idx, { status: e.target.value as SurebetLeg['status'] })}
+                      >
+                        <option value="pending">{t('bets.statusPending')}</option>
+                        <option value="won">{t('bets.statusWon')}</option>
+                        <option value="lost">{t('bets.statusLost')}</option>
+                      </Select>
+                    </div>
+                  </div>
+                </div>
+              ))}
+
+              {/* Surebet summary */}
+              <div className="flex gap-4 text-xs text-muted-foreground px-1">
+                <span>
+                  {t('bets.totalStake')}:{' '}
+                  <span className="text-foreground font-medium">
+                    {sbLegs.reduce((s, l) => s + (Number(l.stake) || 0), 0).toFixed(2)} {form.currency}
+                  </span>
+                </span>
+                {sbLegs.some((l) => l.status === 'won') && (
+                  <span>
+                    {t('bets.expectedReturn')}:{' '}
+                    <span className="text-success font-medium">
+                      +{(
+                        sbLegs
+                          .filter((l) => l.status === 'won')
+                          .reduce((s, l) => s + l.stake * l.odds - l.stake, 0)
+                      ).toFixed(2)} {form.currency}
+                    </span>
+                  </span>
+                )}
+              </div>
             </div>
-            <div className="space-y-2">
-              <Label>{t('bets.odds')}</Label>
-              <Input
-                type="number"
-                step="0.01"
-                min="1"
-                required
-                value={form.odds}
-                onChange={(e) => setForm({ ...form, odds: parseFloat(e.target.value) || 1 })}
-              />
+          )}
+
+          {/* Stake / Odds / Currency — hidden for surebet */}
+          {!isSurebet && (
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label>{t('bets.stake')}</Label>
+                <Input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  required
+                  value={form.stake}
+                  onChange={(e) => setForm({ ...form, stake: parseFloat(e.target.value) || 0 })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>{t('bets.odds')}</Label>
+                <Input
+                  type="number"
+                  step="0.01"
+                  min="1"
+                  required
+                  value={form.odds}
+                  onChange={(e) => setForm({ ...form, odds: parseFloat(e.target.value) || 1 })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>{t('bets.currency')}</Label>
+                <Select
+                  value={form.currency}
+                  onChange={(e) => setForm({ ...form, currency: e.target.value })}
+                >
+                  {CURRENCIES.map((c) => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </Select>
+              </div>
             </div>
+          )}
+
+          {/* Currency alone for surebet */}
+          {isSurebet && (
             <div className="space-y-2">
               <Label>{t('bets.currency')}</Label>
               <Select
@@ -264,44 +446,42 @@ export function BetFormDialog({ open, onClose, initial, mode = 'edit' }: Props) 
                 onChange={(e) => setForm({ ...form, currency: e.target.value })}
               >
                 {CURRENCIES.map((c) => (
-                  <option key={c} value={c}>
-                    {c}
-                  </option>
+                  <option key={c} value={c}>{c}</option>
                 ))}
               </Select>
             </div>
-          </div>
+          )}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label>{t('bets.status')}</Label>
-              <Select
-                value={form.status}
-                onChange={(e) => setForm({ ...form, status: e.target.value as BetStatus })}
-              >
-                {statuses.map((s) => (
-                  <option key={s.value} value={s.value}>
-                    {t(s.key as any)}
-                  </option>
-                ))}
-              </Select>
+          {/* Status + Bookmaker — hidden for surebet (auto-computed) */}
+          {!isSurebet && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>{t('bets.status')}</Label>
+                <Select
+                  value={form.status}
+                  onChange={(e) => setForm({ ...form, status: e.target.value as BetStatus })}
+                >
+                  {statuses.map((s) => (
+                    <option key={s.value} value={s.value}>{t(s.key as any)}</option>
+                  ))}
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>{t('bets.bookmaker')}</Label>
+                <Select
+                  value={form.bookmaker ?? ''}
+                  onChange={(e) => setForm({ ...form, bookmaker: e.target.value || null })}
+                >
+                  <option value="">—</option>
+                  {BOOKMAKERS.map((b) => (
+                    <option key={b.id} value={b.id}>{b.name}</option>
+                  ))}
+                </Select>
+              </div>
             </div>
-            <div className="space-y-2">
-              <Label>{t('bets.bookmaker')}</Label>
-              <Select
-                value={form.bookmaker ?? ''}
-                onChange={(e) => setForm({ ...form, bookmaker: e.target.value || null })}
-              >
-                <option value="">—</option>
-                {BOOKMAKERS.map((b) => (
-                  <option key={b.id} value={b.id}>
-                    {b.name}
-                  </option>
-                ))}
-              </Select>
-            </div>
-          </div>
+          )}
 
+          {/* Category + Payout */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>{t('bets.category')}</Label>
@@ -311,13 +491,11 @@ export function BetFormDialog({ open, onClose, initial, mode = 'edit' }: Props) 
               >
                 <option value="">—</option>
                 {categories.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name}
-                  </option>
+                  <option key={c.id} value={c.id}>{c.name}</option>
                 ))}
               </Select>
             </div>
-            {(form.status === 'cashout' || form.status === 'half_won') && (
+            {!isSurebet && (form.status === 'cashout' || form.status === 'half_won') && (
               <div className="space-y-2">
                 <Label>{t('bets.payout')}</Label>
                 <Input
@@ -331,6 +509,7 @@ export function BetFormDialog({ open, onClose, initial, mode = 'edit' }: Props) 
             )}
           </div>
 
+          {/* Tags */}
           <div className="space-y-2">
             <Label>{t('bets.tags')}</Label>
             <Input
@@ -360,13 +539,16 @@ export function BetFormDialog({ open, onClose, initial, mode = 'edit' }: Props) 
             )}
           </div>
 
-          <div className="space-y-2">
-            <Label>{t('bets.notes')}</Label>
-            <Input
-              value={form.notes ?? ''}
-              onChange={(e) => setForm({ ...form, notes: e.target.value })}
-            />
-          </div>
+          {/* Notes — hidden for surebet (used internally) */}
+          {!isSurebet && (
+            <div className="space-y-2">
+              <Label>{t('bets.notes')}</Label>
+              <Input
+                value={form.notes ?? ''}
+                onChange={(e) => setForm({ ...form, notes: e.target.value })}
+              />
+            </div>
+          )}
 
           <div className="flex gap-2 justify-end pt-2">
             <Button type="button" variant="outline" onClick={onClose}>

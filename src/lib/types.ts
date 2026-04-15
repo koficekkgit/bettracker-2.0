@@ -1,5 +1,12 @@
 export type BetStatus = 'pending' | 'won' | 'lost' | 'void' | 'cashout' | 'half_won' | 'half_lost';
-export type BetType = 'single' | 'accumulator';
+export type BetType = 'single' | 'accumulator' | 'surebet';
+
+export interface SurebetLeg {
+  bookmaker: string;
+  odds: number;
+  stake: number;
+  status: 'pending' | 'won' | 'lost';
+}
 
 export interface Profile {
   id: string;
