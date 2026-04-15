@@ -30,7 +30,7 @@ export function TrialBanner() {
             <span className="text-muted-foreground"> · max 5 sázek, omezené funkce</span>
           </p>
           <Link
-            href="/settings#subscription"
+            href="/subscription"
             className="text-sm font-medium underline hover:no-underline"
           >
             Aktivovat Pro →
@@ -56,7 +56,7 @@ export function TrialBanner() {
           </p>
           <div className="flex items-center gap-3">
             <Link
-              href="/settings#subscription"
+              href="/subscription"
               className="text-sm font-medium underline hover:no-underline"
             >
               Aktivovat Pro →
@@ -83,7 +83,7 @@ export function TrialBanner() {
             <span className="font-medium text-amber-600">Pro vyprší za {sub.daysLeft} dní</span>
           </p>
           <Link
-            href="/settings#subscription"
+            href="/subscription"
             className="text-sm font-medium underline hover:no-underline"
           >
             Prodloužit →

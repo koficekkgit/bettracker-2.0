@@ -174,7 +174,7 @@ export function PaymentDialog({ open, onClose, initialPlan = 'lifetime' }: Props
                 <p className="text-sm font-medium">Máš slevový kód?</p>
                 <div className="flex gap-2">
                   <Input
-                    placeholder="Zadej kód (např. HONZA)"
+                    placeholder="Zadej tvůj slevový kód"
                     value={referralInput}
                     onChange={(e) => {
                       setReferralInput(e.target.value.toUpperCase());
@@ -341,7 +341,7 @@ function RevolutBox({
       {expanded && (
         <div className="border-t border-blue-500/20 p-4 space-y-3">
           <div className="text-xs text-muted-foreground">
-            Pokud nechceš platit přes banku, můžeš zaplatit přes Revolut. Po platbě napiš na telegram @koficek nebo instagram @adahonza, aktivuji ti Pro ručně.
+            Pokud nechceš platit přes banku, můžeš zaplatit přes Revolut a aktivuji ti Pro ručně.
           </div>
 
           <div className="flex items-center justify-between bg-background/50 rounded-md p-2">
@@ -382,7 +382,7 @@ function RevolutBox({
           <div className="rounded-md bg-amber-500/10 border border-amber-500/30 p-2.5 text-xs">
             <span className="font-medium text-amber-600">Důležité:</span>{' '}
             <span className="text-muted-foreground">
-              Po platbě přes Revolut kontaktuj Honzu, aby ti Pro aktivoval ručně.
+              Po platbě přes Revolut mě kontaktuj na telegram @koficekk nebo instagram @adahonza, aktivuji ti Pro ručně.
               Automatické párování funguje jen u QR platby přes banku.
             </span>
           </div>

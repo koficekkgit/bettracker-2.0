@@ -16,10 +16,7 @@ export const metadata: Metadata = {
   title: "BetTracker",
   description: "Trackuj své sázky a statistiky na jednom místě.",
   icons: {
-    icon: [
-      { url: '/favicon.ico', sizes: 'any' },
-      { url: '/icon.png', type: 'image/png', sizes: '623x623' },
-    ],
+    icon: '/favicon.ico',
     apple: '/icon.png',
   },
 };

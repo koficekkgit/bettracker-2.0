@@ -39,7 +39,7 @@ export function ProGate({ children, feature }: Props) {
             {' '}Aktivuj Pro pro odemčení všech funkcí.
           </p>
         </div>
-        <Link href="/settings#subscription">
+        <Link href="/subscription">
           <Button>
             <Sparkles className="w-4 h-4" />
             Získat Pro
