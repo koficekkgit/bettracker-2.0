@@ -52,7 +52,7 @@ export function Sidebar() {
   }
 
   return (
-    <aside className="w-full md:w-64 md:min-h-screen border-b md:border-b-0 md:border-r border-border bg-card flex md:flex-col">
+    <aside className="w-full md:w-64 md:h-screen md:flex-shrink-0 border-b md:border-b-0 md:border-r border-border bg-card flex md:flex-col">
       <div className="hidden md:flex items-center gap-3 p-5 border-b border-border">
         <Image src="/logo.png" alt="BetTracker" width={40} height={40} className="rounded-md" />
         <div>
