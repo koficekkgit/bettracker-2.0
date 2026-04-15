@@ -16,6 +16,7 @@ export const BOOKMAKERS = [
   { id: 'synot', name: 'Synot', logo: '/bookmakers/synot.png' },
   { id: 'kingsbet', name: 'Kingsbet', logo: '/bookmakers/kingsbet.jpg' },
   { id: 'sazkabet', name: 'Sazkabet', logo: '/bookmakers/sazkabet.png' },
+  { id: 'foreign', name: 'Zahraniční', logo: '' },
 ] as const;
 
 export function formatCurrency(amount: number, currency: string = 'CZK'): string {
