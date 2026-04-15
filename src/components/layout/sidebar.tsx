@@ -27,7 +27,13 @@ export function Sidebar() {
   useEffect(() => {
     setMounted(true);
   }, []);
-
+// /app/layout.tsx
+export const metadata = {
+  title: 'BetTracker',
+  icons: {
+    icon: '/favicon.ico', // Soubor musí být v /public/favicon.ico
+  },
+}
   const items = [
     { href: '/dashboard', label: t('dashboard'), icon: LayoutDashboard },
     { href: '/bets', label: t('bets'), icon: ListOrdered },

@@ -21,7 +21,13 @@ export const viewport: Viewport = {
   maximumScale: 1,
   userScalable: false,
 };
-
+// /app/layout.tsx
+export const metadata = {
+  title: 'BetTracker',
+  icons: {
+    icon: '/favicon.ico', // Soubor musí být v /public/favicon.ico
+  },
+}
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const locale = await getLocale();
   const messages = await getMessages();
