@@ -17,6 +17,8 @@ export const metadata: Metadata = {
   description: "Trackuj své sázky a statistiky na jednom místě.",
   icons: {
     icon: "/favicon.ico",
+    url: '/favicon.ico', // Přidejte ?v=3 (nebo jiné číslo)
+    href: '/favicon.ico',
   },
 };
 
