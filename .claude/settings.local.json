@@ -2,7 +2,11 @@
   "permissions": {
     "allow": [
       "Bash(xargs grep:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(grep -r \"password\\\\|token\\\\|secret\\\\|auth\" /c/Users/kofic/Desktop/bettracker-new/supabase/*.sql)",
+      "Bash(grep -l \"token\\\\|api\" /c/Users/kofic/Desktop/bettracker-new/supabase/*.sql)",
+      "Bash(cat /c/Users/kofic/Desktop/bettracker-new/supabase/*.sql)",
+      "Bash(grep -n \"create table\\\\|drop table\\\\|alter table\" /c/Users/kofic/Desktop/bettracker-new/supabase/migration_*.sql)"
     ]
   }
 }
