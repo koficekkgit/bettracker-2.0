@@ -10,7 +10,24 @@ import './globals.css';
 
 const inter = Inter({ subsets: ['latin', 'latin-ext', 'cyrillic'] });
 
+// layout.tsx
+import type { Metadata } from "next"; // Tento import tam může a nemusí být
 
+export const metadata: Metadata = {
+  title: "BetTracker", // <-- Zde změňte název, který se ukazuje v záložce
+  description: "Trackuj své sázky a statistiky na jednom místě.",
+  icons: {
+    icon: "/favicon.ico", // <-- Cesta k vaší ikoně
+  },
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="cs">
+      <body>{children}</body>
+    </html>
+  );
+}
 export const viewport: Viewport = {
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: '#ffffff' },
