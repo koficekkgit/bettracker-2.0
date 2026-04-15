@@ -1,3 +1,4 @@
+tsx
 import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import { NextIntlClientProvider } from 'next-intl';
@@ -10,24 +11,16 @@ import './globals.css';
 
 const inter = Inter({ subsets: ['latin', 'latin-ext', 'cyrillic'] });
 
-// layout.tsx
-import type { Metadata } from "next"; // Tento import tam může a nemusí být
-
+// 1. Definice metadat (Název a Ikona v záložce)
 export const metadata: Metadata = {
-  title: "BetTracker", // <-- Zde změňte název, který se ukazuje v záložce
+  title: "BetTracker",
   description: "Trackuj své sázky a statistiky na jednom místě.",
   icons: {
-    icon: "/favicon.ico", // <-- Cesta k vaší ikoně
+    icon: "/favicon.ico",
   },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="cs">
-      <body>{children}</body>
-    </html>
-  );
-}
+// 2. Definice viewportu (Nastavení barev a chování na mobilu)
 export const viewport: Viewport = {
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: '#ffffff' },
@@ -38,13 +31,8 @@ export const viewport: Viewport = {
   maximumScale: 1,
   userScalable: false,
 };
-// /app/layout.tsx
-export const metadata = {
-  title: 'BetTracker',
-  icons: {
-    icon: '/favicon.ico', // Soubor musí být v /public/favicon.ico
-  },
-}
+
+// 3. Hlavní layout aplikace (Všechny poskytovatele a obal webu)
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const locale = await getLocale();
   const messages = await getMessages();
