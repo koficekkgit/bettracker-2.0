@@ -116,13 +116,8 @@ function InsightCard({
         ? 'border-destructive/30 bg-destructive/5 text-destructive'
         : 'border-border bg-muted/30 text-muted-foreground';
 
-  // Nahradit {name}, {roi}, atd. v textu
-  let text = t(insight.titleKey);
-  if (insight.params) {
-    for (const [k, v] of Object.entries(insight.params)) {
-      text = text.replace(`{${k}}`, String(v));
-    }
-  }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const text = t(insight.titleKey as any, insight.params as any);
 
   return (
     <div className={`border rounded-lg p-3 ${colorClass}`}>
