@@ -94,6 +94,28 @@ export interface BetInput {
   notes?: string | null;
 }
 
+export interface ReferralCode {
+  id: string;
+  code: string;
+  owner_id: string;
+  is_active: boolean;
+  created_at: string;
+}
+
+export interface ReferralUse {
+  id: string;
+  code: string;
+  owner_id: string;
+  used_by: string;
+  plan: string;
+  original_amount: number;
+  discount_amount: number;
+  reward_amount: number;
+  payment_id: number | null;
+  paid_out: boolean;
+  created_at: string;
+}
+
 export type FriendshipStatus = 'pending' | 'accepted';
 
 export interface Friendship {

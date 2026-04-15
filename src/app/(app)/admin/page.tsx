@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Plus, Copy, Trash2, Check, ShieldAlert, Wallet } from 'lucide-react';
+import { Plus, Copy, Trash2, Check, ShieldAlert, Wallet, Gift, Ban } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,6 +14,13 @@ import {
   useDeleteLicenseCode,
 } from '@/hooks/use-admin';
 import { useAllUsers, useTogglePayoutsEnabled } from '@/hooks/use-feature-flags';
+import {
+  useAllReferralCodes,
+  useCreateReferralCode,
+  useDeactivateReferralCode,
+  useAllReferralUses,
+  useMarkReferralPaidOut,
+} from '@/hooks/use-referrals';
 import type { SubscriptionPlan } from '@/lib/types';
 import { toast } from 'sonner';
 
@@ -36,6 +43,15 @@ export default function AdminPage() {
   const [note, setNote] = useState('');
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
   const [userFilter, setUserFilter] = useState('');
+
+  // Referral state
+  const { data: refCodes = [] } = useAllReferralCodes();
+  const { data: refUses = [] } = useAllReferralUses();
+  const createRefCode = useCreateReferralCode();
+  const deactivateRefCode = useDeactivateReferralCode();
+  const markPaidOut = useMarkReferralPaidOut();
+  const [refCodeInput, setRefCodeInput] = useState('');
+  const [refOwnerInput, setRefOwnerInput] = useState('');
 
   if (profileLoading) {
     return <div className="text-muted-foreground">Načítání...</div>;
@@ -75,6 +91,26 @@ export default function AdminPage() {
   async function handleDelete(code: string) {
     if (confirm(`Opravdu smazat kód ${code}?`)) {
       await deleteCode.mutateAsync(code);
+    }
+  }
+
+  async function handleCreateRefCode(e: React.FormEvent) {
+    e.preventDefault();
+    if (!refCodeInput.trim() || !refOwnerInput.trim()) return;
+    const owner = users.find(
+      (u) => u.username?.toLowerCase() === refOwnerInput.trim().toLowerCase()
+    );
+    if (!owner) {
+      toast.error('Username nenalezen');
+      return;
+    }
+    try {
+      await createRefCode.mutateAsync({ code: refCodeInput, owner_id: owner.id });
+      toast.success(`Kód ${refCodeInput.toUpperCase()} přiřazen uživateli ${owner.username}`);
+      setRefCodeInput('');
+      setRefOwnerInput('');
+    } catch (e: unknown) {
+      toast.error(e instanceof Error ? e.message : 'Chyba');
     }
   }
 
@@ -242,6 +278,138 @@ export default function AdminPage() {
                   })}
                 </tbody>
               </table>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Referral kódy */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base font-medium flex items-center gap-2">
+            <Gift className="w-4 h-4" />
+            Referral kódy
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {/* Vytvořit nový kód */}
+          <form onSubmit={handleCreateRefCode} className="flex gap-2 flex-wrap">
+            <Input
+              placeholder="Kód (např. HONZA)"
+              value={refCodeInput}
+              onChange={(e) => setRefCodeInput(e.target.value.toUpperCase())}
+              className="w-36 font-mono uppercase"
+            />
+            <Input
+              placeholder="Username usera"
+              value={refOwnerInput}
+              onChange={(e) => setRefOwnerInput(e.target.value)}
+              className="w-44"
+            />
+            <Button type="submit" disabled={createRefCode.isPending}>
+              <Plus className="w-4 h-4" />
+              Přiřadit kód
+            </Button>
+          </form>
+
+          {/* Seznam kódů */}
+          {refCodes.length > 0 && (
+            <div className="overflow-x-auto rounded-md border border-border">
+              <table className="w-full text-sm">
+                <thead className="text-xs text-muted-foreground">
+                  <tr className="text-left border-b border-border">
+                    <th className="p-3 font-normal">Kód</th>
+                    <th className="p-3 font-normal">Uživatel</th>
+                    <th className="p-3 font-normal">Použití</th>
+                    <th className="p-3 font-normal">Vydělal</th>
+                    <th className="p-3 font-normal">Stav</th>
+                    <th className="p-3 font-normal"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {refCodes.map((rc) => {
+                    const owner = users.find((u) => u.id === rc.owner_id);
+                    const uses = refUses.filter((u) => u.code === rc.code);
+                    const earned = uses.reduce((s, u) => s + u.reward_amount, 0);
+                    return (
+                      <tr key={rc.id} className="border-b border-border last:border-0">
+                        <td className="p-3 font-mono font-bold">{rc.code}</td>
+                        <td className="p-3 text-xs text-muted-foreground">
+                          {owner?.username ?? rc.owner_id.slice(0, 8)}
+                        </td>
+                        <td className="p-3 text-xs">{uses.length}×</td>
+                        <td className="p-3 text-xs text-success">{earned} Kč</td>
+                        <td className="p-3">
+                          {rc.is_active ? (
+                            <span className="text-xs text-success">Aktivní</span>
+                          ) : (
+                            <span className="text-xs text-muted-foreground">Deaktivován</span>
+                          )}
+                        </td>
+                        <td className="p-3">
+                          {rc.is_active && (
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              onClick={() => deactivateRefCode.mutate(rc.id)}
+                              title="Deaktivovat"
+                            >
+                              <Ban className="w-4 h-4" />
+                            </Button>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {/* Referral uses — nevyplacené */}
+          {refUses.filter((u) => !u.paid_out).length > 0 && (
+            <div className="space-y-1">
+              <p className="text-xs text-muted-foreground font-medium">Čekají na výplatu</p>
+              <div className="overflow-x-auto rounded-md border border-border">
+                <table className="w-full text-sm">
+                  <thead className="text-xs text-muted-foreground">
+                    <tr className="text-left border-b border-border">
+                      <th className="p-3 font-normal">Datum</th>
+                      <th className="p-3 font-normal">Kód</th>
+                      <th className="p-3 font-normal">Komu vyplatit</th>
+                      <th className="p-3 font-normal">Plán</th>
+                      <th className="p-3 font-normal text-right">Odměna</th>
+                      <th className="p-3 font-normal"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {refUses.filter((u) => !u.paid_out).map((u) => {
+                      const owner = users.find((usr) => usr.id === u.owner_id);
+                      return (
+                        <tr key={u.id} className="border-b border-border last:border-0">
+                          <td className="p-3 text-xs text-muted-foreground whitespace-nowrap">
+                            {new Date(u.created_at).toLocaleDateString('cs-CZ')}
+                          </td>
+                          <td className="p-3 font-mono text-xs">{u.code}</td>
+                          <td className="p-3 text-xs">{owner?.username ?? u.owner_id.slice(0, 8)}</td>
+                          <td className="p-3 text-xs capitalize">{u.plan}</td>
+                          <td className="p-3 text-right font-medium text-success">+{u.reward_amount} Kč</td>
+                          <td className="p-3">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => markPaidOut.mutate(u.id)}
+                              disabled={markPaidOut.isPending}
+                            >
+                              Vyplaceno
+                            </Button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
         </CardContent>

@@ -50,15 +50,24 @@ drop policy if exists "referral_codes_select_all" on public.referral_codes;
 create policy "referral_codes_select_all" on public.referral_codes
   for select using (true);
 
--- Každý může vložit jen svůj kód
-drop policy if exists "referral_codes_insert_own" on public.referral_codes;
-create policy "referral_codes_insert_own" on public.referral_codes
-  for insert with check (auth.uid() = owner_id);
+-- Jen admin může vytvářet a měnit referral kódy
+drop policy if exists "referral_codes_insert_admin" on public.referral_codes;
+create policy "referral_codes_insert_admin" on public.referral_codes
+  for insert with check (
+    exists (select 1 from public.profiles where id = auth.uid() and is_admin = true)
+  );
 
--- Update jen svého kódu
-drop policy if exists "referral_codes_update_own" on public.referral_codes;
-create policy "referral_codes_update_own" on public.referral_codes
-  for update using (auth.uid() = owner_id);
+drop policy if exists "referral_codes_update_admin" on public.referral_codes;
+create policy "referral_codes_update_admin" on public.referral_codes
+  for update using (
+    exists (select 1 from public.profiles where id = auth.uid() and is_admin = true)
+  );
+
+drop policy if exists "referral_codes_delete_admin" on public.referral_codes;
+create policy "referral_codes_delete_admin" on public.referral_codes
+  for delete using (
+    exists (select 1 from public.profiles where id = auth.uid() and is_admin = true)
+  );
 
 -- Referral uses: user vidí svoje (jako owner i jako kupující)
 drop policy if exists "referral_uses_select_own" on public.referral_uses;
@@ -113,51 +122,4 @@ $$;
 
 grant execute on function public.validate_referral_code(text) to authenticated;
 
--- ============================================================
--- Helper funkce - vytvoř referral kód pro usera (pokud ještě nemá)
--- ============================================================
-create or replace function public.ensure_referral_code()
-returns text
-language plpgsql
-security definer
-set search_path = public
-as $$
-declare
-  v_user_id uuid;
-  v_username text;
-  v_code text;
-  v_existing text;
-begin
-  v_user_id := auth.uid();
-
-  -- Zkontroluj, zda už kód má
-  select code into v_existing
-    from public.referral_codes
-    where owner_id = v_user_id
-    limit 1;
-
-  if v_existing is not null then
-    return v_existing;
-  end if;
-
-  -- Vygeneruj kód z username
-  select upper(regexp_replace(coalesce(username, split_part(id::text, '-', 1)), '[^a-zA-Z0-9]', '', 'g'))
-    into v_username
-    from public.profiles
-    where id = v_user_id;
-
-  v_code := left(v_username, 8);
-
-  -- Pokud kód už existuje, přidej náhodné číslo
-  if exists (select 1 from public.referral_codes where code = v_code) then
-    v_code := v_code || floor(random() * 900 + 100)::text;
-  end if;
-
-  insert into public.referral_codes (code, owner_id)
-    values (v_code, v_user_id);
-
-  return v_code;
-end;
-$$;
-
-grant execute on function public.ensure_referral_code() to authenticated;
+-- (Kódy vytváří jen admin přes admin panel, žádná auto-generace)

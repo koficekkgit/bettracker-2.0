@@ -43,7 +43,13 @@ export function useCreatePendingPayment() {
   const qc = useQueryClient();
 
   return useMutation({
-    mutationFn: async (plan: SubscriptionPlan): Promise<PendingPayment> => {
+    mutationFn: async ({
+      plan,
+      referralCode,
+    }: {
+      plan: SubscriptionPlan;
+      referralCode?: string;
+    }): Promise<PendingPayment> => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
 
@@ -59,17 +65,24 @@ export function useCreatePendingPayment() {
       if (vsError) throw vsError;
       const variableSymbol = vsData as number;
 
-      // Vytvoříme nový pending
+      // Vypočítej cenu (s případnou slevou 10 %)
       const planInfo = SUBSCRIPTION_PLANS[plan];
+      const originalAmount = planInfo.price;
+      const finalAmount = referralCode
+        ? Math.round(originalAmount * 0.9)
+        : originalAmount;
+
       const { data, error } = await supabase
         .from('pending_payments')
         .insert({
           user_id: user.id,
           variable_symbol: variableSymbol,
           plan,
-          amount: planInfo.price,
+          amount: finalAmount,
+          original_amount: originalAmount,
           currency: 'CZK',
           status: 'pending',
+          referral_code: referralCode ?? null,
         })
         .select()
         .single();

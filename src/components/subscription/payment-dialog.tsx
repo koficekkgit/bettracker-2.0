@@ -1,11 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { X, Copy, Check, Loader2, QrCode, Smartphone } from 'lucide-react';
+import { X, Copy, Check, Loader2, QrCode, Smartphone, Tag } from 'lucide-react';
 import QRCode from 'qrcode';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { generateSpayd, SUBSCRIPTION_PLANS, type PlanId } from '@/lib/payments';
 import { useCreatePendingPayment, useMyPendingPayment, useCancelPendingPayment } from '@/hooks/use-payments';
+import { useValidateReferralCode } from '@/hooks/use-referrals';
 import { toast } from 'sonner';
 
 interface Props {
@@ -18,9 +20,13 @@ export function PaymentDialog({ open, onClose, initialPlan = 'lifetime' }: Props
   const [selectedPlan, setSelectedPlan] = useState<PlanId>(initialPlan);
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
   const [copied, setCopied] = useState<string | null>(null);
+  const [referralInput, setReferralInput] = useState('');
+  const [referralCode, setReferralCode] = useState<string | null>(null); // validovaný kód
+  const [referralError, setReferralError] = useState<string | null>(null);
 
   const createPayment = useCreatePendingPayment();
   const cancelPayment = useCancelPendingPayment();
+  const validateReferral = useValidateReferralCode();
   const { data: pendingPayment, refetch } = useMyPendingPayment();
 
   const iban = process.env.NEXT_PUBLIC_BANK_IBAN ?? '';
@@ -30,8 +36,28 @@ export function PaymentDialog({ open, onClose, initialPlan = 'lifetime' }: Props
   useEffect(() => {
     if (!open) {
       setQrDataUrl(null);
+      setReferralInput('');
+      setReferralCode(null);
+      setReferralError(null);
     }
   }, [open]);
+
+  async function handleValidateReferral() {
+    if (!referralInput.trim()) return;
+    const result = await validateReferral.mutateAsync(referralInput.trim());
+    if (result.valid) {
+      setReferralCode(referralInput.trim().toUpperCase());
+      setReferralError(null);
+      toast.success('Slevový kód platí! Sleva 10 % bude započítána.');
+    } else {
+      setReferralCode(null);
+      if (result.error === 'own_code') {
+        setReferralError('Nemůžeš použít vlastní referral kód.');
+      } else {
+        setReferralError('Neplatný kód.');
+      }
+    }
+  }
 
   // Vygeneruj QR kód, jakmile máme pending payment
   useEffect(() => {
@@ -64,8 +90,11 @@ export function PaymentDialog({ open, onClose, initialPlan = 'lifetime' }: Props
   if (!open) return null;
 
   async function handleGenerate() {
-    await createPayment.mutateAsync(selectedPlan);
+    await createPayment.mutateAsync({ plan: selectedPlan, referralCode: referralCode ?? undefined });
   }
+
+  const planPrice = SUBSCRIPTION_PLANS[selectedPlan].price;
+  const discountedPrice = referralCode ? Math.round(planPrice * 0.9) : planPrice;
 
   async function handleCancel() {
     if (pendingPayment) {
@@ -140,6 +169,41 @@ export function PaymentDialog({ open, onClose, initialPlan = 'lifetime' }: Props
                 </div>
               </div>
 
+              {/* Slevový / referral kód */}
+              <div className="space-y-2">
+                <p className="text-sm font-medium">Máš slevový kód?</p>
+                <div className="flex gap-2">
+                  <Input
+                    placeholder="Zadej kód (např. HONZA)"
+                    value={referralInput}
+                    onChange={(e) => {
+                      setReferralInput(e.target.value.toUpperCase());
+                      setReferralCode(null);
+                      setReferralError(null);
+                    }}
+                    className="font-mono uppercase"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handleValidateReferral}
+                    disabled={!referralInput.trim() || validateReferral.isPending}
+                  >
+                    {validateReferral.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Použít'}
+                  </Button>
+                </div>
+                {referralCode && (
+                  <div className="flex items-center gap-1.5 text-sm text-emerald-500">
+                    <Tag className="w-3.5 h-3.5" />
+                    Kód <span className="font-mono font-bold">{referralCode}</span> aktivní — sleva 10 %
+                    {' '}({planPrice} → <span className="font-bold">{discountedPrice} Kč</span>)
+                  </div>
+                )}
+                {referralError && (
+                  <p className="text-sm text-destructive">{referralError}</p>
+                )}
+              </div>
+
               <Button
                 className="w-full"
                 onClick={handleGenerate}
@@ -150,7 +214,7 @@ export function PaymentDialog({ open, onClose, initialPlan = 'lifetime' }: Props
                 ) : (
                   <QrCode className="w-4 h-4" />
                 )}
-                Generovat QR platbu
+                Generovat QR platbu{referralCode ? ` — ${discountedPrice} Kč` : ''}
               </Button>
             </>
           )}

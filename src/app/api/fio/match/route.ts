@@ -141,6 +141,32 @@ export async function GET(req: NextRequest) {
       continue;
     }
 
+    // Zaloguj referral použití, pokud byl kód použit
+    if (payment.referral_code) {
+      const { data: refCode } = await supabase
+        .from('referral_codes')
+        .select('owner_id')
+        .eq('code', payment.referral_code)
+        .maybeSingle();
+
+      if (refCode) {
+        const originalAmount = payment.original_amount ?? payment.amount;
+        const discountAmount = originalAmount - payment.amount;
+        const rewardAmount = Math.round(originalAmount * 0.1);
+
+        await supabase.from('referral_uses').insert({
+          code: payment.referral_code,
+          owner_id: refCode.owner_id,
+          used_by: payment.user_id,
+          plan: payment.plan,
+          original_amount: originalAmount,
+          discount_amount: discountAmount,
+          reward_amount: rewardAmount,
+          payment_id: payment.id,
+        });
+      }
+    }
+
     result.matched++;
   }
 
