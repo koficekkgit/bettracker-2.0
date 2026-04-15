@@ -9,7 +9,20 @@ import { Toaster } from 'sonner';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin', 'latin-ext', 'cyrillic'] });
-
+// app/layout.tsx
+export const metadata = {
+  title: 'BetTracker',
+  description: 'Profesionální tracker sportovních sázek',
+  icons: {
+    icon: [
+      { url: '/favicon.ico' }, // klasika
+      { url: '/icon.png', sizes: '32x32', type: 'image/png' }, // pro jistotu
+    ],
+    apple: [
+      { url: '/apple-icon.png' }, // pro iPhony
+    ],
+  },
+}
 export const metadata: Metadata = {
   title: 'BetTracker',
   description: 'Profesionální tracker sportovních sázek',
