@@ -31,16 +31,32 @@ export async function POST(req: Request) {
             },
             {
               type: 'text',
-              text: `Z tohoto screenshotu ze sázkovky vyextrahuj tyto údaje a vrať POUZE validní JSON bez jakéhokoliv dalšího textu:
+              text: `Jsi expert na rozpoznávání tiketů ze sázkovek. Z tohoto screenshotu vyextrahuj údaje a vrať POUZE validní JSON bez jakéhokoliv dalšího textu.
+
+Pravidla:
+- "odds": kurz sázky jako desetinné číslo (hledej čísla jako 1.85, 2.50, 4.50 atd., může být označeno "Kurz", "Celkový kurz", "Koeficient")
+- "stake": vsazená částka (hledej "Vklad", "Sázka", "Stake", "Za kolik", číslice s Kč/€/$). Pokud není vidět, dej null.
+- "description": název zápasu nebo události (typicky "Tým A - Tým B" nebo "Tým A vs Tým B")
+- "bookmaker": rozpoznej sázkovku podle loga, barev nebo URL:
+    - Tipsport = tmavý design, modré/zelené logo, URL tipsport.cz
+    - Fortuna = oranžové logo, fortuna.cz
+    - Chance = červené logo, chance.cz
+    - Betano = fialové/modré, betano.cz
+    - Synot = žluté logo, synottip.cz
+    - Sazkabet = sazkabet.cz
+    - Fbet = fbet.cz
+    Vrať jednu z: tipsport|fortuna|chance|betano|synot|kingsbet|sazkabet|fbet|foreign nebo null
+- "currency": měna (CZK|EUR|USD), výchozí CZK
+
 {
-  "odds": <číslo kurzu, desetinný formát, např. 2.15>,
-  "stake": <vsazená částka jako číslo, např. 100>,
-  "description": "<název zápasu nebo události, pokud je vidět>",
-  "bookmaker": "<název sázkovky pokud ji poznáš: tipsport|fortuna|chance|betano|synot|kingsbet|sazkabet|fbet|foreign>",
-  "currency": "<měna: CZK|EUR|USD>"
+  "odds": <číslo nebo null>,
+  "stake": <číslo nebo null>,
+  "description": "<text nebo null>",
+  "bookmaker": "<id nebo null>",
+  "currency": "<CZK|EUR|USD>"
 }
 
-Pokud nějaký údaj není vidět nebo si nejsi jistý, použij null. Vrať POUZE JSON, nic jiného.`,
+Vrať POUZE JSON, nic jiného.`,
             },
           ],
         },
