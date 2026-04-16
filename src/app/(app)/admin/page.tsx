@@ -98,12 +98,19 @@ export default function AdminPage() {
 
   async function handleCreateRefCode(e: React.FormEvent) {
     e.preventDefault();
-    if (!refCodeInput.trim() || !refOwnerInput.trim()) return;
+    if (!refCodeInput.trim()) {
+      toast.error('Zadej kód');
+      return;
+    }
+    if (!refOwnerInput.trim()) {
+      toast.error('Zadej username usera');
+      return;
+    }
     const owner = users.find(
       (u) => u.username?.toLowerCase() === refOwnerInput.trim().toLowerCase()
     );
     if (!owner) {
-      toast.error('Username nenalezen');
+      toast.error(`Username "${refOwnerInput.trim()}" nenalezen`);
       return;
     }
     try {
@@ -113,8 +120,14 @@ export default function AdminPage() {
       setRefOwnerInput('');
       setRefDiscountPct(10);
       setRefRewardPct(10);
-    } catch (e: unknown) {
-      toast.error(e instanceof Error ? e.message : 'Chyba');
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      // Přeložit časté DB chyby
+      if (msg.includes('duplicate') || msg.includes('unique')) {
+        toast.error('Kód s tímto názvem už existuje — zvol jiný.');
+      } else {
+        toast.error(msg || 'Neznámá chyba');
+      }
     }
   }
 

@@ -16,6 +16,7 @@ export const BOOKMAKERS = [
   { id: 'synot', name: 'Synot', logo: '/bookmakers/synot.png' },
   { id: 'kingsbet', name: 'Kingsbet', logo: '/bookmakers/kingsbet.jpg' },
   { id: 'sazkabet', name: 'Sazkabet', logo: '/bookmakers/sazkabet.png' },
+  { id: 'fbet', name: 'Fbet', logo: '' },
   { id: 'foreign', name: 'Zahraniční', logo: '' },
 ] as const;
 
