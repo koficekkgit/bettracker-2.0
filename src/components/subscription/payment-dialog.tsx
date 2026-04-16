@@ -23,6 +23,7 @@ export function PaymentDialog({ open, onClose, initialPlan = 'lifetime' }: Props
   const [referralInput, setReferralInput] = useState('');
   const [referralCode, setReferralCode] = useState<string | null>(null); // validovaný kód
   const [referralError, setReferralError] = useState<string | null>(null);
+  const [referralDiscountPct, setReferralDiscountPct] = useState<number>(10);
 
   const createPayment = useCreatePendingPayment();
   const cancelPayment = useCancelPendingPayment();
@@ -39,6 +40,7 @@ export function PaymentDialog({ open, onClose, initialPlan = 'lifetime' }: Props
       setReferralInput('');
       setReferralCode(null);
       setReferralError(null);
+      setReferralDiscountPct(10);
     }
   }, [open]);
 
@@ -47,8 +49,9 @@ export function PaymentDialog({ open, onClose, initialPlan = 'lifetime' }: Props
     const result = await validateReferral.mutateAsync(referralInput.trim());
     if (result.valid) {
       setReferralCode(referralInput.trim().toUpperCase());
+      setReferralDiscountPct(result.discount_pct ?? 10);
       setReferralError(null);
-      toast.success('Slevový kód platí! Sleva 10 % bude započítána.');
+      toast.success(`Slevový kód platí! Sleva ${result.discount_pct ?? 10} % bude započítána.`);
     } else {
       setReferralCode(null);
       if (result.error === 'own_code') {
@@ -90,11 +93,11 @@ export function PaymentDialog({ open, onClose, initialPlan = 'lifetime' }: Props
   if (!open) return null;
 
   async function handleGenerate() {
-    await createPayment.mutateAsync({ plan: selectedPlan, referralCode: referralCode ?? undefined });
+    await createPayment.mutateAsync({ plan: selectedPlan, referralCode: referralCode ?? undefined, discountPct: referralCode ? referralDiscountPct : undefined });
   }
 
   const planPrice = SUBSCRIPTION_PLANS[selectedPlan].price;
-  const discountedPrice = referralCode ? Math.round(planPrice * 0.9) : planPrice;
+  const discountedPrice = referralCode ? Math.round(planPrice * (1 - referralDiscountPct / 100)) : planPrice;
 
   async function handleCancel() {
     if (pendingPayment) {
@@ -195,7 +198,7 @@ export function PaymentDialog({ open, onClose, initialPlan = 'lifetime' }: Props
                 {referralCode && (
                   <div className="flex items-center gap-1.5 text-sm text-emerald-500">
                     <Tag className="w-3.5 h-3.5" />
-                    Kód <span className="font-mono font-bold">{referralCode}</span> aktivní — sleva 10 %
+                    Kód <span className="font-mono font-bold">{referralCode}</span> aktivní — sleva {referralDiscountPct} %
                     {' '}({planPrice} → <span className="font-bold">{discountedPrice} Kč</span>)
                   </div>
                 )}

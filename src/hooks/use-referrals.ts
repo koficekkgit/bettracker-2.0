@@ -46,12 +46,12 @@ export function useMyReferralEarnings() {
 export function useValidateReferralCode() {
   const supabase = createClient();
   return useMutation({
-    mutationFn: async (code: string): Promise<{ valid: boolean; error?: string }> => {
+    mutationFn: async (code: string): Promise<{ valid: boolean; error?: string; discount_pct?: number; reward_pct?: number }> => {
       const { data, error } = await supabase.rpc('validate_referral_code', {
         input_code: code,
       });
       if (error) throw error;
-      return data as { valid: boolean; error?: string };
+      return data as { valid: boolean; error?: string; discount_pct?: number; reward_pct?: number };
     },
   });
 }
@@ -79,10 +79,10 @@ export function useCreateReferralCode() {
   const supabase = createClient();
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async ({ code, owner_id }: { code: string; owner_id: string }) => {
+    mutationFn: async ({ code, owner_id, discount_pct, reward_pct }: { code: string; owner_id: string; discount_pct: number; reward_pct: number }) => {
       const { error } = await supabase
         .from('referral_codes')
-        .insert({ code: code.toUpperCase().trim(), owner_id });
+        .insert({ code: code.toUpperCase().trim(), owner_id, discount_pct, reward_pct });
       if (error) throw error;
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ['all-referral-codes'] }),

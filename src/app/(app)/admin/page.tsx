@@ -52,6 +52,8 @@ export default function AdminPage() {
   const markPaidOut = useMarkReferralPaidOut();
   const [refCodeInput, setRefCodeInput] = useState('');
   const [refOwnerInput, setRefOwnerInput] = useState('');
+  const [refDiscountPct, setRefDiscountPct] = useState(10);
+  const [refRewardPct, setRefRewardPct] = useState(10);
 
   if (profileLoading) {
     return <div className="text-muted-foreground">Načítání...</div>;
@@ -105,10 +107,12 @@ export default function AdminPage() {
       return;
     }
     try {
-      await createRefCode.mutateAsync({ code: refCodeInput, owner_id: owner.id });
+      await createRefCode.mutateAsync({ code: refCodeInput, owner_id: owner.id, discount_pct: refDiscountPct, reward_pct: refRewardPct });
       toast.success(`Kód ${refCodeInput.toUpperCase()} přiřazen uživateli ${owner.username}`);
       setRefCodeInput('');
       setRefOwnerInput('');
+      setRefDiscountPct(10);
+      setRefRewardPct(10);
     } catch (e: unknown) {
       toast.error(e instanceof Error ? e.message : 'Chyba');
     }
@@ -293,7 +297,7 @@ export default function AdminPage() {
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Vytvořit nový kód */}
-          <form onSubmit={handleCreateRefCode} className="flex gap-2 flex-wrap">
+          <form onSubmit={handleCreateRefCode} className="flex gap-2 flex-wrap items-center">
             <Input
               placeholder="Kód (např. HONZA)"
               value={refCodeInput}
@@ -304,8 +308,32 @@ export default function AdminPage() {
               placeholder="Username usera"
               value={refOwnerInput}
               onChange={(e) => setRefOwnerInput(e.target.value)}
-              className="w-44"
+              className="w-40"
             />
+            <div className="flex items-center gap-1.5">
+              <Input
+                type="number"
+                min={1}
+                max={100}
+                value={refDiscountPct}
+                onChange={(e) => setRefDiscountPct(Number(e.target.value))}
+                className="w-16 text-center"
+                title="Sleva pro kupujícího (%)"
+              />
+              <span className="text-xs text-muted-foreground whitespace-nowrap">% sleva</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <Input
+                type="number"
+                min={1}
+                max={100}
+                value={refRewardPct}
+                onChange={(e) => setRefRewardPct(Number(e.target.value))}
+                className="w-16 text-center"
+                title="Odměna pro referrera (%)"
+              />
+              <span className="text-xs text-muted-foreground whitespace-nowrap">% referrer</span>
+            </div>
             <Button type="submit" disabled={createRefCode.isPending}>
               <Plus className="w-4 h-4" />
               Přiřadit kód
@@ -320,6 +348,8 @@ export default function AdminPage() {
                   <tr className="text-left border-b border-border">
                     <th className="p-3 font-normal">Kód</th>
                     <th className="p-3 font-normal">Uživatel</th>
+                    <th className="p-3 font-normal">Sleva</th>
+                    <th className="p-3 font-normal">Referrer</th>
                     <th className="p-3 font-normal">Použití</th>
                     <th className="p-3 font-normal">Vydělal</th>
                     <th className="p-3 font-normal">Stav</th>
@@ -337,6 +367,8 @@ export default function AdminPage() {
                         <td className="p-3 text-xs text-muted-foreground">
                           {owner?.username ?? rc.owner_id.slice(0, 8)}
                         </td>
+                        <td className="p-3 text-xs">{rc.discount_pct ?? 10} %</td>
+                        <td className="p-3 text-xs">{rc.reward_pct ?? 10} %</td>
                         <td className="p-3 text-xs">{uses.length}×</td>
                         <td className="p-3 text-xs text-success">{earned} Kč</td>
                         <td className="p-3">

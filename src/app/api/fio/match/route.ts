@@ -145,14 +145,15 @@ export async function GET(req: NextRequest) {
     if (payment.referral_code) {
       const { data: refCode } = await supabase
         .from('referral_codes')
-        .select('owner_id')
+        .select('owner_id, reward_pct')
         .eq('code', payment.referral_code)
         .maybeSingle();
 
       if (refCode) {
         const originalAmount = payment.original_amount ?? payment.amount;
         const discountAmount = originalAmount - payment.amount;
-        const rewardAmount = Math.round(originalAmount * 0.1);
+        const rewardPct = (refCode as { owner_id: string; reward_pct: number }).reward_pct ?? 10;
+        const rewardAmount = Math.round(originalAmount * rewardPct / 100);
 
         await supabase.from('referral_uses').insert({
           code: payment.referral_code,

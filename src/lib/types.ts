@@ -99,6 +99,8 @@ export interface ReferralCode {
   code: string;
   owner_id: string;
   is_active: boolean;
+  discount_pct: number;
+  reward_pct: number;
   created_at: string;
 }
 

@@ -109,13 +109,15 @@ export function SubscriptionPanel() {
                     {plan.price} <span className="text-sm font-normal text-muted-foreground">Kč</span>
                   </p>
                   <p className="text-xs text-muted-foreground">{plan.period}</p>
-                  {plan.save && (
-                    <p className="text-xs text-success mt-2">{plan.save}</p>
-                  )}
+                  <div className="min-h-[1.25rem] mt-2">
+                    {plan.save && (
+                      <p className="text-xs text-success">{plan.save}</p>
+                    )}
+                  </div>
                   <Button
                     size="sm"
                     variant={plan.popular ? 'default' : 'outline'}
-                    className="mt-3 w-full"
+                    className="mt-2 w-full"
                     onClick={() => openPayment(plan.id as PlanId)}
                   >
                     Koupit

@@ -46,9 +46,11 @@ export function useCreatePendingPayment() {
     mutationFn: async ({
       plan,
       referralCode,
+      discountPct,
     }: {
       plan: SubscriptionPlan;
       referralCode?: string;
+      discountPct?: number;
     }): Promise<PendingPayment> => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
@@ -65,11 +67,11 @@ export function useCreatePendingPayment() {
       if (vsError) throw vsError;
       const variableSymbol = vsData as number;
 
-      // Vypočítej cenu (s případnou slevou 10 %)
+      // Vypočítej cenu (s případnou slevou)
       const planInfo = SUBSCRIPTION_PLANS[plan];
       const originalAmount = planInfo.price;
-      const finalAmount = referralCode
-        ? Math.round(originalAmount * 0.9)
+      const finalAmount = referralCode && discountPct
+        ? Math.round(originalAmount * (1 - discountPct / 100))
         : originalAmount;
 
       const { data, error } = await supabase
