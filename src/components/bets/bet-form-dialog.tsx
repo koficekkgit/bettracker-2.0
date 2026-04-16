@@ -213,6 +213,29 @@ export function BetFormDialog({ open, onClose, initial, mode = 'edit' }: Props) 
   function addSbLeg() { setSbLegs((prev) => [...prev, { bookmaker: '', odds: 2.0, stake: 0, status: 'pending' }]); }
   function removeSbLeg(idx: number) { setSbLegs((prev) => prev.filter((_, i) => i !== idx)); }
 
+  // Tag input — musí být před early return!
+  const [tagInput, setTagInput] = useState('');
+  const addTag = useCallback((raw: string) => {
+    const val = raw.trim().toLowerCase().replace(/,/g, '');
+    if (!val) return;
+    setForm((prev) => ({
+      ...prev,
+      tags: prev.tags?.includes(val) ? prev.tags : [...(prev.tags ?? []), val],
+    }));
+    setTagInput('');
+  }, []);
+  function handleTagKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === 'Enter' || e.key === ',') {
+      e.preventDefault();
+      addTag(tagInput);
+    } else if (e.key === 'Backspace' && tagInput === '' && form.tags && form.tags.length > 0) {
+      setForm((prev) => ({ ...prev, tags: prev.tags?.slice(0, -1) }));
+    }
+  }
+  function removeTag(tag: string) {
+    setForm((prev) => ({ ...prev, tags: prev.tags?.filter((tg) => tg !== tag) }));
+  }
+
   if (!open) return null;
 
   async function handleSubmit(e: React.FormEvent) {
@@ -262,29 +285,6 @@ export function BetFormDialog({ open, onClose, initial, mode = 'edit' }: Props) 
 
   const isSurebet = form.bet_type === 'surebet';
   const isAccumulator = form.bet_type === 'accumulator';
-
-  // Tag input
-  const [tagInput, setTagInput] = useState('');
-  const addTag = useCallback((raw: string) => {
-    const val = raw.trim().toLowerCase().replace(/,/g, '');
-    if (!val) return;
-    setForm((prev) => ({
-      ...prev,
-      tags: prev.tags?.includes(val) ? prev.tags : [...(prev.tags ?? []), val],
-    }));
-    setTagInput('');
-  }, []);
-  function handleTagKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
-    if (e.key === 'Enter' || e.key === ',') {
-      e.preventDefault();
-      addTag(tagInput);
-    } else if (e.key === 'Backspace' && tagInput === '' && form.tags && form.tags.length > 0) {
-      setForm((prev) => ({ ...prev, tags: prev.tags?.slice(0, -1) }));
-    }
-  }
-  function removeTag(tag: string) {
-    setForm((prev) => ({ ...prev, tags: prev.tags?.filter((t) => t !== tag) }));
-  }
 
   return (
     <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 overflow-y-auto">
