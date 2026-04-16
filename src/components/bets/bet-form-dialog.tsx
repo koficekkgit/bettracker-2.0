@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { X, Plus, Trash2, ImageUp, Loader2, Info } from 'lucide-react';
 import { toast } from 'sonner';
@@ -262,6 +262,29 @@ export function BetFormDialog({ open, onClose, initial, mode = 'edit' }: Props) 
 
   const isSurebet = form.bet_type === 'surebet';
   const isAccumulator = form.bet_type === 'accumulator';
+
+  // Tag input
+  const [tagInput, setTagInput] = useState('');
+  const addTag = useCallback((raw: string) => {
+    const val = raw.trim().toLowerCase().replace(/,/g, '');
+    if (!val) return;
+    setForm((prev) => ({
+      ...prev,
+      tags: prev.tags?.includes(val) ? prev.tags : [...(prev.tags ?? []), val],
+    }));
+    setTagInput('');
+  }, []);
+  function handleTagKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === 'Enter' || e.key === ',') {
+      e.preventDefault();
+      addTag(tagInput);
+    } else if (e.key === 'Backspace' && tagInput === '' && form.tags && form.tags.length > 0) {
+      setForm((prev) => ({ ...prev, tags: prev.tags?.slice(0, -1) }));
+    }
+  }
+  function removeTag(tag: string) {
+    setForm((prev) => ({ ...prev, tags: prev.tags?.filter((t) => t !== tag) }));
+  }
 
   return (
     <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 overflow-y-auto">
@@ -649,31 +672,31 @@ export function BetFormDialog({ open, onClose, initial, mode = 'edit' }: Props) 
           {/* Tags */}
           <div className="space-y-2">
             <Label>{t('bets.tags')}</Label>
-            <Input
-              placeholder={t('bets.tagsPlaceholder')}
-              value={(form.tags ?? []).join(', ')}
-              onChange={(e) =>
-                setForm({
-                  ...form,
-                  tags: e.target.value
-                    .split(',')
-                    .map((t) => t.trim().toLowerCase())
-                    .filter((t) => t.length > 0),
-                })
-              }
-            />
-            {form.tags && form.tags.length > 0 && (
-              <div className="flex flex-wrap gap-1 mt-2">
-                {form.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-secondary text-foreground"
+            <div className="flex flex-wrap gap-1.5 min-h-[2.25rem] w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
+              {(form.tags ?? []).map((tag) => (
+                <span
+                  key={tag}
+                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-secondary text-foreground text-xs"
+                >
+                  #{tag}
+                  <button
+                    type="button"
+                    onClick={() => removeTag(tag)}
+                    className="text-muted-foreground hover:text-foreground"
                   >
-                    #{tag}
-                  </span>
-                ))}
-              </div>
-            )}
+                    <X className="w-3 h-3" />
+                  </button>
+                </span>
+              ))}
+              <input
+                className="flex-1 min-w-[120px] bg-transparent outline-none text-sm placeholder:text-muted-foreground"
+                placeholder={(form.tags ?? []).length === 0 ? 'value, tip, kámoš… (Enter nebo čárka)' : 'Přidat štítek…'}
+                value={tagInput}
+                onChange={(e) => setTagInput(e.target.value)}
+                onKeyDown={handleTagKeyDown}
+                onBlur={() => addTag(tagInput)}
+              />
+            </div>
           </div>
 
           {/* Notes — hidden for surebet (used internally) */}

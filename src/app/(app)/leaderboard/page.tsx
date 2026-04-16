@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { Trophy, Medal, Award, Star } from 'lucide-react';
@@ -25,15 +26,38 @@ export default function LeaderboardPage() {
 function LeaderboardContent() {
   const t = useTranslations();
   const { data: rows = [], isLoading } = useLeaderboard();
+  const [sortBy, setSortBy] = useState<'profit' | 'roi'>('profit');
+
+  const sorted = [...rows].sort((a, b) =>
+    sortBy === 'roi'
+      ? Number(b.roi) - Number(a.roi)
+      : Number(b.total_profit) - Number(a.total_profit)
+  );
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold flex items-center gap-2">
-          <Trophy className="w-6 h-6 text-yellow-500" />
-          {t('leaderboard.title')}
-        </h1>
-        <p className="text-sm text-muted-foreground mt-1">{t('leaderboard.subtitle')}</p>
+      <div className="flex items-start justify-between flex-wrap gap-3">
+        <div>
+          <h1 className="text-2xl font-semibold flex items-center gap-2">
+            <Trophy className="w-6 h-6 text-yellow-500" />
+            {t('leaderboard.title')}
+          </h1>
+          <p className="text-sm text-muted-foreground mt-1">{t('leaderboard.subtitle')}</p>
+        </div>
+        <div className="flex rounded-md border border-border overflow-hidden text-sm">
+          <button
+            onClick={() => setSortBy('profit')}
+            className={`px-4 py-1.5 transition-colors ${sortBy === 'profit' ? 'bg-secondary text-foreground font-medium' : 'text-muted-foreground hover:text-foreground'}`}
+          >
+            Zisk
+          </button>
+          <button
+            onClick={() => setSortBy('roi')}
+            className={`px-4 py-1.5 border-l border-border transition-colors ${sortBy === 'roi' ? 'bg-secondary text-foreground font-medium' : 'text-muted-foreground hover:text-foreground'}`}
+          >
+            ROI
+          </button>
+        </div>
       </div>
 
       <Card>
@@ -57,7 +81,7 @@ function LeaderboardContent() {
                   </tr>
                 </thead>
                 <tbody>
-                  {rows.map((row, idx) => {
+                  {sorted.map((row, idx) => {
                     const winRate = row.settled_bets > 0 ? (row.won_bets / row.settled_bets) * 100 : 0;
                     const rankInfo = RANK_ICONS[idx];
                     const Icon = rankInfo?.icon;
