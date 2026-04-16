@@ -156,7 +156,17 @@ export default function BetsPage() {
                       <tr key={bet.id} className="border-b border-border last:border-0 hover:bg-secondary/50">
                         <td className="p-3 whitespace-nowrap">{formatDate(bet.placed_at)}</td>
                         <td className="p-3">
-                          <div className="font-medium">{bet.description}</div>
+                          <div className="flex items-center gap-2">
+                            <div className="font-medium">{bet.description}</div>
+                            {bet.bookmaker && (() => {
+                              const bm = BOOKMAKERS.find((b) => b.id === bet.bookmaker);
+                              return bm?.logo ? (
+                                <img src={bm.logo} alt={bm.name} title={bm.name} className="w-4 h-4 rounded object-cover shrink-0" />
+                              ) : bm ? (
+                                <span className="text-[10px] text-muted-foreground bg-secondary px-1 py-0.5 rounded shrink-0">{bm.name}</span>
+                              ) : null;
+                            })()}
+                          </div>
                           {bet.pick && <div className="text-xs text-muted-foreground">{bet.pick}</div>}
                           {bet.bet_type === 'surebet' && (() => {
                             const legs = parseSurebetLegs(bet.notes);
