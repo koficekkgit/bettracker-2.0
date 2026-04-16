@@ -7,7 +7,10 @@
       "Bash(grep -l \"token\\\\|api\" /c/Users/kofic/Desktop/bettracker-new/supabase/*.sql)",
       "Bash(cat /c/Users/kofic/Desktop/bettracker-new/supabase/*.sql)",
       "Bash(grep -n \"create table\\\\|drop table\\\\|alter table\" /c/Users/kofic/Desktop/bettracker-new/supabase/migration_*.sql)",
-      "Bash(identify \"C:/Users/kofic/Desktop/bettracker-new/public/icon.png\")"
+      "Bash(identify \"C:/Users/kofic/Desktop/bettracker-new/public/icon.png\")",
+      "Bash(npm list:*)",
+      "Bash(npm install:*)",
+      "Bash(ls \"C:/Users/kofic/Desktop/bettracker-new/.env\"*)"
     ]
   }
 }

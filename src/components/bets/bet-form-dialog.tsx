@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
-import { X, Plus, Trash2 } from 'lucide-react';
+import { X, Plus, Trash2, ImageUp, Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -56,6 +57,48 @@ export function BetFormDialog({ open, onClose, initial, mode = 'edit' }: Props) 
 
   // For surebet: individual leg rows
   const [sbLegs, setSbLegs] = useState<SurebetLeg[]>(defaultSurebetLegs());
+
+  // Screenshot parsing
+  const [parsing, setParsing] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  async function handleScreenshot(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setParsing(true);
+    try {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = async () => {
+        const dataUrl = reader.result as string;
+        const [meta, imageBase64] = dataUrl.split(',');
+        const mediaType = (meta.match(/:(.*?);/)?.[1] ?? 'image/jpeg') as 'image/jpeg' | 'image/png' | 'image/webp';
+        const res = await fetch('/api/parse-bet-screenshot', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ imageBase64, mediaType }),
+        });
+        if (!res.ok) throw new Error('Chyba při analýze');
+        const data = await res.json();
+        setForm((prev) => ({
+          ...prev,
+          ...(data.odds != null && { odds: data.odds }),
+          ...(data.stake != null && { stake: data.stake }),
+          ...(data.description && { description: data.description }),
+          ...(data.bookmaker && { bookmaker: data.bookmaker }),
+          ...(data.currency && { currency: data.currency }),
+        }));
+        toast.success('Screenshot přečten — zkontroluj vyplněné údaje');
+        setParsing(false);
+      };
+      reader.onerror = () => { throw new Error('Nelze přečíst soubor'); };
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Chyba při analýze screenshotu');
+      setParsing(false);
+    }
+    // Reset input so same file can be re-uploaded
+    e.target.value = '';
+  }
 
   useEffect(() => {
     if (initial) {
@@ -198,9 +241,36 @@ export function BetFormDialog({ open, onClose, initial, mode = 'edit' }: Props) 
           <h2 className="text-lg font-semibold">
             {isEdit ? t('bets.editBet') : isDuplicate ? t('bets.duplicateBet') : t('bets.addBet')}
           </h2>
-          <Button variant="ghost" size="icon" onClick={onClose}>
-            <X className="w-4 h-4" />
-          </Button>
+          <div className="flex items-center gap-1">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleScreenshot}
+            />
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="gap-1.5 text-muted-foreground hover:text-foreground"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={parsing}
+              title="Nahrát screenshot ze sázkovky"
+            >
+              {parsing ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <ImageUp className="w-4 h-4" />
+              )}
+              <span className="text-xs hidden sm:inline">
+                {parsing ? 'Analyzuji...' : 'Screenshot'}
+              </span>
+            </Button>
+            <Button variant="ghost" size="icon" onClick={onClose}>
+              <X className="w-4 h-4" />
+            </Button>
+          </div>
         </div>
 
         <form onSubmit={handleSubmit} className="p-5 space-y-4">
