@@ -20,13 +20,7 @@ export function AchievementsSync() {
     if (earned === 0) return;
 
     const supabase = createClient();
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (!user) return;
-      supabase
-        .from('profiles')
-        .update({ achievements_count: earned })
-        .eq('id', user.id);
-    });
+    supabase.rpc('sync_achievements_count', { p_count: earned });
   }, [bets]);
 
   return null;
