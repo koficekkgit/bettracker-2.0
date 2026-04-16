@@ -2,6 +2,7 @@ import { Sidebar } from '@/components/layout/sidebar';
 import { TrialBanner } from '@/components/subscription/trial-banner';
 import { UsernameOnboardingDialog } from '@/components/auth/username-onboarding-dialog';
 import { AuthCacheReset } from '@/components/auth/auth-cache-reset';
+import { AchievementsSync } from '@/components/auth/achievements-sync';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -13,6 +14,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       </div>
       <UsernameOnboardingDialog />
       <AuthCacheReset />
+      <AchievementsSync />
     </div>
   );
 }

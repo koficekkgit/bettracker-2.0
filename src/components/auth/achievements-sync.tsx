@@ -1,0 +1,33 @@
+'use client';
+
+import { useEffect } from 'react';
+import { createClient } from '@/lib/supabase/client';
+import { useBets } from '@/hooks/use-bets';
+import { buildAchievementContext, getEarnedAchievements } from '@/lib/achievements';
+
+/**
+ * Invisible component — syncs achievements_count to profile on every app load.
+ * Mounted in app layout so it runs automatically for every logged-in user.
+ */
+export function AchievementsSync() {
+  const { data: bets } = useBets();
+
+  useEffect(() => {
+    if (!bets || bets.length === 0) return;
+
+    const ctx = buildAchievementContext(bets);
+    const earned = getEarnedAchievements(ctx).length;
+    if (earned === 0) return;
+
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) return;
+      supabase
+        .from('profiles')
+        .update({ achievements_count: earned })
+        .eq('id', user.id);
+    });
+  }, [bets]);
+
+  return null;
+}
