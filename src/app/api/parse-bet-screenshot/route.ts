@@ -5,9 +5,10 @@ const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 export async function POST(req: Request) {
   try {
-    const { imageBase64, mediaType } = await req.json() as {
+    const { imageBase64, mediaType, categories } = await req.json() as {
       imageBase64: string;
       mediaType: 'image/jpeg' | 'image/png' | 'image/webp' | 'image/gif';
+      categories?: { id: string; name: string }[];
     };
 
     if (!imageBase64) {
@@ -32,6 +33,7 @@ export async function POST(req: Request) {
             {
               type: 'text',
               text: `Jsi expert na rozpoznávání tiketů ze sázkovek. Z tohoto screenshotu vyextrahuj údaje a vrať POUZE validní JSON bez jakéhokoliv dalšího textu.
+${categories && categories.length > 0 ? `\nDostupné kategorie uživatele: ${categories.map((c) => `${c.id}="${c.name}"`).join(', ')}` : ''}
 
 Pravidla:
 - "odds": kurz sázky jako desetinné číslo (hledej čísla jako 1.85, 2.50, 4.50 atd., může být označeno "Kurz", "Celkový kurz", "Koeficient")
@@ -39,6 +41,7 @@ Pravidla:
 - "description": název zápasu nebo události (typicky "Tým A - Tým B" nebo "Tým A vs Tým B")
 - "pick": konkrétní tip/výběr sázky — co bylo vsazeno (např. "TP Can Tho -19.5", "1", "Over 2.5", "BTTS", název týmu apod.). Hledej tučný text u kurzu nebo označení výběru. Pokud není vidět, dej null.
 - "status": výsledek sázky — hledej slova jako Výhra/Won/Win → "won", Prohra/Lost/Lose → "lost", Cashout/Vyplaceno → "cashout", Storno/Void/Zrušeno → "void", Půl výhra/Half win → "half_won", Půl prohra/Half loss → "half_lost". Pokud není výsledek vidět nebo sázka probíhá, dej "pending".
+- "category_id": urči sport nebo kategorii sázky (fotbal, tenis, hokej, basketbal, esport, MMA atd.) a zvol nejlepší shodu z dostupných kategorií uživatele uvedených výše. Vrať přesné id kategorie nebo null pokud žádná nesedí nebo seznam je prázdný.
 - "bookmaker": rozpoznej sázkovku podle loga, barev nebo URL:
     - Tipsport = tmavý design, modré/zelené logo, URL tipsport.cz
     - Fortuna = oranžové logo, fortuna.cz
@@ -57,7 +60,8 @@ Pravidla:
   "pick": "<konkrétní tip/výběr nebo null>",
   "status": "<won|lost|cashout|void|half_won|half_lost|pending>",
   "bookmaker": "<id nebo null>",
-  "currency": "<CZK|EUR|USD>"
+  "currency": "<CZK|EUR|USD>",
+  "category_id": "<id kategorie nebo null>"
 }
 
 Vrať POUZE JSON, nic jiného.`,

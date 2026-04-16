@@ -77,7 +77,11 @@ export function BetFormDialog({ open, onClose, initial, mode = 'edit' }: Props) 
         const res = await fetch('/api/parse-bet-screenshot', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ imageBase64, mediaType }),
+          body: JSON.stringify({
+            imageBase64,
+            mediaType,
+            categories: categories.map((c) => ({ id: c.id, name: c.name })),
+          }),
         });
         if (!res.ok) throw new Error('Chyba při analýze');
         const data = await res.json();
@@ -90,6 +94,7 @@ export function BetFormDialog({ open, onClose, initial, mode = 'edit' }: Props) 
           ...(data.status && { status: data.status }),
           ...(data.bookmaker && { bookmaker: data.bookmaker }),
           ...(data.currency && { currency: data.currency }),
+          ...(data.category_id && { category_id: data.category_id }),
         }));
         toast.success('Screenshot přečten — zkontroluj vyplněné údaje');
       } catch (err) {
