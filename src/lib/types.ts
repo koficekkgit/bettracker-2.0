@@ -148,4 +148,5 @@ export interface LeaderboardRow {
   total_staked: number;
   total_profit: number;
   roi: number;
+  achievements_count: number;
 }

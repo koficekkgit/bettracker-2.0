@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import { Trophy, Medal, Award } from 'lucide-react';
+import { Trophy, Medal, Award, Star } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ProGate } from '@/components/subscription/pro-gate';
 import { useLeaderboard } from '@/hooks/use-friends';
@@ -53,6 +53,7 @@ function LeaderboardContent() {
                     <th className="p-3 font-normal text-right">{t('leaderboard.winRate')}</th>
                     <th className="p-3 font-normal text-right">{t('leaderboard.profit')}</th>
                     <th className="p-3 font-normal text-right">{t('leaderboard.roi')}</th>
+                    <th className="p-3 font-normal text-right">Úspěchy</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -98,6 +99,16 @@ function LeaderboardContent() {
                         )}>
                           {row.roi > 0 ? '+' : ''}
                           {formatNumber(Number(row.roi), 1)} %
+                        </td>
+                        <td className="p-3 text-right">
+                          {row.achievements_count > 0 ? (
+                            <span className="inline-flex items-center gap-1 text-amber-500 font-medium">
+                              <Star className="w-3.5 h-3.5 fill-amber-500" />
+                              {row.achievements_count}
+                            </span>
+                          ) : (
+                            <span className="text-muted-foreground text-xs">—</span>
+                          )}
                         </td>
                       </tr>
                     );

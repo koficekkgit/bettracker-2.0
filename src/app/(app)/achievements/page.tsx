@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { Trophy } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -12,6 +12,7 @@ import {
   getEarnedAchievements,
 } from '@/lib/achievements';
 import { BadgeGrid } from '@/components/achievements/badge-grid';
+import { createClient } from '@/lib/supabase/client';
 
 export default function AchievementsPage() {
   return (
@@ -31,12 +32,23 @@ function Content() {
     return { ctx: c, earnedIds: new Set(getEarnedAchievements(c)) };
   }, [bets]);
 
+  const earned = earnedIds.size;
+
+  // Ulož počet achievementů do profilu (pro leaderboard)
+  useEffect(() => {
+    if (!ctx || earned === 0) return;
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) return;
+      supabase.from('profiles').update({ achievements_count: earned }).eq('id', user.id);
+    });
+  }, [ctx, earned]);
+
   if (isLoading || !ctx) {
     return <div className="text-muted-foreground">{t('common.loading')}</div>;
   }
 
   const total = ACHIEVEMENTS.length;
-  const earned = earnedIds.size;
   const percent = Math.round((earned / total) * 100);
 
   return (
