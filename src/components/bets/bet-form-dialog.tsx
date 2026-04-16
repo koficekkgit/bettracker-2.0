@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
-import { X, Plus, Trash2, ImageUp, Loader2 } from 'lucide-react';
+import { X, Plus, Trash2, ImageUp, Loader2, Info } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -61,6 +61,7 @@ export function BetFormDialog({ open, onClose, initial, mode = 'edit' }: Props) 
   // Screenshot parsing
   const [parsing, setParsing] = useState(false);
   const [dragging, setDragging] = useState(false);
+  const [showScreenshotTip, setShowScreenshotTip] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   async function parseImageFile(file: File) {
@@ -85,6 +86,8 @@ export function BetFormDialog({ open, onClose, initial, mode = 'edit' }: Props) 
           ...(data.odds != null && { odds: data.odds }),
           ...(data.stake != null && { stake: data.stake }),
           ...(data.description && { description: data.description }),
+          ...(data.pick && { pick: data.pick }),
+          ...(data.status && { status: data.status }),
           ...(data.bookmaker && { bookmaker: data.bookmaker }),
           ...(data.currency && { currency: data.currency }),
         }));
@@ -306,6 +309,33 @@ export function BetFormDialog({ open, onClose, initial, mode = 'edit' }: Props) 
               </>
             )}
           </button>
+
+          {/* Info jak správně používat */}
+          <div className="flex justify-end -mt-2">
+            <button
+              type="button"
+              onClick={() => setShowScreenshotTip((v) => !v)}
+              className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <Info className="w-3.5 h-3.5" />
+              Jak to funguje?
+            </button>
+          </div>
+          {showScreenshotTip && (
+            <div className="rounded-lg bg-secondary border border-border p-3 text-xs space-y-1.5 text-muted-foreground">
+              <p className="font-medium text-foreground">Tipy pro nejlepší výsledky:</p>
+              <ul className="space-y-1 list-disc list-inside">
+                <li>Screenshottuj <span className="text-foreground font-medium">tiket / betslip</span> — ne live přehled sázky</li>
+                <li>Musí být vidět <span className="text-foreground font-medium">kurz, vklad a název zápasu</span></li>
+                <li>Pokud je tiket vyřízený, viditelná <span className="text-foreground font-medium">Výhra / Prohra</span> se vyplní automaticky</li>
+                <li>Nejlepší: celá stránka tiketu, ne oříznutý výřez</li>
+              </ul>
+              <p className="pt-0.5">
+                <span className="text-foreground font-medium">Win+Shift+S</span> → vybrat oblast → <span className="text-foreground font-medium">Ctrl+V</span> do tohoto okna
+              </p>
+            </div>
+          )}
+
           {/* Date + Type */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">

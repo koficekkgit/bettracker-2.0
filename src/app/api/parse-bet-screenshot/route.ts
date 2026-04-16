@@ -35,8 +35,10 @@ export async function POST(req: Request) {
 
 Pravidla:
 - "odds": kurz sázky jako desetinné číslo (hledej čísla jako 1.85, 2.50, 4.50 atd., může být označeno "Kurz", "Celkový kurz", "Koeficient")
-- "stake": vsazená částka (hledej "Vklad", "Sázka", "Stake", "Za kolik", číslice s Kč/€/$). Pokud není vidět, dej null.
+- "stake": vsazená částka (hledej "Vklad", "Vsazeno", "Sázka", "Stake", číslice s Kč/€/$). Pokud není vidět, dej null.
 - "description": název zápasu nebo události (typicky "Tým A - Tým B" nebo "Tým A vs Tým B")
+- "pick": konkrétní tip/výběr sázky — co bylo vsazeno (např. "TP Can Tho -19.5", "1", "Over 2.5", "BTTS", název týmu apod.). Hledej tučný text u kurzu nebo označení výběru. Pokud není vidět, dej null.
+- "status": výsledek sázky — hledej slova jako Výhra/Won/Win → "won", Prohra/Lost/Lose → "lost", Cashout/Vyplaceno → "cashout", Storno/Void/Zrušeno → "void", Půl výhra/Half win → "half_won", Půl prohra/Half loss → "half_lost". Pokud není výsledek vidět nebo sázka probíhá, dej "pending".
 - "bookmaker": rozpoznej sázkovku podle loga, barev nebo URL:
     - Tipsport = tmavý design, modré/zelené logo, URL tipsport.cz
     - Fortuna = oranžové logo, fortuna.cz
@@ -51,7 +53,9 @@ Pravidla:
 {
   "odds": <číslo nebo null>,
   "stake": <číslo nebo null>,
-  "description": "<text nebo null>",
+  "description": "<název zápasu nebo null>",
+  "pick": "<konkrétní tip/výběr nebo null>",
+  "status": "<won|lost|cashout|void|half_won|half_lost|pending>",
   "bookmaker": "<id nebo null>",
   "currency": "<CZK|EUR|USD>"
 }
