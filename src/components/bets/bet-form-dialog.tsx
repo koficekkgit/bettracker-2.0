@@ -60,16 +60,16 @@ export function BetFormDialog({ open, onClose, initial, mode = 'edit' }: Props) 
 
   // Screenshot parsing
   const [parsing, setParsing] = useState(false);
+  const [dragging, setDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  async function handleScreenshot(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  async function parseImageFile(file: File) {
+    if (!file.type.startsWith('image/')) return;
     setParsing(true);
-    try {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = async () => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = async () => {
+      try {
         const dataUrl = reader.result as string;
         const [meta, imageBase64] = dataUrl.split(',');
         const mediaType = (meta.match(/:(.*?);/)?.[1] ?? 'image/jpeg') as 'image/jpeg' | 'image/png' | 'image/webp';
@@ -89,15 +89,36 @@ export function BetFormDialog({ open, onClose, initial, mode = 'edit' }: Props) 
           ...(data.currency && { currency: data.currency }),
         }));
         toast.success('Screenshot přečten — zkontroluj vyplněné údaje');
+      } catch (err) {
+        toast.error(err instanceof Error ? err.message : 'Chyba při analýze screenshotu');
+      } finally {
         setParsing(false);
-      };
-      reader.onerror = () => { throw new Error('Nelze přečíst soubor'); };
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Chyba při analýze screenshotu');
+      }
+    };
+    reader.onerror = () => {
+      toast.error('Nelze přečíst soubor');
       setParsing(false);
-    }
-    // Reset input so same file can be re-uploaded
+    };
+  }
+
+  function handleScreenshot(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (file) parseImageFile(file);
     e.target.value = '';
+  }
+
+  function handlePaste(e: React.ClipboardEvent) {
+    const item = Array.from(e.clipboardData.items).find((i) => i.type.startsWith('image/'));
+    if (!item) return;
+    const file = item.getAsFile();
+    if (file) parseImageFile(file);
+  }
+
+  function handleDrop(e: React.DragEvent) {
+    e.preventDefault();
+    setDragging(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) parseImageFile(file);
   }
 
   useEffect(() => {
@@ -236,7 +257,19 @@ export function BetFormDialog({ open, onClose, initial, mode = 'edit' }: Props) 
 
   return (
     <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 overflow-y-auto">
-      <div className="bg-card border border-border rounded-lg w-full max-w-2xl my-8">
+      <div
+        className="bg-card border border-border rounded-lg w-full max-w-2xl my-8 relative"
+        onPaste={handlePaste}
+        onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+        onDragLeave={() => setDragging(false)}
+        onDrop={handleDrop}
+      >
+        {/* Drag overlay */}
+        {dragging && (
+          <div className="absolute inset-0 z-10 rounded-lg bg-primary/10 border-2 border-dashed border-primary flex items-center justify-center pointer-events-none">
+            <p className="text-primary font-medium">Pusť screenshot sem</p>
+          </div>
+        )}
         <div className="flex items-center justify-between p-5 border-b border-border">
           <h2 className="text-lg font-semibold">
             {isEdit ? t('bets.editBet') : isDuplicate ? t('bets.duplicateBet') : t('bets.addBet')}
