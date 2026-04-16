@@ -258,55 +258,54 @@ export function BetFormDialog({ open, onClose, initial, mode = 'edit' }: Props) 
   return (
     <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 overflow-y-auto">
       <div
-        className="bg-card border border-border rounded-lg w-full max-w-2xl my-8 relative"
+        className="bg-card border border-border rounded-lg w-full max-w-2xl my-8"
         onPaste={handlePaste}
-        onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
-        onDragLeave={() => setDragging(false)}
-        onDrop={handleDrop}
       >
-        {/* Drag overlay */}
-        {dragging && (
-          <div className="absolute inset-0 z-10 rounded-lg bg-primary/10 border-2 border-dashed border-primary flex items-center justify-center pointer-events-none">
-            <p className="text-primary font-medium">Pusť screenshot sem</p>
-          </div>
-        )}
         <div className="flex items-center justify-between p-5 border-b border-border">
           <h2 className="text-lg font-semibold">
             {isEdit ? t('bets.editBet') : isDuplicate ? t('bets.duplicateBet') : t('bets.addBet')}
           </h2>
-          <div className="flex items-center gap-1">
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={handleScreenshot}
-            />
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="gap-1.5 text-muted-foreground hover:text-foreground"
-              onClick={() => fileInputRef.current?.click()}
-              disabled={parsing}
-              title="Nahrát screenshot ze sázkovky"
-            >
-              {parsing ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <ImageUp className="w-4 h-4" />
-              )}
-              <span className="text-xs hidden sm:inline">
-                {parsing ? 'Analyzuji...' : 'Screenshot'}
-              </span>
-            </Button>
-            <Button variant="ghost" size="icon" onClick={onClose}>
-              <X className="w-4 h-4" />
-            </Button>
-          </div>
+          <Button variant="ghost" size="icon" onClick={onClose}>
+            <X className="w-4 h-4" />
+          </Button>
         </div>
 
         <form onSubmit={handleSubmit} className="p-5 space-y-4">
+          {/* Screenshot drop zone */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleScreenshot}
+          />
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+            onDragLeave={() => setDragging(false)}
+            onDrop={(e) => { e.preventDefault(); setDragging(false); const f = e.dataTransfer.files?.[0]; if (f) parseImageFile(f); }}
+            disabled={parsing}
+            className={`w-full rounded-lg border-2 border-dashed transition-colors py-3 px-4 flex items-center justify-center gap-3 cursor-pointer
+              ${dragging
+                ? 'border-primary bg-primary/10 text-primary'
+                : 'border-border hover:border-muted-foreground/50 text-muted-foreground hover:text-foreground'
+              }`}
+          >
+            {parsing ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin shrink-0" />
+                <span className="text-sm">Analyzuji screenshot...</span>
+              </>
+            ) : (
+              <>
+                <ImageUp className="w-4 h-4 shrink-0" />
+                <span className="text-sm">
+                  {dragging ? 'Pusť screenshot sem' : 'Přetáhni screenshot nebo klikni · Ctrl+V'}
+                </span>
+              </>
+            )}
+          </button>
           {/* Date + Type */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
