@@ -185,11 +185,11 @@ export function SubscriptionPanel() {
             </li>
             <li className="flex items-center gap-2">
               <Check className="w-4 h-4 text-success flex-shrink-0" />
-              Všechna časová období ve statistikách
+              Statistiky — všechna časová období
             </li>
             <li className="flex items-center gap-2">
               <Check className="w-4 h-4 text-success flex-shrink-0" />
-              Kalendářové view
+              Kalendář sázek
             </li>
             <li className="flex items-center gap-2">
               <Check className="w-4 h-4 text-success flex-shrink-0" />
@@ -197,19 +197,19 @@ export function SubscriptionPanel() {
             </li>
             <li className="flex items-center gap-2">
               <Check className="w-4 h-4 text-success flex-shrink-0" />
-              Friends + leaderboard
+              Přátelé &amp; žebříček
             </li>
             <li className="flex items-center gap-2">
               <Check className="w-4 h-4 text-success flex-shrink-0" />
-              Tagy a pokročilé filtry
+              Úspěchy (achievements)
             </li>
             <li className="flex items-center gap-2">
               <Check className="w-4 h-4 text-success flex-shrink-0" />
-              3 jazyky (CZ/EN/RU) + 5 měn
+              Správa bankrollu
             </li>
             <li className="flex items-center gap-2">
               <Check className="w-4 h-4 text-success flex-shrink-0" />
-              Vlastní kategorie
+              AI analýza screenshotů tiketu
             </li>
           </ul>
         </div>

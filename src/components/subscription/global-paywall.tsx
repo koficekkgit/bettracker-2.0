@@ -42,12 +42,14 @@ export function GlobalPaywall({ children }: Props) {
 
         <ul className="text-sm space-y-2 text-left inline-block">
           {[
-            'Neomezený počet sázek',
-            'Statistiky a přehledy',
-            'Kalendář a Surebet kalkulačka',
-            'Žebříček a přátelé',
-            'Úspěchy a bankroll',
-            'AI analýza screenshotů',
+            'Neomezený počet sázek (Free má max 5)',
+            'Statistiky — všechna časová období',
+            'Kalendář sázek',
+            'Surebet kalkulačka',
+            'Přátelé & žebříček',
+            'Úspěchy (achievements)',
+            'Správa bankrollu',
+            'AI analýza screenshotů tiketu',
           ].map((f) => (
             <li key={f} className="flex items-center gap-2 text-muted-foreground">
               <Check className="w-4 h-4 text-amber-500 shrink-0" />

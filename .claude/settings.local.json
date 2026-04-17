@@ -10,7 +10,8 @@
       "Bash(identify \"C:/Users/kofic/Desktop/bettracker-new/public/icon.png\")",
       "Bash(npm list:*)",
       "Bash(npm install:*)",
-      "Bash(ls \"C:/Users/kofic/Desktop/bettracker-new/.env\"*)"
+      "Bash(ls \"C:/Users/kofic/Desktop/bettracker-new/.env\"*)",
+      "Bash(find /c/Users/kofic/Desktop/bettracker-new/src/app -name \"page.tsx\" -exec grep -l \"export\" {} \\\\;)"
     ]
   }
 }

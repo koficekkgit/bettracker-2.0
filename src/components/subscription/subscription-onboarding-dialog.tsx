@@ -112,11 +112,12 @@ export function SubscriptionOnboardingDialog() {
           <div className="pt-1 grid grid-cols-2 gap-x-4 gap-y-1">
             {[
               'Neomezené sázky',
-              'Statistiky & grafy',
+              'Statistiky (všechna období)',
+              'Kalendář sázek',
               'Surebet kalkulačka',
-              'Žebříček & přátelé',
-              'AI screenshot analýza',
+              'Přátelé & žebříček',
               'Úspěchy & bankroll',
+              'AI analýza screenshotů',
             ].map((f) => (
               <div key={f} className="flex items-center gap-1.5 text-xs text-muted-foreground">
                 <Check className="w-3 h-3 text-amber-500 shrink-0" />
