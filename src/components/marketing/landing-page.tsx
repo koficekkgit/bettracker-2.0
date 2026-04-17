@@ -63,7 +63,7 @@ const FEATURES = [
     title: 'Surebet kalkulačka',
     subtitle: 'Bez rizika',
     description:
-      'Zadej kurzy od více sázkoven a kalkulačka ti spočítá optimální rozdělení vkladu pro garantovaný zisk bez ohledu na výsledek.',
+      'Zadej kurzy od více sázkovek a kalkulačka ti spočítá optimální rozdělení vkladu pro garantovaný zisk bez ohledu na výsledek.',
     color: 'text-orange-400',
     bg: 'bg-orange-400/10',
     border: 'border-orange-400/20',
@@ -208,7 +208,7 @@ export function LandingPage() {
         {/* Stats strip */}
         <div className="mt-14 grid grid-cols-3 gap-4 max-w-sm mx-auto text-center">
           {[
-            { value: '8+', label: 'sázkoven' },
+            { value: '8+', label: 'sázkovek' },
             { value: '7 dní', label: 'trial zdarma' },
             { value: '99 Kč', label: 'od měsíčně' },
           ].map((s) => (
@@ -540,7 +540,7 @@ function SurebetMockup() {
 
 function LeaderboardMockup() {
   const rows = [
-    { pos: 1, name: 'xBetKing', profit: '+12 840', roi: '+24.1%', crown: true },
+    { pos: 1, name: 'Xeon', profit: '+12 840', roi: '+24.1%', crown: true },
     { pos: 2, name: 'koficekk', profit: '+7 434', roi: '+18.4%', crown: false },
     { pos: 3, name: 'TipsterPro', profit: '+5 210', roi: '+15.7%', crown: false },
     { pos: 4, name: 'sazkar99', profit: '+2 100', roi: '+8.3%', crown: false },
