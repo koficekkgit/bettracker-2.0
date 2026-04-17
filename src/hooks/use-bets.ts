@@ -16,7 +16,8 @@ export function useBets() {
         .from('bets')
         .select('*')
         .eq('user_id', user.id)
-        .order('placed_at', { ascending: false });
+        .order('placed_at', { ascending: false })
+        .order('created_at', { ascending: false });
       if (error) throw error;
       return data as Bet[];
     },
