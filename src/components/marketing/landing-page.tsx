@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import {
   LayoutDashboard,
   BarChart3,
@@ -20,9 +21,66 @@ import {
   Crown,
   TrendingUp,
   ListOrdered,
+  Globe,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+
+const LANGUAGES = [
+  { code: 'cs', label: 'CS', name: 'Čeština' },
+  { code: 'en', label: 'EN', name: 'English' },
+  { code: 'ru', label: 'RU', name: 'Русский' },
+] as const;
+
+function LanguageSwitcher() {
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
+  const [current, setCurrent] = useState('cs');
+
+  useEffect(() => {
+    const match = document.cookie.match(/NEXT_LOCALE=([^;]+)/);
+    if (match) setCurrent(match[1]);
+  }, []);
+
+  function switchLang(code: string) {
+    document.cookie = `NEXT_LOCALE=${code}; path=/; max-age=31536000`;
+    setCurrent(code);
+    setOpen(false);
+    router.refresh();
+  }
+
+  return (
+    <div className="relative">
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+      >
+        <Globe className="w-3.5 h-3.5" />
+        {current.toUpperCase()}
+      </button>
+      {open && (
+        <>
+          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
+          <div className="absolute right-0 top-full mt-1 z-50 min-w-[120px] rounded-lg border border-border bg-card shadow-lg overflow-hidden">
+            {LANGUAGES.map((lang) => (
+              <button
+                key={lang.code}
+                onClick={() => switchLang(lang.code)}
+                className={cn(
+                  'w-full text-left px-3 py-2 text-sm flex items-center gap-2 hover:bg-secondary transition-colors',
+                  current === lang.code ? 'text-foreground font-medium' : 'text-muted-foreground'
+                )}
+              >
+                <span className="text-xs font-mono w-5">{lang.label}</span>
+                {lang.name}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
 
 const FEATURES = [
   {
@@ -163,7 +221,8 @@ export function LandingPage() {
             <Image src="/logo.png" alt="BetTracker" width={28} height={28} className="rounded-md" />
             <span className="font-semibold text-sm">BetTracker</span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
+            <LanguageSwitcher />
             <Link href="/login">
               <Button variant="ghost" size="sm">Přihlásit se</Button>
             </Link>
