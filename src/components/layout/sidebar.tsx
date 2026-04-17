@@ -188,6 +188,13 @@ export function Sidebar() {
           <LogOut className="w-4 h-4" />
           Logout
         </Button>
+        <div className="flex gap-2 flex-wrap pt-1 border-t border-border mt-1">
+          <Link href="/podminky" className="text-[10px] text-muted-foreground hover:text-foreground transition-colors">Podmínky</Link>
+          <span className="text-[10px] text-muted-foreground">·</span>
+          <Link href="/gdpr" className="text-[10px] text-muted-foreground hover:text-foreground transition-colors">GDPR</Link>
+          <span className="text-[10px] text-muted-foreground">·</span>
+          <Link href="/cookies" className="text-[10px] text-muted-foreground hover:text-foreground transition-colors">Cookies</Link>
+        </div>
       </div>
 
     </aside>
