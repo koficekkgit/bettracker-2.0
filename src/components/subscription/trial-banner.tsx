@@ -20,26 +20,6 @@ export function TrialBanner() {
 
   if (sub.loading || dismissed) return null;
 
-  // Free - varuj
-  if (sub.isFree) {
-    return (
-      <div className="bg-danger/10 border-b border-danger/30 px-4 py-2.5">
-        <div className="max-w-6xl mx-auto flex items-center justify-between gap-3 flex-wrap">
-          <p className="text-sm">
-            <span className="font-medium text-danger">Free verze</span>
-            <span className="text-muted-foreground"> · max 5 sázek, omezené funkce</span>
-          </p>
-          <Link
-            href="/subscription"
-            className="text-sm font-medium underline hover:no-underline"
-          >
-            Aktivovat Pro →
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
   // Trial - vždy ukázat počet dní
   if (sub.isTrial && sub.daysLeft !== null) {
     return (

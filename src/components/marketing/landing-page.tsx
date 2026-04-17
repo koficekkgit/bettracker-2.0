@@ -106,27 +106,15 @@ const FEATURES = [
 
 const PLANS = [
   {
-    name: 'Free',
-    price: '0',
-    period: 'navždy',
-    features: [
-      'Max 5 sázek',
-      'Základní dashboard',
-      'Přehled posledních sázek',
-    ],
-    cta: 'Začít zdarma',
-    href: '/register',
-    highlight: false,
-  },
-  {
     name: 'Trial',
     price: '0',
-    period: '7 dní',
-    badge: 'Pro zdarma',
+    period: '7 dní zdarma',
+    badge: 'Začni zde',
     features: [
-      'Vše z Pro na 7 dní',
+      'Plný Pro přístup na 7 dní',
       'Bez platební karty',
       'Aktivace jedním kliknutím',
+      'Vše co Pro nabízí',
     ],
     cta: 'Vyzkoušet zdarma',
     href: '/register',
@@ -138,7 +126,7 @@ const PLANS = [
     period: '/měsíc',
     features: [
       'Neomezené sázky',
-      'Statistiky & grafy',
+      'Statistiky & všechna období',
       'Kalendář, Surebet, Přátelé',
       'Úspěchy & Bankroll',
       'AI analýza screenshotů',
@@ -333,7 +321,7 @@ export function LandingPage() {
             <h2 className="text-2xl md:text-3xl font-bold mb-2">Ceny</h2>
             <p className="text-muted-foreground">Začni zdarma, Pro od 99 Kč/měsíc</p>
           </div>
-          <div className="grid md:grid-cols-3 gap-4 max-w-3xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-4 max-w-2xl mx-auto">
             {PLANS.map((plan) => (
               <div
                 key={plan.name}

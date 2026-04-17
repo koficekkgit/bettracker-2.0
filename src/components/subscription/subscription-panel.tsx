@@ -181,7 +181,7 @@ export function SubscriptionPanel() {
           <ul className="text-sm space-y-1.5 text-muted-foreground">
             <li className="flex items-center gap-2">
               <Check className="w-4 h-4 text-success flex-shrink-0" />
-              Neomezený počet sázek (Free má max 5)
+              Neomezený počet sázek
             </li>
             <li className="flex items-center gap-2">
               <Check className="w-4 h-4 text-success flex-shrink-0" />

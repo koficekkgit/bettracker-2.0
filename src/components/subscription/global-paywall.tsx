@@ -42,7 +42,7 @@ export function GlobalPaywall({ children }: Props) {
 
         <ul className="text-sm space-y-2 text-left inline-block">
           {[
-            'Neomezený počet sázek (Free má max 5)',
+            'Neomezený počet sázek',
             'Statistiky — všechna časová období',
             'Kalendář sázek',
             'Surebet kalkulačka',

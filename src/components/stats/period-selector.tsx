@@ -20,9 +20,6 @@ const PRESETS: DateRangePreset[] = [
   'custom',
 ];
 
-// Free user vidí jen tyto dva
-const FREE_PRESETS: DateRangePreset[] = ['last7days', 'last30days'];
-
 interface Props {
   value: DateRangePreset;
   onChange: (value: DateRangePreset) => void;
@@ -35,8 +32,7 @@ export function PeriodSelector({ value, onChange, custom, onCustomChange }: Prop
   const sub = useSubscription();
 
   function isLocked(preset: DateRangePreset): boolean {
-    if (sub.isPro) return false;
-    return !FREE_PRESETS.includes(preset);
+    return !sub.isPro && !sub.isTrial;
   }
 
   function handleClick(preset: DateRangePreset) {

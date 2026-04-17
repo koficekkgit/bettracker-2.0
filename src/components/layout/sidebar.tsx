@@ -150,12 +150,9 @@ export function Sidebar() {
               </div>
             )}
 
-            {/* Free */}
+            {/* Free — vyzvi k aktivaci trialu */}
             {sub.isFree && (
-              <div className="rounded-lg border border-border px-3 py-2.5 space-y-2">
-                <div className="flex items-center gap-1.5">
-                  <span className="text-xs font-medium text-muted-foreground">Free plán</span>
-                </div>
+              <div className="rounded-lg border border-border px-3 py-2.5">
                 <Link
                   href="/subscription"
                   className="flex items-center justify-center gap-1.5 w-full py-1.5 rounded-md text-xs font-semibold bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:from-amber-400 hover:to-orange-400 transition-all"
