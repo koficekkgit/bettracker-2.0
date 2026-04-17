@@ -321,7 +321,7 @@ export function LandingPage() {
             <h2 className="text-2xl md:text-3xl font-bold mb-2">Ceny</h2>
             <p className="text-muted-foreground">Začni zdarma, Pro od 99 Kč/měsíc</p>
           </div>
-          <div className="grid md:grid-cols-2 gap-4 max-w-2xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-4 max-w-2xl mx-auto mb-6">
             {PLANS.map((plan) => (
               <div
                 key={plan.name}
@@ -369,20 +369,34 @@ export function LandingPage() {
               </div>
             ))}
           </div>
+          <p className="text-xs text-muted-foreground text-center max-w-2xl mx-auto">
+            Každý nový uživatel získá 7denní zkušební období zdarma. Po jeho uplynutí bude automaticky
+            aktivováno placené předplatné dle zvoleného tarifu, pokud nebude před koncem zkušební doby
+            zrušeno. Předplatné se automaticky obnovuje po skončení zvoleného období, dokud není
+            uživatelem zrušeno. Lifetime licence poskytuje přístup ke službě po dobu existence BetTrackeru.
+          </p>
         </div>
       </section>
 
       {/* Footer */}
       <footer className="border-t border-border">
-        <div className="max-w-6xl mx-auto px-4 py-8 flex items-center justify-between flex-wrap gap-4 text-sm text-muted-foreground">
-          <div className="flex items-center gap-2">
-            <Image src="/logo.png" alt="BetTracker" width={20} height={20} className="rounded" />
-            <span>BetTracker v2.0</span>
+        <div className="max-w-6xl mx-auto px-4 py-8 space-y-4">
+          <div className="flex items-center justify-between flex-wrap gap-4 text-sm text-muted-foreground">
+            <div className="flex items-center gap-2">
+              <Image src="/logo.png" alt="BetTracker" width={20} height={20} className="rounded" />
+              <span>BetTracker v2.0</span>
+            </div>
+            <div className="flex items-center gap-4 text-xs">
+              <Link href="/login" className="hover:text-foreground transition-colors">Přihlásit se</Link>
+              <Link href="/register" className="hover:text-foreground transition-colors">Registrace</Link>
+              <Link href="/podminky" className="hover:text-foreground transition-colors">Obchodní podmínky</Link>
+              <Link href="/gdpr" className="hover:text-foreground transition-colors">GDPR</Link>
+              <Link href="/cookies" className="hover:text-foreground transition-colors">Cookies</Link>
+            </div>
           </div>
-          <div className="flex items-center gap-4">
-            <Link href="/login" className="hover:text-foreground transition-colors">Přihlásit se</Link>
-            <Link href="/register" className="hover:text-foreground transition-colors">Registrace</Link>
-          </div>
+          <p className="text-xs text-muted-foreground border-t border-border pt-4">
+            BetTracker není sázková kancelář ani neposkytuje sázkové tipy nebo doporučení. Slouží výhradně jako analytický nástroj pro evidenci vlastních sázek uživatele. Služba je určena osobám starším 18 let. · Jan Adam · IČO: 23405538 · <a href="mailto:kontakt@bettracker.cz" className="hover:text-foreground transition-colors">kontakt@bettracker.cz</a>
+          </p>
         </div>
       </footer>
     </div>
