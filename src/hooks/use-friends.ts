@@ -5,6 +5,25 @@ import { createClient } from '@/lib/supabase/client';
 import type { Bet, FriendWithProfile, LeaderboardRow, Profile } from '@/lib/types';
 import { toast } from 'sonner';
 
+/** Počet čekajících příchozích friend requestů (pro badge v sidebaru). */
+export function usePendingFriendRequestCount() {
+  const supabase = createClient();
+  return useQuery({
+    queryKey: ['pending-friend-requests-count'],
+    queryFn: async (): Promise<number> => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return 0;
+      const { count } = await supabase
+        .from('friendships')
+        .select('*', { count: 'exact', head: true })
+        .eq('addressee_id', user.id)
+        .eq('status', 'pending');
+      return count ?? 0;
+    },
+    refetchInterval: 30_000,
+  });
+}
+
 /**
  * Načte všechny friendships přihlášeného usera (přijaté i čekající),
  * spojené s profile druhého usera. Vrací jednotný formát.

@@ -10,6 +10,7 @@ import { useTheme } from 'next-themes';
 import { createClient } from '@/lib/supabase/client';
 import { useProfile } from '@/hooks/use-profile';
 import { useSubscription } from '@/hooks/use-subscription';
+import { usePendingFriendRequestCount } from '@/hooks/use-friends';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 
@@ -24,6 +25,7 @@ export function Sidebar() {
   const { theme, setTheme } = useTheme();
   const { data: profile } = useProfile();
   const sub = useSubscription();
+  const { data: pendingRequests = 0 } = usePendingFriendRequestCount();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -77,7 +79,12 @@ export function Sidebar() {
               )}
             >
               <Icon className="w-4 h-4" />
-              {item.label}
+              <span className="flex-1">{item.label}</span>
+              {item.href === '/friends' && pendingRequests > 0 && (
+                <span className="flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white animate-pulse">
+                  {pendingRequests > 9 ? '9+' : pendingRequests}
+                </span>
+              )}
             </Link>
           );
         })}
