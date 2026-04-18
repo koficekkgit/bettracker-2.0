@@ -34,14 +34,11 @@ function Content() {
 
   const earned = earnedIds.size;
 
-  // Ulož počet achievementů do profilu (pro leaderboard)
+  // Sync přes RPC (obchází RLS) — při každé změně earned
   useEffect(() => {
-    if (!ctx || earned === 0) return;
+    if (!ctx) return;
     const supabase = createClient();
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (!user) return;
-      supabase.from('profiles').update({ achievements_count: earned }).eq('id', user.id);
-    });
+    supabase.rpc('sync_achievements_count', { p_count: earned });
   }, [ctx, earned]);
 
   if (isLoading || !ctx) {

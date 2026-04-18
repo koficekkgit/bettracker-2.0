@@ -13,11 +13,10 @@ export function AchievementsSync() {
   const { data: bets } = useBets();
 
   useEffect(() => {
-    if (!bets || bets.length === 0) return;
+    if (!bets) return;
 
     const ctx = buildAchievementContext(bets);
     const earned = getEarnedAchievements(ctx).length;
-    if (earned === 0) return;
 
     const supabase = createClient();
     supabase.rpc('sync_achievements_count', { p_count: earned });
