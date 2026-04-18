@@ -58,6 +58,10 @@ export function BetFormDialog({ open, onClose, initial, mode = 'edit' }: Props) 
   // For surebet: individual leg rows
   const [sbLegs, setSbLegs] = useState<SurebetLeg[]>(defaultSurebetLegs());
 
+  // Raw string display values pre stake/odds — umožňují mazání a psaní desetinných čísel
+  const [stakeStr, setStakeStr] = useState(String(form.stake || ''));
+  const [oddsStr, setOddsStr] = useState(String(form.odds ?? ''));
+
   // Screenshot parsing
   const [parsing, setParsing] = useState(false);
   const [dragging, setDragging] = useState(false);
@@ -96,6 +100,8 @@ export function BetFormDialog({ open, onClose, initial, mode = 'edit' }: Props) 
           ...(data.currency && { currency: data.currency }),
           ...(data.category_id && { category_id: data.category_id }),
         }));
+        if (data.odds != null) setOddsStr(String(data.odds));
+        if (data.stake != null) setStakeStr(String(data.stake));
         toast.success('Screenshot přečten — zkontroluj vyplněné údaje');
       } catch (err) {
         toast.error(err instanceof Error ? err.message : 'Chyba při analýze screenshotu');
@@ -151,6 +157,9 @@ export function BetFormDialog({ open, onClose, initial, mode = 'edit' }: Props) 
         notes: rawNotes,
       });
 
+      setStakeStr(String(Number(initial.stake) || ''));
+      setOddsStr(String(Number(initial.odds) ?? ''));
+
       if (betType === 'accumulator') {
         const parts = desc.split(MATCH_SEP).filter((p) => p.length > 0);
         setMatches(parts.length >= 2 ? parts : [...parts, ...Array(2 - parts.length).fill('')]);
@@ -186,6 +195,8 @@ export function BetFormDialog({ open, onClose, initial, mode = 'edit' }: Props) 
       });
       setMatches(['', '']);
       setSbLegs(defaultSurebetLegs());
+      setStakeStr('');
+      setOddsStr('1.5');
     }
   }, [initial, open, mode]);
 
@@ -287,12 +298,13 @@ export function BetFormDialog({ open, onClose, initial, mode = 'edit' }: Props) 
   const isAccumulator = form.bet_type === 'accumulator';
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 overflow-y-auto">
+    <div className="fixed inset-0 z-50 bg-black/60 flex md:items-center md:justify-center md:p-4">
       <div
-        className="bg-card border border-border rounded-lg w-full max-w-2xl my-8"
+        className="bg-card md:border md:border-border md:rounded-lg w-full md:max-w-2xl flex flex-col h-full md:h-auto md:max-h-[90vh]"
         onPaste={handlePaste}
       >
-        <div className="flex items-center justify-between p-5 border-b border-border">
+        {/* Sticky header */}
+        <div className="flex items-center justify-between px-4 py-3 md:p-5 border-b border-border shrink-0">
           <h2 className="text-lg font-semibold">
             {isEdit ? t('bets.editBet') : isDuplicate ? t('bets.duplicateBet') : t('bets.addBet')}
           </h2>
@@ -301,7 +313,7 @@ export function BetFormDialog({ open, onClose, initial, mode = 'edit' }: Props) 
           </Button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-5 space-y-4">
+        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-4 md:p-5 space-y-4">
           {/* Screenshot drop zone */}
           <input
             ref={fileInputRef}
@@ -568,8 +580,18 @@ export function BetFormDialog({ open, onClose, initial, mode = 'edit' }: Props) 
                   step="0.01"
                   min="0"
                   required
-                  value={form.stake}
-                  onChange={(e) => setForm({ ...form, stake: parseFloat(e.target.value) || 0 })}
+                  value={stakeStr}
+                  onChange={(e) => {
+                    setStakeStr(e.target.value);
+                    const parsed = parseFloat(e.target.value);
+                    if (!isNaN(parsed)) setForm((f) => ({ ...f, stake: parsed }));
+                  }}
+                  onBlur={() => {
+                    const parsed = parseFloat(stakeStr);
+                    const val = isNaN(parsed) ? 0 : parsed;
+                    setForm((f) => ({ ...f, stake: val }));
+                    setStakeStr(val === 0 ? '' : String(val));
+                  }}
                 />
               </div>
               <div className="space-y-2">
@@ -579,8 +601,18 @@ export function BetFormDialog({ open, onClose, initial, mode = 'edit' }: Props) 
                   step="0.01"
                   min="1"
                   required
-                  value={form.odds}
-                  onChange={(e) => setForm({ ...form, odds: parseFloat(e.target.value) || 1 })}
+                  value={oddsStr}
+                  onChange={(e) => {
+                    setOddsStr(e.target.value);
+                    const parsed = parseFloat(e.target.value);
+                    if (!isNaN(parsed)) setForm((f) => ({ ...f, odds: parsed }));
+                  }}
+                  onBlur={() => {
+                    const parsed = parseFloat(oddsStr);
+                    const val = isNaN(parsed) || parsed < 1 ? 1 : parsed;
+                    setForm((f) => ({ ...f, odds: val }));
+                    setOddsStr(String(val));
+                  }}
                 />
               </div>
               <div className="space-y-2">
@@ -710,7 +742,7 @@ export function BetFormDialog({ open, onClose, initial, mode = 'edit' }: Props) 
             </div>
           )}
 
-          <div className="flex gap-2 justify-end pt-2">
+          <div className="flex gap-2 justify-end pt-2 pb-2">
             <Button type="button" variant="outline" onClick={onClose}>
               {t('common.cancel')}
             </Button>
