@@ -80,6 +80,11 @@ export function Sidebar() {
             >
               <Icon className="w-4 h-4" />
               <span className="flex-1">{item.label}</span>
+              {item.href === '/bankroll' && (
+                <span className="px-1.5 py-0.5 rounded text-[9px] font-bold tracking-wide uppercase bg-violet-500/15 border border-violet-500/30 text-violet-400">
+                  Beta
+                </span>
+              )}
               {item.href === '/friends' && pendingRequests > 0 && (
                 <span className="flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white animate-pulse">
                   {pendingRequests > 9 ? '9+' : pendingRequests}
