@@ -11,7 +11,11 @@
       "Bash(npm list:*)",
       "Bash(npm install:*)",
       "Bash(ls \"C:/Users/kofic/Desktop/bettracker-new/.env\"*)",
-      "Bash(find /c/Users/kofic/Desktop/bettracker-new/src/app -name \"page.tsx\" -exec grep -l \"export\" {} \\\\;)"
+      "Bash(find /c/Users/kofic/Desktop/bettracker-new/src/app -name \"page.tsx\" -exec grep -l \"export\" {} \\\\;)",
+      "Bash(Test-Path \"C:\\\\Users\\\\kofic\\\\Desktop\\\\bettracker-new\\\\src\\\\hooks\\\\use-groups.ts\")",
+      "Bash(Test-Path \"C:\\\\Users\\\\kofic\\\\Desktop\\\\bettracker-new\\\\src\\\\app\\\\\\(app\\)\\\\groups\\\\page.tsx\")",
+      "Bash(Test-Path \"C:\\\\Users\\\\kofic\\\\Desktop\\\\bettracker-new\\\\src\\\\app\\\\\\(app\\)\\\\groups\\\\[id]\\\\page.tsx\")",
+      "Bash(Test-Path \"C:\\\\Users\\\\kofic\\\\Desktop\\\\bettracker-new\\\\supabase\\\\migration_groups.sql\")"
     ]
   }
 }

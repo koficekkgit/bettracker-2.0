@@ -1,0 +1,277 @@
+'use client';
+
+import { useState } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import Link from 'next/link';
+import {
+  Users, Copy, Crown, Trophy, Medal, Award, Star,
+  ArrowLeft, UserX, LogOut, Trash2,
+} from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { ProGate } from '@/components/subscription/pro-gate';
+import {
+  useMyGroups, useGroupLeaderboard, useGroupMembers,
+  useKickMember, useLeaveGroup, useDeleteGroup,
+} from '@/hooks/use-groups';
+import { formatCurrency, formatNumber, cn } from '@/lib/utils';
+import { toast } from 'sonner';
+import type { LeaderboardRow } from '@/lib/types';
+
+const RANK_ICONS = [
+  { icon: Trophy, color: 'text-yellow-500' },
+  { icon: Medal,  color: 'text-gray-400' },
+  { icon: Award,  color: 'text-amber-600' },
+];
+
+export default function GroupDetailPage() {
+  return (
+    <ProGate feature="groups">
+      <GroupDetailContent />
+    </ProGate>
+  );
+}
+
+function GroupDetailContent() {
+  const params = useParams();
+  const router = useRouter();
+  const groupId = params.id as string;
+
+  const { data: myGroups = [] } = useMyGroups();
+  const group = myGroups.find((g) => g.id === groupId);
+
+  const { data: leaderboard = [], isLoading: loadingLb } = useGroupLeaderboard(groupId);
+  const { data: members = [], isLoading: loadingMembers } = useGroupMembers(groupId);
+
+  const kickMember = useKickMember();
+  const leaveGroup = useLeaveGroup();
+  const deleteGroup = useDeleteGroup();
+
+  const [sortBy, setSortBy] = useState<'profit' | 'roi'>('profit');
+
+  const isOwner = group?.role === 'owner';
+
+  const sorted = [...leaderboard].sort((a, b) =>
+    sortBy === 'roi'
+      ? Number(b.roi) - Number(a.roi)
+      : Number(b.total_profit) - Number(a.total_profit)
+  );
+
+  if (!group && myGroups.length > 0) {
+    return (
+      <div className="text-center py-16 text-muted-foreground">
+        Skupina nenalezena nebo nejsi jejím členem.
+        <br />
+        <Link href="/groups" className="text-foreground underline mt-2 inline-block">← Zpět na skupiny</Link>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6 max-w-3xl">
+      {/* Header */}
+      <div className="flex items-start justify-between flex-wrap gap-3">
+        <div className="flex items-center gap-3">
+          <button onClick={() => router.push('/groups')} className="text-muted-foreground hover:text-foreground transition-colors">
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+          <div>
+            <h1 className="text-2xl font-bold flex items-center gap-2">
+              <Users className="w-6 h-6" />
+              {group?.name ?? '...'}
+              {isOwner && <Crown className="w-4 h-4 text-amber-500" />}
+            </h1>
+            <button
+              className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors mt-1 font-mono"
+              onClick={() => { navigator.clipboard.writeText(group?.invite_code ?? ''); toast.success('Kód zkopírován'); }}
+            >
+              <Copy className="w-3 h-3" />
+              Kód: {group?.invite_code ?? '...'}
+              <span className="text-[10px] normal-case font-sans">(klikni pro kopírování)</span>
+            </button>
+          </div>
+        </div>
+
+        <div className="flex gap-2">
+          {isOwner ? (
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-red-400 border-red-400/30 hover:bg-red-400/10"
+              onClick={() => {
+                if (confirm(`Smazat skupinu "${group?.name}"? Tato akce je nevratná.`)) {
+                  deleteGroup.mutate(groupId, { onSuccess: () => router.push('/groups') });
+                }
+              }}
+            >
+              <Trash2 className="w-4 h-4" /> Smazat skupinu
+            </Button>
+          ) : (
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-red-400 border-red-400/30 hover:bg-red-400/10"
+              onClick={() => {
+                if (confirm(`Opustit skupinu "${group?.name}"?`)) {
+                  leaveGroup.mutate(groupId, { onSuccess: () => router.push('/groups') });
+                }
+              }}
+            >
+              <LogOut className="w-4 h-4" /> Opustit
+            </Button>
+          )}
+        </div>
+      </div>
+
+      {/* Sort */}
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <p className="text-sm text-muted-foreground">
+          {members.length} {members.length === 1 ? 'člen' : members.length < 5 ? 'členové' : 'členů'} · statistiky za posledních 30 dní
+        </p>
+        <div className="flex rounded-md border border-border overflow-hidden text-sm">
+          <button
+            onClick={() => setSortBy('profit')}
+            className={`px-4 py-1.5 transition-colors ${sortBy === 'profit' ? 'bg-secondary text-foreground font-medium' : 'text-muted-foreground hover:text-foreground'}`}
+          >
+            Zisk
+          </button>
+          <button
+            onClick={() => setSortBy('roi')}
+            className={`px-4 py-1.5 border-l border-border transition-colors ${sortBy === 'roi' ? 'bg-secondary text-foreground font-medium' : 'text-muted-foreground hover:text-foreground'}`}
+          >
+            ROI
+          </button>
+        </div>
+      </div>
+
+      {/* Leaderboard */}
+      <Card>
+        <CardContent className="p-0">
+          {loadingLb ? (
+            <p className="p-8 text-center text-muted-foreground text-sm">Načítám žebříček...</p>
+          ) : sorted.length === 0 ? (
+            <p className="p-8 text-center text-muted-foreground text-sm">
+              Zatím žádná data. Členové skupiny potřebují alespoň 1 sázku za posledních 30 dní.
+            </p>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="text-left border-b border-border text-xs text-muted-foreground">
+                    <th className="p-3 font-normal w-10">#</th>
+                    <th className="p-3 font-normal">Hráč</th>
+                    <th className="p-3 font-normal text-right">Sázek</th>
+                    <th className="p-3 font-normal text-right">Win %</th>
+                    <th className="p-3 font-normal text-right">Zisk</th>
+                    <th className="p-3 font-normal text-right">ROI</th>
+                    <th className="p-3 font-normal text-right">Úspěchy</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {sorted.map((row, idx) => {
+                    const winRate = row.settled_bets > 0 ? (row.won_bets / row.settled_bets) * 100 : 0;
+                    const rankInfo = RANK_ICONS[idx];
+                    const Icon = rankInfo?.icon;
+                    const memberInfo = members.find((m) => m.user_id === row.user_id);
+                    return (
+                      <tr key={row.user_id} className="border-b border-border last:border-0 hover:bg-secondary/50">
+                        <td className="p-3">
+                          {Icon ? (
+                            <Icon className={cn('w-4 h-4', rankInfo.color)} />
+                          ) : (
+                            <span className="text-muted-foreground text-xs font-medium">{idx + 1}</span>
+                          )}
+                        </td>
+                        <td className="p-3">
+                          <div className="flex items-center gap-2">
+                            <div>
+                              <div className="font-medium flex items-center gap-1.5">
+                                {row.display_name ?? row.username ?? '—'}
+                                {memberInfo?.role === 'owner' && <Crown className="w-3 h-3 text-amber-500" />}
+                              </div>
+                              {row.username && (
+                                <div className="text-xs text-muted-foreground">@{row.username}</div>
+                              )}
+                            </div>
+                          </div>
+                        </td>
+                        <td className="p-3 text-right text-muted-foreground">{row.settled_bets}</td>
+                        <td className="p-3 text-right">{formatNumber(winRate, 0)} %</td>
+                        <td className={cn(
+                          'p-3 text-right font-semibold',
+                          row.total_profit > 0 ? 'text-success' : row.total_profit < 0 ? 'text-danger' : 'text-muted-foreground'
+                        )}>
+                          {row.total_profit > 0 ? '+' : ''}{formatCurrency(Number(row.total_profit), 'CZK')}
+                        </td>
+                        <td className={cn(
+                          'p-3 text-right font-semibold',
+                          row.roi > 0 ? 'text-success' : 'text-danger'
+                        )}>
+                          {row.roi > 0 ? '+' : ''}{formatNumber(Number(row.roi), 1)} %
+                        </td>
+                        <td className="p-3 text-right">
+                          {row.achievements_count > 0 ? (
+                            <span className="inline-flex items-center gap-1 text-amber-500 font-medium">
+                              <Star className="w-3 h-3 fill-amber-500" />
+                              {row.achievements_count}
+                            </span>
+                          ) : (
+                            <span className="text-muted-foreground text-xs">—</span>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+              <p className="px-3 py-2 text-xs text-muted-foreground border-t border-border">
+                min. 1 sázka za 30 dní
+              </p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Members list */}
+      {isOwner && members.length > 0 && (
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm">Správa členů</CardTitle>
+          </CardHeader>
+          <CardContent className="p-0">
+            {loadingMembers ? (
+              <p className="p-4 text-sm text-muted-foreground">Načítám...</p>
+            ) : (
+              <div>
+                {members.map((m) => (
+                  <div key={m.user_id} className="flex items-center gap-3 px-4 py-2.5 border-b border-border last:border-0">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium text-sm truncate">{m.display_name ?? m.username ?? '—'}</span>
+                        {m.role === 'owner' && <Crown className="w-3 h-3 text-amber-500 shrink-0" />}
+                      </div>
+                      {m.username && <span className="text-xs text-muted-foreground">@{m.username}</span>}
+                    </div>
+                    {m.role !== 'owner' && (
+                      <button
+                        className="p-1.5 rounded-md text-muted-foreground hover:text-red-400 hover:bg-red-400/10 transition-colors"
+                        onClick={() => {
+                          if (confirm(`Odebrat ${m.display_name ?? m.username} ze skupiny?`)) {
+                            kickMember.mutate({ groupId, userId: m.user_id });
+                          }
+                        }}
+                        title="Odebrat člena"
+                      >
+                        <UserX className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
+}

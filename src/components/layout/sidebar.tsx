@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { LayoutDashboard, ListOrdered, BarChart3, CalendarDays, Calculator, Users, Trophy, Wallet, CreditCard, Medal, Settings, ShieldCheck, LogOut, Moon, Sun, Zap, Crown } from 'lucide-react';
+import { LayoutDashboard, ListOrdered, BarChart3, CalendarDays, Calculator, Users, UsersRound, Trophy, Wallet, CreditCard, Medal, Settings, ShieldCheck, LogOut, Moon, Sun, Zap, Crown } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { createClient } from '@/lib/supabase/client';
 import { useProfile } from '@/hooks/use-profile';
@@ -39,6 +39,7 @@ export function Sidebar() {
     { href: '/calendar', label: t('calendar'), icon: CalendarDays },
     { href: '/surebet', label: t('surebet'), icon: Calculator },
     { href: '/friends', label: t('friends'), icon: Users },
+    { href: '/groups', label: t('groups'), icon: UsersRound },
     { href: '/leaderboard', label: t('leaderboard'), icon: Trophy },
     { href: '/achievements', label: tAch('title'), icon: Medal },
     { href: '/bankroll', label: tBankroll('title'), icon: CreditCard },

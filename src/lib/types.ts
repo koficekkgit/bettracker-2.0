@@ -150,3 +150,21 @@ export interface LeaderboardRow {
   roi: number;
   achievements_count: number;
 }
+
+export interface Group {
+  id: string;
+  name: string;
+  invite_code: string;
+  created_by: string;
+  created_at: string;
+  role: 'owner' | 'member';
+  member_count: number;
+}
+
+export interface GroupMember {
+  user_id: string;
+  username: string | null;
+  display_name: string | null;
+  role: 'owner' | 'member';
+  joined_at: string;
+}
