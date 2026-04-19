@@ -107,7 +107,8 @@ export function breakdownByWeekday(
 /** Automatické insight karty: najde zajímavé body v datech */
 export function generateInsights(
   bets: Bet[],
-  categoryNames: Map<string, string>
+  categoryNames: Map<string, string>,
+  weekdayLabels: string[] = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 ): Insight[] {
   const insights: Insight[] = [];
   const MIN_BETS = 10;  // minimální počet sázek pro smysluplný insight
@@ -150,10 +151,7 @@ export function generateInsights(
   }
 
   // 3. Nejlepší den v týdnu (pokud už je dost dat)
-  const byDay = breakdownByWeekday(
-    bets,
-    ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-  ).filter((b) => b.bets >= MIN_BETS);
+  const byDay = breakdownByWeekday(bets, weekdayLabels).filter((b) => b.bets >= MIN_BETS);
   if (byDay.length >= 3) {
     const bestDay = [...byDay].sort((a, b) => b.winRate - a.winRate)[0];
     if (bestDay.winRate > 55) {

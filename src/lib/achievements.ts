@@ -38,21 +38,23 @@ export function buildAchievementContext(bets: Bet[]): AchievementContext {
   const profits = bets.map(calculateBetProfit);
   const totalProfit = profits.reduce((s, p) => s + p, 0);
 
-  // Streaks — projedeme chronologicky
-  const sortedSettled = [...settled].sort(
-    (a, b) => new Date(a.placed_at).getTime() - new Date(b.placed_at).getTime()
-  );
+  // Streaks — bets arrive DESC from DB, reverse to get chronological order
+  // (avoids non-deterministic sort when placed_at timestamps are identical)
+  const sortedSettled = [...settled].reverse();
   let curWin = 0, curLoss = 0, maxWin = 0;
   let finalCurWin = 0, finalCurLoss = 0;
   for (const bet of sortedSettled) {
-    if (bet.status === 'won') {
+    const isWin = bet.status === 'won' || bet.status === 'half_won';
+    const isLoss = bet.status === 'lost' || bet.status === 'half_lost';
+    if (isWin) {
       curWin++;
       curLoss = 0;
       if (curWin > maxWin) maxWin = curWin;
-    } else if (bet.status === 'lost') {
+    } else if (isLoss) {
       curLoss++;
       curWin = 0;
     }
+    // void/cashout doesn't break the streak
     finalCurWin = curWin;
     finalCurLoss = curLoss;
   }

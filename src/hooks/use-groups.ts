@@ -52,7 +52,8 @@ export function useCreateGroup() {
       if (error) throw error;
       const result = data as { success: boolean; error?: string; group_id?: string; invite_code?: string };
       if (!result.success) throw new Error(result.error ?? 'Nepodařilo se vytvořit skupinu');
-      return { group_id: result.group_id!, invite_code: result.invite_code! };
+      if (!result.group_id || !result.invite_code) throw new Error('Neplatná odpověď serveru');
+      return { group_id: result.group_id, invite_code: result.invite_code };
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['my-groups'] });
@@ -102,7 +103,7 @@ export function useLeaveGroup() {
     },
     onSuccess: (_, groupId) => {
       qc.invalidateQueries({ queryKey: ['my-groups'] });
-      qc.removeQueries({ queryKey: ['group-leaderboard', groupId] });
+      qc.invalidateQueries({ queryKey: ['group-leaderboard', groupId] });
       toast.success('Opustil jsi skupinu');
     },
     onError: (e: Error) => toast.error(e.message),

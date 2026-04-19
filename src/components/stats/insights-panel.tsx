@@ -49,7 +49,7 @@ function InsightsContent({ bets: betsProp }: { bets?: Bet[] }) {
   const data = useMemo(() => {
     if (!bets) return null;
     return {
-      insights: generateInsights(bets, categoryNames),
+      insights: generateInsights(bets, categoryNames, weekdayLabels),
       byCategory: breakdownByCategory(bets, categoryNames),
       byBookmaker: breakdownByBookmaker(bets),
       byOddsRange: breakdownByOddsRange(bets),

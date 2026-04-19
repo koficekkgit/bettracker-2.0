@@ -38,7 +38,9 @@ function Content() {
   useEffect(() => {
     if (!ctx) return;
     const supabase = createClient();
-    supabase.rpc('sync_achievements_count', { p_count: earned });
+    supabase.rpc('sync_achievements_count', { p_count: earned }).catch((err) => {
+      console.error('[achievements] sync failed:', err);
+    });
   }, [ctx, earned]);
 
   if (isLoading || !ctx) {

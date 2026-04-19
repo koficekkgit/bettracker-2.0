@@ -57,7 +57,7 @@ function BadgeCard({
     (Icons as unknown as Record<string, LucideIcon>).Star;
 
   const prog = achievement.progress?.(ctx);
-  const progressPct = prog ? Math.min(100, (prog.current / prog.target) * 100) : 0;
+  const progressPct = prog && prog.target > 0 ? Math.min(100, (prog.current / prog.target) * 100) : 0;
 
   return (
     <div

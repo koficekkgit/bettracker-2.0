@@ -133,32 +133,35 @@ export function calculateStats(bets: Bet[]): BetStats {
   const pending = bets.filter((b) => b.status === 'pending');
 
   const totalStaked = settled.reduce((sum, b) => sum + Number(b.stake), 0);
-  const profits = bets.map(calculateBetProfit);
-  const totalProfit = profits.reduce((sum, p) => sum + p, 0);
+  // Only count settled bets for profit (pending = 0 anyway, but this is more correct)
+  const settledProfits = settled.map(calculateBetProfit);
+  const totalProfit = settledProfits.reduce((sum, p) => sum + p, 0);
 
   const roi = totalStaked > 0 ? (totalProfit / totalStaked) * 100 : 0;
   const winRate = settled.length > 0 ? (won.length / settled.length) * 100 : 0;
-  const avgOdds = bets.length > 0 ? bets.reduce((s, b) => s + Number(b.odds), 0) / bets.length : 0;
+  const avgOdds = settled.length > 0 ? settled.reduce((s, b) => s + Number(b.odds), 0) / settled.length : 0;
 
-  // Streaks
-  const sortedSettled = [...settled].sort(
-    (a, b) => new Date(a.placed_at).getTime() - new Date(b.placed_at).getTime()
-  );
+  // Streaks — bets arrive DESC from DB, reverse to get chronological order
+  // (avoids non-deterministic sort when placed_at timestamps are identical)
+  const chronological = [...settled].reverse();
   let curWin = 0, curLoss = 0, maxWin = 0, maxLoss = 0;
-  for (const bet of sortedSettled) {
-    if (bet.status === 'won') {
+  for (const bet of chronological) {
+    const isWin = bet.status === 'won' || bet.status === 'half_won';
+    const isLoss = bet.status === 'lost' || bet.status === 'half_lost';
+    if (isWin) {
       curWin++;
       curLoss = 0;
       maxWin = Math.max(maxWin, curWin);
-    } else if (bet.status === 'lost') {
+    } else if (isLoss) {
       curLoss++;
       curWin = 0;
       maxLoss = Math.max(maxLoss, curLoss);
     }
+    // void/cashout don't break the streak
   }
 
-  const bestWin = Math.max(0, ...profits);
-  const worstLoss = Math.min(0, ...profits);
+  const bestWin = settledProfits.length > 0 ? Math.max(0, ...settledProfits) : 0;
+  const worstLoss = settledProfits.length > 0 ? Math.min(0, ...settledProfits) : 0;
 
   return {
     totalBets: bets.length,
@@ -209,8 +212,9 @@ export function calculateProfitTimeline(bets: Bet[]): { date: string; profit: nu
 // Bet-by-bet cumulative timeline (one point per settled bet, indexed 1…N)
 // Bets arrive sorted DESC (newest first) — we reverse to get chronological order
 export function calculateBetTimeline(bets: Bet[]): { index: number; profit: number }[] {
+  // void sázky vynecháme — mají 0 profit a přidají jen šum (zbytečný bod v grafu)
   const settled = [...bets]
-    .filter((b) => b.status !== 'pending')
+    .filter((b) => b.status !== 'pending' && b.status !== 'void')
     .reverse(); // oldest first (matches bottom→top of bets table)
 
   let cumulative = 0;

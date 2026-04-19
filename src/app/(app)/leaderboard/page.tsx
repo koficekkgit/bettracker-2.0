@@ -7,6 +7,7 @@ import { Trophy, Medal, Award, Star, Globe, Users } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { ProGate } from '@/components/subscription/pro-gate';
 import { useLeaderboard, useFriendsLeaderboard } from '@/hooks/use-friends';
+import { useProfile } from '@/hooks/use-profile';
 import { formatCurrency, formatNumber, cn } from '@/lib/utils';
 import type { LeaderboardRow } from '@/lib/types';
 
@@ -26,6 +27,8 @@ export default function LeaderboardPage() {
 
 function LeaderboardContent() {
   const t = useTranslations();
+  const { data: profile } = useProfile();
+  const currency = profile?.default_currency ?? 'CZK';
   const [tab, setTab]       = useState<'global' | 'friends'>('global');
   const [sortBy, setSortBy] = useState<'profit' | 'roi'>('roi');
 
@@ -137,6 +140,7 @@ function LeaderboardContent() {
                       row={row}
                       idx={idx}
                       showProfit={isFriendsTab}
+                      currency={currency}
                     />
                   ))}
                 </tbody>
@@ -159,10 +163,12 @@ function LeaderboardRow({
   row,
   idx,
   showProfit,
+  currency,
 }: {
   row: LeaderboardRow;
   idx: number;
   showProfit: boolean;
+  currency: string;
 }) {
   const winRate = row.settled_bets > 0 ? (row.won_bets / row.settled_bets) * 100 : 0;
   const rankInfo = RANK_ICONS[idx];
@@ -206,7 +212,7 @@ function LeaderboardRow({
           row.total_profit > 0 ? 'text-success' : row.total_profit < 0 ? 'text-danger' : 'text-muted-foreground'
         )}>
           {row.total_profit > 0 ? '+' : ''}
-          {formatCurrency(Number(row.total_profit), 'CZK')}
+          {formatCurrency(Number(row.total_profit), currency)}
         </td>
       )}
 

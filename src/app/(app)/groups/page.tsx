@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { Users, Plus, LogIn, Copy, Crown, ChevronRight, Trash2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -10,7 +11,6 @@ import { ProGate } from '@/components/subscription/pro-gate';
 import {
   useMyGroups, useCreateGroup, useJoinGroup, useLeaveGroup, useDeleteGroup,
 } from '@/hooks/use-groups';
-import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 
 export default function GroupsPage() {
@@ -21,7 +21,14 @@ export default function GroupsPage() {
   );
 }
 
+function memberLabel(count: number, t: ReturnType<typeof useTranslations<'groups'>>) {
+  if (count === 1) return `1 ${t('memberCount_one')}`;
+  if (count < 5) return `${count} ${t('memberCount_few')}`;
+  return `${count} ${t('memberCount_many')}`;
+}
+
 function GroupsContent() {
+  const t = useTranslations('groups');
   const router = useRouter();
   const { data: groups = [], isLoading } = useMyGroups();
   const createGroup = useCreateGroup();
@@ -48,11 +55,9 @@ function GroupsContent() {
     <div className="space-y-6 max-w-2xl">
       <div>
         <h1 className="text-2xl font-bold flex items-center gap-2">
-          <Users className="w-6 h-6" /> Skupiny
+          <Users className="w-6 h-6" /> {t('title')}
         </h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          Vytvoř skupinu nebo se připoj ke stávající. Uvnitř skupiny vidíš statistiky všech členů.
-        </p>
+        <p className="text-sm text-muted-foreground mt-1">{t('subtitle')}</p>
       </div>
 
       {/* Actions */}
@@ -60,12 +65,12 @@ function GroupsContent() {
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm flex items-center gap-2">
-              <Plus className="w-4 h-4 text-amber-500" /> Vytvořit skupinu
+              <Plus className="w-4 h-4 text-amber-500" /> {t('createTitle')}
             </CardTitle>
           </CardHeader>
           <CardContent className="flex gap-2">
             <Input
-              placeholder="Název skupiny..."
+              placeholder={t('createPlaceholder')}
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleCreate()}
@@ -76,7 +81,7 @@ function GroupsContent() {
               disabled={!newName.trim() || createGroup.isPending}
               className="bg-amber-500 hover:bg-amber-400 text-white shrink-0"
             >
-              Vytvořit
+              {t('createBtn')}
             </Button>
           </CardContent>
         </Card>
@@ -84,12 +89,12 @@ function GroupsContent() {
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm flex items-center gap-2">
-              <LogIn className="w-4 h-4 text-blue-400" /> Připojit se kódem
+              <LogIn className="w-4 h-4 text-blue-400" /> {t('joinTitle')}
             </CardTitle>
           </CardHeader>
           <CardContent className="flex gap-2">
             <Input
-              placeholder="XXXX-XXXX"
+              placeholder={t('joinPlaceholder')}
               value={joinCode}
               onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
               onKeyDown={(e) => e.key === 'Enter' && handleJoin()}
@@ -102,7 +107,7 @@ function GroupsContent() {
               variant="outline"
               className="shrink-0"
             >
-              Připojit
+              {t('joinBtn')}
             </Button>
           </CardContent>
         </Card>
@@ -111,15 +116,15 @@ function GroupsContent() {
       {/* My groups */}
       <div>
         <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-          Moje skupiny ({groups.length})
+          {t('myGroups')} ({groups.length})
         </h2>
 
         {isLoading ? (
-          <p className="text-sm text-muted-foreground">Načítám...</p>
+          <p className="text-sm text-muted-foreground">{t('loading')}</p>
         ) : groups.length === 0 ? (
           <Card>
             <CardContent className="p-8 text-center text-muted-foreground text-sm">
-              Zatím nejsi v žádné skupině. Vytvoř novou nebo se připoj kódem.
+              {t('noGroups')}
             </CardContent>
           </Card>
         ) : (
@@ -143,14 +148,14 @@ function GroupsContent() {
                     </div>
                     <div className="flex items-center gap-3 mt-0.5">
                       <span className="text-xs text-muted-foreground">
-                        {group.member_count} {group.member_count === 1 ? 'člen' : group.member_count < 5 ? 'členové' : 'členů'}
+                        {memberLabel(group.member_count, t)}
                       </span>
                       <button
                         className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors font-mono"
                         onClick={(e) => {
                           e.stopPropagation();
                           navigator.clipboard.writeText(group.invite_code);
-                          toast.success('Kód zkopírován');
+                          toast.success(t('codeCopied'));
                         }}
                       >
                         <Copy className="w-3 h-3" />
@@ -164,11 +169,11 @@ function GroupsContent() {
                         className="p-1.5 rounded-md text-muted-foreground hover:text-red-400 hover:bg-red-400/10 transition-colors"
                         onClick={(e) => {
                           e.stopPropagation();
-                          if (confirm(`Smazat skupinu "${group.name}"? Tato akce je nevratná.`)) {
+                          if (confirm(t('deleteConfirm', { name: group.name }))) {
                             deleteGroup.mutate(group.id);
                           }
                         }}
-                        title="Smazat skupinu"
+                        title={t('delete')}
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -177,12 +182,12 @@ function GroupsContent() {
                         className="text-xs text-muted-foreground hover:text-red-400 transition-colors px-2 py-1 rounded-md hover:bg-red-400/10"
                         onClick={(e) => {
                           e.stopPropagation();
-                          if (confirm(`Opustit skupinu "${group.name}"?`)) {
+                          if (confirm(t('leaveConfirm', { name: group.name }))) {
                             leaveGroup.mutate(group.id);
                           }
                         }}
                       >
-                        Opustit
+                        {t('leave')}
                       </button>
                     )}
                     <ChevronRight className="w-4 h-4 text-muted-foreground" />

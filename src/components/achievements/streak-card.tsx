@@ -10,13 +10,30 @@ import { useMemo } from 'react';
 
 export function StreakCard() {
   const t = useTranslations();
-  const { data: bets } = useBets();
+  const { data: bets, isLoading } = useBets();
 
   const ctx = useMemo(() => (bets ? buildAchievementContext(bets) : null), [bets]);
   const earnedCount = useMemo(
     () => (ctx ? getEarnedAchievements(ctx).length : 0),
     [ctx]
   );
+
+  if (isLoading) {
+    return (
+      <div className="rounded-xl border border-border bg-card p-4 animate-pulse">
+        <div className="h-4 w-24 bg-muted rounded mb-4" />
+        <div className="grid grid-cols-3 gap-3">
+          {[0, 1, 2].map((i) => (
+            <div key={i} className="flex flex-col items-center gap-2">
+              <div className="w-5 h-5 bg-muted rounded" />
+              <div className="w-6 h-6 bg-muted rounded" />
+              <div className="w-12 h-3 bg-muted rounded" />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   if (!ctx) return null;
 
