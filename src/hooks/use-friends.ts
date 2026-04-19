@@ -209,7 +209,7 @@ export function useFriendProfileByUsername(username: string) {
 }
 
 /**
- * Leaderboard - top 10 podle ROI za 30 dní
+ * Leaderboard - globální, top 50 podle ROI za 30 dní (bez zisku)
  */
 export function useLeaderboard() {
   const supabase = createClient();
@@ -219,7 +219,22 @@ export function useLeaderboard() {
       const { data, error } = await supabase
         .from('leaderboard_30d')
         .select('*')
-        .limit(10);
+        .limit(50);
+      if (error) throw error;
+      return (data ?? []) as LeaderboardRow[];
+    },
+  });
+}
+
+/**
+ * Leaderboard - jen přátelé + já, se ziskem (přes RPC SECURITY DEFINER)
+ */
+export function useFriendsLeaderboard() {
+  const supabase = createClient();
+  return useQuery({
+    queryKey: ['friends-leaderboard'],
+    queryFn: async (): Promise<LeaderboardRow[]> => {
+      const { data, error } = await supabase.rpc('get_friends_leaderboard');
       if (error) throw error;
       return (data ?? []) as LeaderboardRow[];
     },

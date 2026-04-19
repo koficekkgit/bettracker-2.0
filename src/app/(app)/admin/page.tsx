@@ -121,8 +121,9 @@ export default function AdminPage() {
       setRefDiscountPct(10);
       setRefRewardPct(10);
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : String(err);
-      // Přeložit časté DB chyby
+      const msg = err instanceof Error
+        ? err.message
+        : (err as any)?.message ?? String(err);
       if (msg.includes('duplicate') || msg.includes('unique')) {
         toast.error('Kód s tímto názvem už existuje — zvol jiný.');
       } else {

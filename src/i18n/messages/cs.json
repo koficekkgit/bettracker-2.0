@@ -91,14 +91,19 @@
   "leaderboard": {
     "title": "Žebříček",
     "subtitle": "Top 10 hráčů podle ROI za posledních 30 dní",
+    "tabGlobal": "Globální",
+    "tabFriends": "Přátelé",
+    "subtitleGlobal": "Top hráči podle ROI — zisk není viditelný",
+    "subtitleFriends": "Ty a tvoji přátelé — vše viditelné",
     "rank": "#",
     "player": "Hráč",
     "bets": "Sázek",
     "winRate": "Win rate",
     "profit": "Zisk",
     "roi": "ROI",
-    "noData": "Žádná data. Hráči potřebují alespoň 5 vyhodnocených sázek za 30 dní.",
-    "minBets": "min. 5 sázek za 30 dní"
+    "noData": "Žádná data. Hráči potřebují alespoň 3 vyhodnocené sázky za 30 dní.",
+    "noFriendsData": "Nemáš ještě žádné přátele na žebříčku. Přidej přátele v sekci Přátelé!",
+    "minBets": "min. 3 sázky za 30 dní"
   },
   "surebet": {
     "title": "Surebet kalkulačka",

@@ -91,14 +91,19 @@
   "leaderboard": {
     "title": "Leaderboard",
     "subtitle": "Top 10 players by ROI in the last 30 days",
+    "tabGlobal": "Global",
+    "tabFriends": "Friends",
+    "subtitleGlobal": "Top players by ROI — profit is hidden",
+    "subtitleFriends": "You and your friends — everything visible",
     "rank": "#",
     "player": "Player",
     "bets": "Bets",
     "winRate": "Win rate",
     "profit": "Profit",
     "roi": "ROI",
-    "noData": "No data. Players need at least 5 settled bets in 30 days.",
-    "minBets": "min. 5 bets in 30 days"
+    "noData": "No data. Players need at least 3 settled bets in 30 days.",
+    "noFriendsData": "No friends on the leaderboard yet. Add friends in the Friends section!",
+    "minBets": "min. 3 bets in 30 days"
   },
   "surebet": {
     "title": "Surebet calculator",

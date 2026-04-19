@@ -83,7 +83,7 @@ export function useCreateReferralCode() {
       const { error } = await supabase
         .from('referral_codes')
         .insert({ code: code.toUpperCase().trim(), owner_id, discount_pct, reward_pct });
-      if (error) throw error;
+      if (error) throw new Error(error.message);
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ['all-referral-codes'] }),
   });
