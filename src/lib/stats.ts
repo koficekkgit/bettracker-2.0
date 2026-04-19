@@ -183,15 +183,23 @@ export function calculateStats(bets: Bet[]): BetStats {
  * Vrátí kumulativní profit v čase pro graf.
  */
 export function calculateProfitTimeline(bets: Bet[]): { date: string; profit: number }[] {
-  const sorted = [...bets]
+  const settled = [...bets]
     .filter((b) => b.status !== 'pending')
     .sort((a, b) => new Date(a.placed_at).getTime() - new Date(b.placed_at).getTime());
 
+  // Aggregate profit by calendar day (YYYY-MM-DD)
+  const byDay = new Map<string, number>();
+  for (const bet of settled) {
+    const day = bet.placed_at.slice(0, 10); // "YYYY-MM-DD"
+    byDay.set(day, (byDay.get(day) ?? 0) + calculateBetProfit(bet));
+  }
+
+  // Build cumulative timeline, one point per day
   let cumulative = 0;
-  return sorted.map((bet) => {
-    cumulative += calculateBetProfit(bet);
+  return Array.from(byDay.entries()).map(([day, dayProfit]) => {
+    cumulative += dayProfit;
     return {
-      date: bet.placed_at,
+      date: day,
       profit: Math.round(cumulative * 100) / 100,
     };
   });
