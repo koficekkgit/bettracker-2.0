@@ -205,17 +205,17 @@ export function calculateProfitTimeline(bets: Bet[]): { date: string; profit: nu
   });
 }
 
-// Bet-by-bet cumulative timeline (one point per settled bet, preserves timestamp)
-export function calculateBetTimeline(bets: Bet[]): { ts: string; profit: number }[] {
+// Bet-by-bet cumulative timeline (one point per settled bet, indexed 1…N)
+export function calculateBetTimeline(bets: Bet[]): { index: number; profit: number }[] {
   const settled = [...bets]
     .filter((b) => b.status !== 'pending')
     .sort((a, b) => new Date(a.placed_at).getTime() - new Date(b.placed_at).getTime());
 
   let cumulative = 0;
-  return settled.map((bet) => {
+  return settled.map((bet, i) => {
     cumulative += calculateBetProfit(bet);
     return {
-      ts: bet.placed_at, // full ISO timestamp
+      index: i + 1,
       profit: Math.round(cumulative * 100) / 100,
     };
   });

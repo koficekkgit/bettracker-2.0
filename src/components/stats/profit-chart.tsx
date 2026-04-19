@@ -18,9 +18,9 @@ interface DayData {
   profit: number;
 }
 
-// ── Bet-by-bet (intra-day / průběžný) ─────────────────────────────────────────
+// ── Bet-by-bet (průběžný) ─────────────────────────────────────────────────────
 interface BetData {
-  ts: string; // full ISO timestamp
+  index: number; // 1-based bet number
   profit: number;
 }
 
@@ -31,7 +31,7 @@ interface Props {
 }
 
 function isBetData(d: DayData[] | BetData[]): d is BetData[] {
-  return d.length > 0 && 'ts' in d[0];
+  return d.length > 0 && 'index' in d[0];
 }
 
 const tooltipStyle = {
@@ -55,31 +55,6 @@ export function ProfitChart({ data, currency = 'CZK', mode = 'cumulative' }: Pro
     return max / (max - min);
   }, [values, max, min]);
 
-  // X-axis label formatter for bet-by-bet mode
-  const betTickFormatter = useMemo(() => {
-    if (!isBetData(data) || data.length === 0) return (_: string) => '';
-    const first = new Date(data[0].ts);
-    const last = new Date(data[data.length - 1].ts);
-    const sameDay = first.toDateString() === last.toDateString();
-
-    return (ts: string) => {
-      const d = new Date(ts);
-      if (sameDay) {
-        // HH:mm
-        return d.toLocaleTimeString('cs-CZ', { hour: '2-digit', minute: '2-digit' });
-      }
-      // D.M. HH:mm when multi-day
-      return `${d.getDate()}.${d.getMonth() + 1}. ${d.toLocaleTimeString('cs-CZ', { hour: '2-digit', minute: '2-digit' })}`;
-    };
-  }, [data]);
-
-  const betTooltipLabel = (ts: string) => {
-    const d = new Date(ts);
-    return d.toLocaleString('cs-CZ', {
-      day: 'numeric', month: 'numeric', year: 'numeric',
-      hour: '2-digit', minute: '2-digit',
-    });
-  };
 
   if (data.length === 0) {
     return (
@@ -125,12 +100,16 @@ export function ProfitChart({ data, currency = 'CZK', mode = 'cumulative' }: Pro
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
             {gradient}
-            <XAxis dataKey="ts" tickFormatter={betTickFormatter} {...axisProps} />
+            <XAxis
+              dataKey="index"
+              tickFormatter={(n: number) => `#${n}`}
+              {...axisProps}
+            />
             <YAxis {...axisProps} width={50} />
             {refLine}
             <Tooltip
               {...tooltipStyle}
-              labelFormatter={(ts) => betTooltipLabel(ts as string)}
+              labelFormatter={(n: number) => `Sázka #${n}`}
               formatter={(value: number) => [formatCurrency(value, currency), 'Profit']}
             />
             {area}
