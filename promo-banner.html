@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>BetTracker — Promo Banner</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0a0f;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+    padding: 40px;
+  }
+
+  .banner {
+    width: 1200px;
+    height: 630px;
+    background: linear-gradient(135deg, #0f0f1a 0%, #12121f 50%, #0d0d18 100%);
+    border-radius: 24px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 64px 72px;
+    border: 1px solid rgba(255,255,255,0.06);
+    box-shadow: 0 40px 120px rgba(0,0,0,0.8);
+  }
+
+  /* Background glow blobs */
+  .banner::before {
+    content: '';
+    position: absolute;
+    top: -120px;
+    right: -80px;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(234,179,8,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .banner::after {
+    content: '';
+    position: absolute;
+    bottom: -100px;
+    left: -60px;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  /* Grid pattern overlay */
+  .grid-overlay {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+  }
+
+  /* Left side */
+  .left {
+    position: relative;
+    z-index: 2;
+    max-width: 620px;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(234,179,8,0.12);
+    border: 1px solid rgba(234,179,8,0.3);
+    color: #eab308;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 100px;
+    margin-bottom: 24px;
+  }
+
+  .badge-dot {
+    width: 6px;
+    height: 6px;
+    background: #eab308;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .logo-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+
+  .logo-icon {
+    width: 52px;
+    height: 52px;
+    background: linear-gradient(135deg, #eab308, #f59e0b);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    box-shadow: 0 8px 24px rgba(234,179,8,0.3);
+    flex-shrink: 0;
+  }
+
+  .logo-text {
+    font-size: 38px;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+
+  .logo-text span {
+    color: #eab308;
+  }
+
+  .tagline {
+    font-size: 16px;
+    color: rgba(255,255,255,0.45);
+    font-weight: 400;
+    margin-bottom: 28px;
+    line-height: 1.5;
+  }
+
+  .features {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 36px;
+  }
+
+  .feature-row {
+    display: flex;
+    gap: 20px;
+  }
+
+  .feature {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: rgba(255,255,255,0.75);
+    font-size: 13.5px;
+    font-weight: 500;
+  }
+
+  .feature-icon {
+    font-size: 15px;
+    flex-shrink: 0;
+  }
+
+  /* Promo pills */
+  .promos {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .promo-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .promo-trial {
+    background: rgba(34,197,94,0.12);
+    border: 1px solid rgba(34,197,94,0.3);
+    color: #22c55e;
+  }
+
+  .promo-code {
+    background: rgba(234,179,8,0.12);
+    border: 1px solid rgba(234,179,8,0.35);
+    color: #eab308;
+  }
+
+  .promo-code .code {
+    background: rgba(234,179,8,0.2);
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    font-weight: 700;
+  }
+
+  /* Right side — mock card */
+  .right {
+    position: absolute;
+    right: 64px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 340px;
+  }
+
+  .mock-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 20px 22px;
+  }
+
+  .mc-header {
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.35);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .mc-stat {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+
+  .mc-stat.green  { color: #22c55e; }
+  .mc-stat.yellow { color: #eab308; }
+  .mc-stat.blue   { color: #818cf8; }
+
+  .mc-sub {
+    font-size: 12px;
+    color: rgba(255,255,255,0.35);
+    margin-top: 2px;
+  }
+
+  .mc-row {
+    display: flex;
+    gap: 12px;
+  }
+
+  .mc-row .mock-card {
+    flex: 1;
+  }
+
+  .mc-stat-sm {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  /* Mini bar chart */
+  .mini-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 5px;
+    height: 40px;
+    margin-top: 12px;
+  }
+
+  .bar {
+    flex: 1;
+    border-radius: 4px 4px 0 0;
+    min-height: 4px;
+  }
+
+  .bar.pos { background: rgba(34,197,94,0.6); }
+  .bar.neg { background: rgba(239,68,68,0.5); }
+
+  /* URL */
+  .url-badge {
+    position: absolute;
+    bottom: 28px;
+    right: 72px;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: rgba(255,255,255,0.35);
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .url-badge strong {
+    color: rgba(255,255,255,0.65);
+    font-weight: 600;
+  }
+
+  /* Beta tag */
+  .beta-tag {
+    position: absolute;
+    top: 28px;
+    right: 72px;
+    background: rgba(129,140,248,0.15);
+    border: 1px solid rgba(129,140,248,0.3);
+    color: #818cf8;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 100px;
+  }
+</style>
+</head>
+<body>
+<div class="banner">
+  <div class="grid-overlay"></div>
+
+  <div class="beta-tag">Beta</div>
+
+  <!-- LEFT CONTENT -->
+  <div class="left">
+    <div class="badge">
+      <span class="badge-dot"></span>
+      Právě spuštěno
+    </div>
+
+    <div class="logo-row">
+      <div class="logo-icon">📊</div>
+      <div class="logo-text">Bet<span>Tracker</span></div>
+    </div>
+
+    <p class="tagline">
+      Eviduj sázky, sleduj profit, ROI a streaky.<br>
+      Žádné excely. Žádné poznámky.
+    </p>
+
+    <div class="features">
+      <div class="feature-row">
+        <div class="feature"><span class="feature-icon">📊</span> Statistiky & vývoj bankrollu</div>
+        <div class="feature"><span class="feature-icon">🏆</span> Žebříček hráčů</div>
+      </div>
+      <div class="feature-row">
+        <div class="feature"><span class="feature-icon">🤖</span> AI sken tiketu</div>
+        <div class="feature"><span class="feature-icon">🧮</span> Surebet kalkulačka</div>
+      </div>
+      <div class="feature-row">
+        <div class="feature"><span class="feature-icon">📅</span> Kalendář sázek</div>
+        <div class="feature"><span class="feature-icon">🎖</span> Úspěchy & achievementy</div>
+      </div>
+    </div>
+
+    <div class="promos">
+      <div class="promo-pill promo-trial">
+        ✅ 7 dní PRO zdarma — bez karty
+      </div>
+      <div class="promo-pill promo-code">
+        🏷 Kód <span class="code">SMTENNIS11</span> — 11 % sleva
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT MOCK UI -->
+  <div class="right">
+    <div class="mock-card">
+      <div class="mc-header">Celkový profit</div>
+      <div class="mc-stat green">+14 280 Kč</div>
+      <div class="mc-sub">za posledních 30 dní</div>
+      <div class="mini-chart">
+        <div class="bar neg" style="height:30%"></div>
+        <div class="bar pos" style="height:55%"></div>
+        <div class="bar pos" style="height:70%"></div>
+        <div class="bar neg" style="height:20%"></div>
+        <div class="bar pos" style="height:85%"></div>
+        <div class="bar pos" style="height:100%"></div>
+        <div class="bar pos" style="height:90%"></div>
+        <div class="bar neg" style="height:35%"></div>
+        <div class="bar pos" style="height:75%"></div>
+        <div class="bar pos" style="height:95%"></div>
+      </div>
+    </div>
+
+    <div class="mc-row">
+      <div class="mock-card">
+        <div class="mc-header">ROI</div>
+        <div class="mc-stat-sm green">+18,4 %</div>
+      </div>
+      <div class="mock-card">
+        <div class="mc-header">Win rate</div>
+        <div class="mc-stat-sm yellow">63 %</div>
+      </div>
+    </div>
+
+    <div class="mock-card">
+      <div class="mc-header">Aktivní série výher 🔥</div>
+      <div class="mc-stat-sm" style="color:#f97316;">5× za sebou</div>
+    </div>
+  </div>
+
+  <div class="url-badge">
+    🔗 <strong>bettracker.cz</strong>
+  </div>
+</div>
+</body>
+</html>

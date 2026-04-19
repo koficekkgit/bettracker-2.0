@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import {
@@ -140,6 +140,68 @@ const T = {
   },
 } as const;
 
+// ─── Typewriter cycling phrases ───────────────────────────────────────────────
+
+const HERO_PHRASES: Record<Lang, string[]> = {
+  cs: ['Zlepšuj výsledky.', 'Přestaň gamblit.', 'Začni vydělávat.', 'Sleduj profit.', 'Poznej svou formu.'],
+  en: ['Improve your results.', 'Stop gambling.', 'Start earning.', 'Track your profit.', 'Know your form.'],
+  ru: ['Улучшай результаты.', 'Перестань гамблить.', 'Начни зарабатывать.', 'Следи за прибылью.', 'Знай свою форму.'],
+};
+
+function useTypewriter(phrases: string[]) {
+  const [displayed, setDisplayed] = useState('');
+  const [phraseIdx, setPhraseIdx] = useState(0);
+  const [charIdx, setCharIdx] = useState(0);
+  const [deleting, setDeleting] = useState(false);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout>>();
+
+  useEffect(() => {
+    const current = phrases[phraseIdx];
+    let delay: number;
+
+    if (!deleting && charIdx < current.length) {
+      // Typing
+      delay = 55;
+      timeoutRef.current = setTimeout(() => {
+        setDisplayed(current.slice(0, charIdx + 1));
+        setCharIdx((c) => c + 1);
+      }, delay);
+    } else if (!deleting && charIdx === current.length) {
+      // Pause at end
+      delay = 2200;
+      timeoutRef.current = setTimeout(() => setDeleting(true), delay);
+    } else if (deleting && charIdx > 0) {
+      // Deleting
+      delay = 28;
+      timeoutRef.current = setTimeout(() => {
+        setDisplayed(current.slice(0, charIdx - 1));
+        setCharIdx((c) => c - 1);
+      }, delay);
+    } else if (deleting && charIdx === 0) {
+      // Move to next phrase
+      setDeleting(false);
+      setPhraseIdx((i) => (i + 1) % phrases.length);
+    }
+
+    return () => clearTimeout(timeoutRef.current);
+  }, [charIdx, deleting, phraseIdx, phrases]);
+
+  // Reset when phrases array changes (lang switch)
+  const prevPhrasesRef = useRef(phrases);
+  useEffect(() => {
+    if (prevPhrasesRef.current !== phrases) {
+      prevPhrasesRef.current = phrases;
+      clearTimeout(timeoutRef.current);
+      setDisplayed('');
+      setPhraseIdx(0);
+      setCharIdx(0);
+      setDeleting(false);
+    }
+  }, [phrases]);
+
+  return displayed;
+}
+
 const FEATURE_STYLES = [
   { icon: ListOrdered, color: 'text-blue-400',   bg: 'bg-blue-400/10',   border: 'border-blue-400/20' },
   { icon: BarChart3,   color: 'text-emerald-400', bg: 'bg-emerald-400/10', border: 'border-emerald-400/20' },
@@ -163,6 +225,8 @@ export function LandingPage() {
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
+
+  const typedText = useTypewriter(HERO_PHRASES[lang]);
 
   // Read lang from cookie on mount
   useEffect(() => {
@@ -250,28 +314,33 @@ export function LandingPage() {
 
       {/* Hero */}
       <section className="max-w-6xl mx-auto px-4 pt-20 pb-16 text-center">
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 text-amber-500 text-xs font-medium mb-6">
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 text-amber-500 text-xs font-semibold mb-7 tracking-wide">
           <Zap className="w-3 h-3" />
           {t.heroBadge}
         </div>
-        <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-5 leading-tight">
+
+        <h1 className="text-5xl md:text-7xl font-black tracking-tight mb-6 leading-[1.05]">
           {t.heroTitle1}<br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400">
-            {t.heroTitle2}
+          {/* Typewriter line — fixed height prevents layout shift */}
+          <span className="inline-block min-h-[1.1em] text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400">
+            {typedText}
+            <span className="animate-pulse text-amber-400 not-italic font-thin">|</span>
           </span>
         </h1>
-        <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto mb-8">
+
+        <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto mb-9 font-medium leading-relaxed">
           {t.heroDesc}
         </p>
+
         <div className="flex items-center justify-center gap-3 flex-wrap">
           <Link href="/register">
-            <Button size="lg" className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white font-semibold px-8">
+            <Button size="lg" className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white font-bold px-8 text-base h-12">
               <Zap className="w-4 h-4" />
               {t.heroCta}
             </Button>
           </Link>
           <Link href="/login">
-            <Button size="lg" variant="outline">{t.heroLogin}</Button>
+            <Button size="lg" variant="outline" className="font-semibold h-12 text-base">{t.heroLogin}</Button>
           </Link>
         </div>
 
@@ -282,8 +351,8 @@ export function LandingPage() {
             { value: '99 Kč', label: t.stat3 },
           ].map((s) => (
             <div key={s.label}>
-              <p className="text-2xl font-bold text-foreground">{s.value}</p>
-              <p className="text-xs text-muted-foreground mt-0.5">{s.label}</p>
+              <p className="text-3xl font-black text-foreground tracking-tight">{s.value}</p>
+              <p className="text-xs font-medium text-muted-foreground mt-1 uppercase tracking-wider">{s.label}</p>
             </div>
           ))}
         </div>
@@ -292,8 +361,8 @@ export function LandingPage() {
       {/* Features carousel */}
       <section className="max-w-6xl mx-auto px-4 pb-20">
         <div className="text-center mb-10">
-          <h2 className="text-2xl md:text-3xl font-bold mb-2">{t.featuresTitle}</h2>
-          <p className="text-muted-foreground">{t.featuresSubtitle}</p>
+          <h2 className="text-3xl md:text-4xl font-black tracking-tight mb-2">{t.featuresTitle}</h2>
+          <p className="text-muted-foreground font-medium">{t.featuresSubtitle}</p>
         </div>
 
         <div
@@ -307,8 +376,8 @@ export function LandingPage() {
                 <Icon className={cn('w-4 h-4', style.color)} />
                 <span className={cn('text-xs font-medium', style.color)}>{feature.subtitle}</span>
               </div>
-              <h3 className="text-2xl md:text-3xl font-bold mb-3">{feature.title}</h3>
-              <p className="text-muted-foreground leading-relaxed">{feature.desc}</p>
+              <h3 className="text-2xl md:text-3xl font-black tracking-tight mb-3">{feature.title}</h3>
+              <p className="text-muted-foreground leading-relaxed font-medium">{feature.desc}</p>
               <div className="flex items-center gap-2 mt-8">
                 {features.map((_, i) => (
                   <button
@@ -366,8 +435,8 @@ export function LandingPage() {
       <section className="border-t border-border bg-secondary/20">
         <div className="max-w-6xl mx-auto px-4 py-16">
           <div className="text-center mb-10">
-            <h2 className="text-2xl md:text-3xl font-bold mb-2">{t.pricingTitle}</h2>
-            <p className="text-muted-foreground">{t.pricingSubtitle}</p>
+            <h2 className="text-3xl md:text-4xl font-black tracking-tight mb-2">{t.pricingTitle}</h2>
+            <p className="text-muted-foreground font-medium">{t.pricingSubtitle}</p>
           </div>
           <div className="grid md:grid-cols-2 gap-4 max-w-2xl mx-auto mb-6">
             {/* Trial */}

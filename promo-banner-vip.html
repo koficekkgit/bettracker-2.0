@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8"/>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: #0a0a0a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .banner {
+    width: 1080px;
+    height: 1080px;
+    background: #08080f;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 56px 64px 52px;
+    flex-shrink: 0;
+  }
+
+  .glow-tr {
+    position: absolute;
+    top: -200px; right: -200px;
+    width: 720px; height: 720px;
+    background: radial-gradient(circle, rgba(139,92,246,0.22) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .glow-bl {
+    position: absolute;
+    bottom: -180px; left: -180px;
+    width: 580px; height: 580px;
+    background: radial-gradient(circle, rgba(236,72,153,0.12) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .glow-center {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(139,92,246,0.05) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(139,92,246,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(139,92,246,0.04) 1px, transparent 1px);
+    background-size: 54px 54px;
+    pointer-events: none;
+  }
+  .streak {
+    position: absolute; top: 0; right: 200px;
+    width: 1px; height: 100%;
+    background: linear-gradient(to bottom, transparent, rgba(139,92,246,0.15) 30%, rgba(236,72,153,0.1) 70%, transparent);
+    pointer-events: none;
+  }
+  .streak2 {
+    position: absolute; top: 0; right: 320px;
+    width: 1px; height: 100%;
+    background: linear-gradient(to bottom, transparent, rgba(139,92,246,0.07) 40%, transparent);
+    pointer-events: none;
+  }
+
+  /* ─── TOP ROW ─── */
+  .top-row {
+    position: relative; z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  /* SM BetTracker logo */
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .logo-sm-wrap {
+    background: #1e1e28;
+    border: 1px solid rgba(139,92,246,0.25);
+    border-radius: 14px;
+    padding: 8px 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 1;
+    box-shadow: 0 0 24px rgba(139,92,246,0.2);
+  }
+
+  .logo-sm {
+    font-size: 30px;
+    font-weight: 900;
+    color: #ffffff;
+    letter-spacing: -0.04em;
+    font-style: italic;
+    line-height: 1;
+  }
+
+  .logo-bt {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    color: rgba(255,255,255,0.55);
+    margin-top: 1px;
+  }
+
+  .logo-bt b {
+    color: rgba(255,255,255,0.9);
+    font-weight: 800;
+  }
+
+  .vip-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, rgba(139,92,246,0.2), rgba(236,72,153,0.15));
+    border: 1px solid rgba(139,92,246,0.45);
+    color: #c4b5fd;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 8px 20px;
+    border-radius: 100px;
+  }
+
+  /* ─── HERO ─── */
+  .hero {
+    position: relative; z-index: 3;
+    text-align: center;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+  }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(139,92,246,0.12);
+    border: 1px solid rgba(139,92,246,0.3);
+    color: #a78bfa;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 7px 20px;
+    border-radius: 100px;
+    margin-bottom: 30px;
+  }
+  .dot {
+    width: 7px; height: 7px;
+    background: #a78bfa;
+    border-radius: 50%;
+  }
+
+  .headline {
+    font-size: 86px;
+    font-weight: 900;
+    line-height: 1.08;
+    letter-spacing: -0.045em;
+    color: #ffffff;
+    margin-bottom: 24px;
+    padding-bottom: 6px;
+  }
+  .headline .accent {
+    display: block;
+    background: linear-gradient(90deg, #a78bfa 0%, #e879f9 55%, #f472b6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    padding-bottom: 4px;
+  }
+
+  .sub {
+    font-size: 18px;
+    color: rgba(255,255,255,0.42);
+    font-weight: 400;
+    line-height: 1.6;
+    max-width: 540px;
+    margin-bottom: 40px;
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+    justify-content: center;
+    margin-bottom: 40px;
+  }
+  .chip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(139,92,246,0.07);
+    border: 1px solid rgba(139,92,246,0.18);
+    color: rgba(255,255,255,0.68);
+    font-size: 13.5px;
+    font-weight: 500;
+    padding: 8px 16px;
+    border-radius: 100px;
+  }
+
+  /* ─── PROMO BOX ─── */
+  .promo-box {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    align-items: stretch;
+  }
+  .promo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 24px;
+    border-radius: 16px;
+    font-size: 15.5px;
+    font-weight: 600;
+  }
+  .promo-green {
+    background: rgba(34,197,94,0.08);
+    border: 1.5px solid rgba(34,197,94,0.3);
+    color: #4ade80;
+  }
+  .promo-vip {
+    background: linear-gradient(135deg, rgba(139,92,246,0.15), rgba(236,72,153,0.1));
+    border: 1.5px solid rgba(139,92,246,0.45);
+    color: #e9d5ff;
+  }
+  .big-pct {
+    font-size: 30px;
+    font-weight: 900;
+    background: linear-gradient(90deg, #a78bfa, #e879f9);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+  .promo-vip-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .promo-vip-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.72);
+  }
+  .promo-vip-bottom {
+    font-size: 12px;
+    color: rgba(255,255,255,0.38);
+    font-weight: 500;
+  }
+  .code-badge {
+    background: linear-gradient(135deg, rgba(139,92,246,0.3), rgba(236,72,153,0.2));
+    border: 1px solid rgba(139,92,246,0.5);
+    color: #ddd6fe;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.07em;
+    padding: 3px 12px;
+    border-radius: 7px;
+  }
+
+  /* ─── DIVIDER ─── */
+  .divider {
+    position: absolute;
+    bottom: 128px; left: 64px; right: 64px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(139,92,246,0.18), rgba(236,72,153,0.1), transparent);
+    z-index: 2;
+  }
+
+  /* ─── BOTTOM ─── */
+  .bottom-row {
+    position: relative; z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .url {
+    font-size: 17px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.32);
+  }
+  .url span {
+    background: linear-gradient(90deg, #a78bfa, #c084fc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .contact {
+    display: flex;
+    gap: 20px;
+  }
+  .contact-item {
+    font-size: 13px;
+    color: rgba(255,255,255,0.28);
+    font-weight: 500;
+  }
+  .contact-item strong {
+    color: rgba(255,255,255,0.55);
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+<div class="banner">
+  <div class="glow-tr"></div>
+  <div class="glow-bl"></div>
+  <div class="glow-center"></div>
+  <div class="grid"></div>
+  <div class="streak"></div>
+  <div class="streak2"></div>
+
+  <!-- TOP -->
+  <div class="top-row">
+    <div class="logo">
+      <div class="logo-sm-wrap">
+        <div class="logo-sm">SM</div>
+        <div class="logo-bt"><b>Bet</b>Tracker</div>
+      </div>
+    </div>
+    <div class="vip-pill">👑 VIP přístup</div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="eyebrow">
+      <div class="dot"></div>
+      Exkluzivně pro VIP členy
+    </div>
+
+    <h1 class="headline">
+      Přestaň gamblit.<br>
+      <span class="accent">Začni vydělávat.</span>
+    </h1>
+
+    <p class="sub">
+      Přesná data o každé sázce — profit, ROI,<br>
+      streaky, slabá místa. Profi nástroj pro vážné sázkaře.
+    </p>
+
+    <div class="chips">
+      <div class="chip">📊 Statistiky & grafy</div>
+      <div class="chip">🤖 AI sken tiketu</div>
+      <div class="chip">🏆 Žebříček hráčů</div>
+      <div class="chip">🧮 Surebet kalkulačka</div>
+      <div class="chip">📅 Kalendář sázek</div>
+      <div class="chip">🎖 Achievementy</div>
+    </div>
+
+    <div class="promo-box">
+      <div class="promo promo-green">
+        ✅ 7 dní PRO zdarma — bez karty
+      </div>
+      <div class="promo promo-vip">
+        <div class="big-pct">22%</div>
+        <div class="promo-vip-inner">
+          <div class="promo-vip-top">
+            sleva pro VIP &nbsp;<span class="code-badge">VIPTENNIS22</span>
+          </div>
+          <div class="promo-vip-bottom">👑 exkluzivní VIP nabídka</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- BOTTOM -->
+  <div class="bottom-row">
+    <div class="url">🔗 <span>bettracker.cz</span></div>
+    <div class="contact">
+      <div class="contact-item">TG <strong>@koficekk</strong></div>
+      <div class="contact-item">IG <strong>@adahonza</strong></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
