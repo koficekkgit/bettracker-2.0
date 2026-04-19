@@ -205,20 +205,18 @@ export function calculateProfitTimeline(bets: Bet[]): { date: string; profit: nu
   });
 }
 
-export function calculateDailyTimeline(bets: Bet[]): { date: string; profit: number }[] {
+// Bet-by-bet cumulative timeline (one point per settled bet, preserves timestamp)
+export function calculateBetTimeline(bets: Bet[]): { ts: string; profit: number }[] {
   const settled = [...bets]
     .filter((b) => b.status !== 'pending')
     .sort((a, b) => new Date(a.placed_at).getTime() - new Date(b.placed_at).getTime());
 
-  // Aggregate profit by calendar day (YYYY-MM-DD) — NOT cumulative
-  const byDay = new Map<string, number>();
-  for (const bet of settled) {
-    const day = bet.placed_at.slice(0, 10);
-    byDay.set(day, (byDay.get(day) ?? 0) + calculateBetProfit(bet));
-  }
-
-  return Array.from(byDay.entries()).map(([day, dayProfit]) => ({
-    date: day,
-    profit: Math.round(dayProfit * 100) / 100,
-  }));
+  let cumulative = 0;
+  return settled.map((bet) => {
+    cumulative += calculateBetProfit(bet);
+    return {
+      ts: bet.placed_at, // full ISO timestamp
+      profit: Math.round(cumulative * 100) / 100,
+    };
+  });
 }

@@ -12,7 +12,7 @@ import {
   calculateStats,
   calculateBetProfit,
   calculateProfitTimeline,
-  calculateDailyTimeline,
+  calculateBetTimeline,
   filterBetsByRange,
   type DateRangePreset,
   type CustomRange,
@@ -27,7 +27,7 @@ export default function StatsPage() {
   const { data: profile } = useProfile();
 
   const [period, setPeriod] = useState<DateRangePreset>('last30days');
-  const [chartMode, setChartMode] = useState<'cumulative' | 'daily'>('cumulative');
+  const [chartMode, setChartMode] = useState<'cumulative' | 'bet-by-bet'>('cumulative');
   const [customRange, setCustomRange] = useState<CustomRange>(() => {
     const today = new Date();
     const monthAgo = new Date();
@@ -42,7 +42,7 @@ export default function StatsPage() {
   );
   const stats = useMemo(() => calculateStats(bets), [bets]);
   const timeline = useMemo(() => calculateProfitTimeline(bets), [bets]);
-  const dailyTimeline = useMemo(() => calculateDailyTimeline(bets), [bets]);
+  const betTimeline = useMemo(() => calculateBetTimeline(bets), [bets]);
   const currency = profile?.default_currency ?? bets[0]?.currency ?? allBets[0]?.currency ?? 'CZK';
 
   const byCategory = useMemo(() => {
@@ -167,16 +167,16 @@ export default function StatsPage() {
                   Kumulativní
                 </button>
                 <button
-                  onClick={() => setChartMode('daily')}
-                  className={`px-3 py-1 transition-colors border-l border-border ${chartMode === 'daily' ? 'bg-secondary text-foreground font-medium' : 'text-muted-foreground hover:text-foreground'}`}
+                  onClick={() => setChartMode('bet-by-bet')}
+                  className={`px-3 py-1 transition-colors border-l border-border ${chartMode === 'bet-by-bet' ? 'bg-secondary text-foreground font-medium' : 'text-muted-foreground hover:text-foreground'}`}
                 >
-                  Denní
+                  Průběžný
                 </button>
               </div>
             </CardHeader>
             <CardContent>
               <ProfitChart
-                data={chartMode === 'cumulative' ? timeline : dailyTimeline}
+                data={chartMode === 'cumulative' ? timeline : betTimeline}
                 currency={currency}
                 mode={chartMode}
               />
