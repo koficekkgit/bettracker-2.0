@@ -12,6 +12,7 @@ import {
   calculateStats,
   calculateBetProfit,
   calculateProfitTimeline,
+  calculateDailyTimeline,
   filterBetsByRange,
   type DateRangePreset,
   type CustomRange,
@@ -26,6 +27,7 @@ export default function StatsPage() {
   const { data: profile } = useProfile();
 
   const [period, setPeriod] = useState<DateRangePreset>('last30days');
+  const [chartMode, setChartMode] = useState<'cumulative' | 'daily'>('cumulative');
   const [customRange, setCustomRange] = useState<CustomRange>(() => {
     const today = new Date();
     const monthAgo = new Date();
@@ -40,6 +42,7 @@ export default function StatsPage() {
   );
   const stats = useMemo(() => calculateStats(bets), [bets]);
   const timeline = useMemo(() => calculateProfitTimeline(bets), [bets]);
+  const dailyTimeline = useMemo(() => calculateDailyTimeline(bets), [bets]);
   const currency = profile?.default_currency ?? bets[0]?.currency ?? allBets[0]?.currency ?? 'CZK';
 
   const byCategory = useMemo(() => {
@@ -154,11 +157,29 @@ export default function StatsPage() {
           </div>
 
           <Card>
-            <CardHeader>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-base font-medium">{t('dashboard.profitChart')}</CardTitle>
+              <div className="flex rounded-md border border-border overflow-hidden text-xs">
+                <button
+                  onClick={() => setChartMode('cumulative')}
+                  className={`px-3 py-1 transition-colors ${chartMode === 'cumulative' ? 'bg-secondary text-foreground font-medium' : 'text-muted-foreground hover:text-foreground'}`}
+                >
+                  Kumulativní
+                </button>
+                <button
+                  onClick={() => setChartMode('daily')}
+                  className={`px-3 py-1 transition-colors border-l border-border ${chartMode === 'daily' ? 'bg-secondary text-foreground font-medium' : 'text-muted-foreground hover:text-foreground'}`}
+                >
+                  Denní
+                </button>
+              </div>
             </CardHeader>
             <CardContent>
-              <ProfitChart data={timeline} currency={currency} />
+              <ProfitChart
+                data={chartMode === 'cumulative' ? timeline : dailyTimeline}
+                currency={currency}
+                mode={chartMode}
+              />
             </CardContent>
           </Card>
 
