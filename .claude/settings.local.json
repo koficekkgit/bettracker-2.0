@@ -15,7 +15,8 @@
       "Bash(Test-Path \"C:\\\\Users\\\\kofic\\\\Desktop\\\\bettracker-new\\\\src\\\\hooks\\\\use-groups.ts\")",
       "Bash(Test-Path \"C:\\\\Users\\\\kofic\\\\Desktop\\\\bettracker-new\\\\src\\\\app\\\\\\(app\\)\\\\groups\\\\page.tsx\")",
       "Bash(Test-Path \"C:\\\\Users\\\\kofic\\\\Desktop\\\\bettracker-new\\\\src\\\\app\\\\\\(app\\)\\\\groups\\\\[id]\\\\page.tsx\")",
-      "Bash(Test-Path \"C:\\\\Users\\\\kofic\\\\Desktop\\\\bettracker-new\\\\supabase\\\\migration_groups.sql\")"
+      "Bash(Test-Path \"C:\\\\Users\\\\kofic\\\\Desktop\\\\bettracker-new\\\\supabase\\\\migration_groups.sql\")",
+      "PowerShell(Select-String -Path \"C:\\\\Users\\\\kofic\\\\Desktop\\\\bettracker-new\\\\src\\\\components\\\\marketing\\\\landing-page.tsx\" -Pattern \"footer|Footer|podmink|GDPR|gdpr|legal\" -CaseSensitive:$false)"
     ]
   }
 }

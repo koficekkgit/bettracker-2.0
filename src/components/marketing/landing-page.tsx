@@ -6,7 +6,7 @@ import Image from 'next/image';
 import {
   BarChart3, CalendarDays, Calculator, Users, Trophy,
   Medal, Sparkles, Check, ChevronLeft, ChevronRight,
-  Zap, Globe, ListOrdered,
+  Zap, Globe, ListOrdered, Mail,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -41,6 +41,16 @@ const T = {
     footerRegister: 'Registrace',
     footerTerms: 'Obchodní podmínky',
     footerLegal: 'BetTracker není sázková kancelář ani neposkytuje sázkové tipy nebo doporučení. Slouží výhradně jako analytický nástroj pro evidenci vlastních sázek uživatele. Služba je určena osobám starším 18 let.',
+    footerDesc: 'Profesionální evidence sázek. Statistiky, grafy, žebříček, bankroll a AI analýza tiketu — vše na jednom místě.',
+    footerColProduct: 'PRODUKT',
+    footerColAccount: 'ÚČET',
+    footerColLegal: 'PRÁVNÍ',
+    footerFeatures: 'Funkce',
+    footerPricing: 'Ceník',
+    footerTryFree: 'Vyzkoušet zdarma',
+    footerGdpr: 'GDPR',
+    footerCookies: 'Cookies',
+    footerCopyright: '© 2026 BetTracker. Všechna práva vyhrazena.',
     trialBadge: 'Začni zde',
     trialPeriod: '7 dní zdarma',
     trialFeatures: ['Plný Pro přístup na 7 dní', 'Bez platební karty', 'Aktivace jedním kliknutím', 'Vše co Pro nabízí'],
@@ -81,6 +91,16 @@ const T = {
     footerRegister: 'Register',
     footerTerms: 'Terms of Service',
     footerLegal: 'BetTracker is not a bookmaker and does not provide betting tips or recommendations. It serves exclusively as an analytical tool for recording your own bets. The service is intended for persons over 18 years of age.',
+    footerDesc: 'Professional bet tracking. Stats, charts, leaderboard, bankroll and AI ticket analysis — all in one place.',
+    footerColProduct: 'PRODUCT',
+    footerColAccount: 'ACCOUNT',
+    footerColLegal: 'LEGAL',
+    footerFeatures: 'Features',
+    footerPricing: 'Pricing',
+    footerTryFree: 'Try for free',
+    footerGdpr: 'GDPR',
+    footerCookies: 'Cookies',
+    footerCopyright: '© 2026 BetTracker. All rights reserved.',
     trialBadge: 'Start here',
     trialPeriod: '7 days free',
     trialFeatures: ['Full Pro access for 7 days', 'No credit card needed', 'One-click activation', 'Everything Pro offers'],
@@ -121,6 +141,16 @@ const T = {
     footerRegister: 'Регистрация',
     footerTerms: 'Условия использования',
     footerLegal: 'BetTracker не является букмекерской конторой и не предоставляет ставки или рекомендации. Служит исключительно аналитическим инструментом для учёта собственных ставок. Сервис предназначен для лиц старше 18 лет.',
+    footerDesc: 'Профессиональный учёт ставок. Статистика, графики, рейтинг, банкролл и AI-анализ тикетов — всё в одном месте.',
+    footerColProduct: 'ПРОДУКТ',
+    footerColAccount: 'АККАУНТ',
+    footerColLegal: 'ПРАВОВОЕ',
+    footerFeatures: 'Функции',
+    footerPricing: 'Цены',
+    footerTryFree: 'Попробовать бесплатно',
+    footerGdpr: 'GDPR',
+    footerCookies: 'Cookies',
+    footerCopyright: '© 2026 BetTracker. Все права защищены.',
     trialBadge: 'Начни здесь',
     trialPeriod: '7 дней бесплатно',
     trialFeatures: ['Полный Pro доступ на 7 дней', 'Без банковской карты', 'Активация в один клик', 'Всё что предлагает Pro'],
@@ -494,27 +524,86 @@ export function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-border">
-        <div className="max-w-6xl mx-auto px-4 py-8 space-y-4">
-          <div className="flex items-center justify-between flex-wrap gap-4 text-sm text-muted-foreground">
-            <div className="flex items-center gap-2">
-              <Image src="/logo.png" alt="BetTracker" width={20} height={20} className="rounded" />
-              <span>BetTracker v2.0</span>
+      <footer className="border-t border-border bg-card/40">
+        <div className="max-w-6xl mx-auto px-6 py-14">
+          {/* Main grid */}
+          <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr_1fr] gap-10 mb-12">
+
+            {/* Brand column */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2.5">
+                <Image src="/logo.png" alt="BetTracker" width={36} height={36} className="rounded-lg" />
+                <span className="font-bold text-lg text-foreground">BetTracker</span>
+              </div>
+              <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
+                {t.footerDesc}
+              </p>
+              {/* Social icons */}
+              <div className="flex items-center gap-2 pt-1">
+                <a
+                  href="https://x.com/bettrackercz"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-9 h-9 rounded-lg border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-border/80 transition-colors"
+                  aria-label="X / Twitter"
+                >
+                  <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current">
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                  </svg>
+                </a>
+                <a
+                  href="mailto:kontakt@bettracker.cz"
+                  className="w-9 h-9 rounded-lg border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-border/80 transition-colors"
+                  aria-label="Email"
+                >
+                  <Mail className="w-4 h-4" />
+                </a>
+              </div>
             </div>
-            <div className="flex items-center gap-4 text-xs">
-              <Link href="/login" className="hover:text-foreground transition-colors">{t.footerLogin}</Link>
-              <Link href="/register" className="hover:text-foreground transition-colors">{t.footerRegister}</Link>
-              <Link href="/podminky" className="hover:text-foreground transition-colors">{t.footerTerms}</Link>
-              <Link href="/gdpr" className="hover:text-foreground transition-colors">GDPR</Link>
-              <Link href="/cookies" className="hover:text-foreground transition-colors">Cookies</Link>
+
+            {/* Product column */}
+            <div>
+              <p className="text-xs font-semibold tracking-widest text-muted-foreground mb-4">{t.footerColProduct}</p>
+              <ul className="space-y-2.5">
+                <li><Link href="#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{t.footerFeatures}</Link></li>
+                <li><Link href="#pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{t.footerPricing}</Link></li>
+                <li><Link href="/register" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{t.footerTryFree}</Link></li>
+              </ul>
+            </div>
+
+            {/* Account column */}
+            <div>
+              <p className="text-xs font-semibold tracking-widest text-muted-foreground mb-4">{t.footerColAccount}</p>
+              <ul className="space-y-2.5">
+                <li><Link href="/login" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{t.footerLogin}</Link></li>
+                <li><Link href="/register" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{t.footerRegister}</Link></li>
+              </ul>
+            </div>
+
+            {/* Legal column */}
+            <div>
+              <p className="text-xs font-semibold tracking-widest text-muted-foreground mb-4">{t.footerColLegal}</p>
+              <ul className="space-y-2.5">
+                <li><Link href="/podminky" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{t.footerTerms}</Link></li>
+                <li><Link href="/gdpr" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{t.footerGdpr}</Link></li>
+                <li><Link href="/cookies" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{t.footerCookies}</Link></li>
+              </ul>
             </div>
           </div>
-          <p className="text-xs text-muted-foreground border-t border-border pt-4">
-            {t.footerLegal} · Jan Adam · IČO: 23405538 ·{' '}
-            <a href="mailto:kontakt@bettracker.cz" className="hover:text-foreground transition-colors">
-              kontakt@bettracker.cz
-            </a>
-          </p>
+
+          {/* Bottom bar */}
+          <div className="border-t border-border pt-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <Image src="/logo.png" alt="BetTracker" width={20} height={20} className="rounded opacity-60" />
+              <span className="text-xs text-muted-foreground">{t.footerCopyright}</span>
+            </div>
+            <p className="text-[11px] text-muted-foreground/70 max-w-xl leading-relaxed">
+              {t.footerLegal} · Jan Adam · IČO: 23405538 ·{' '}
+              <a href="mailto:kontakt@bettracker.cz" className="hover:text-muted-foreground transition-colors">
+                kontakt@bettracker.cz
+              </a>
+            </p>
+          </div>
         </div>
       </footer>
     </div>
