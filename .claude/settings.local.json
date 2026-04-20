@@ -16,7 +16,10 @@
       "Bash(Test-Path \"C:\\\\Users\\\\kofic\\\\Desktop\\\\bettracker-new\\\\src\\\\app\\\\\\(app\\)\\\\groups\\\\page.tsx\")",
       "Bash(Test-Path \"C:\\\\Users\\\\kofic\\\\Desktop\\\\bettracker-new\\\\src\\\\app\\\\\\(app\\)\\\\groups\\\\[id]\\\\page.tsx\")",
       "Bash(Test-Path \"C:\\\\Users\\\\kofic\\\\Desktop\\\\bettracker-new\\\\supabase\\\\migration_groups.sql\")",
-      "PowerShell(Select-String -Path \"C:\\\\Users\\\\kofic\\\\Desktop\\\\bettracker-new\\\\src\\\\components\\\\marketing\\\\landing-page.tsx\" -Pattern \"footer|Footer|podmink|GDPR|gdpr|legal\" -CaseSensitive:$false)"
+      "PowerShell(Select-String -Path \"C:\\\\Users\\\\kofic\\\\Desktop\\\\bettracker-new\\\\src\\\\components\\\\marketing\\\\landing-page.tsx\" -Pattern \"footer|Footer|podmink|GDPR|gdpr|legal\" -CaseSensitive:$false)",
+      "PowerShell(Select-String -Path \"C:\\\\Users\\\\kofic\\\\Desktop\\\\bettracker-new\\\\src\\\\components\\\\marketing\\\\landing-page.tsx\" -Pattern \"feature|pricing|section|id=\" -CaseSensitive:$false)",
+      "PowerShell(head -40)",
+      "PowerShell(Select-String -Path \"C:\\\\Users\\\\kofic\\\\Desktop\\\\bettracker-new\\\\src\\\\components\\\\marketing\\\\landing-page.tsx\" -Pattern \"<section\" -CaseSensitive:$false)"
     ]
   }
 }
