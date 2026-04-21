@@ -87,7 +87,11 @@
     "viewDashboard": "View",
     "removeConfirm": "Really remove this friend?",
     "viewingFriend": "Viewing profile",
-    "backToFriends": "Back to friends"
+    "backToFriends": "Back to friends",
+    "privacyBetsHidden": "This user has hidden their bets",
+    "privacyBetsHiddenDesc": "This can be changed in their account settings.",
+    "privacyProfitHidden": "This user has hidden their profit",
+    "privacyProfitHiddenDesc": "This can be changed in their account settings."
   },
   "leaderboard": {
     "title": "Leaderboard",

@@ -87,7 +87,11 @@
     "viewDashboard": "Открыть",
     "removeConfirm": "Точно удалить этого друга?",
     "viewingFriend": "Просмотр профиля",
-    "backToFriends": "Назад к друзьям"
+    "backToFriends": "Назад к друзьям",
+    "privacyBetsHidden": "Этот пользователь скрыл свои ставки",
+    "privacyBetsHiddenDesc": "Это можно изменить в настройках аккаунта.",
+    "privacyProfitHidden": "Этот пользователь скрыл свою прибыль",
+    "privacyProfitHiddenDesc": "Это можно изменить в настройках аккаунта."
   },
   "leaderboard": {
     "title": "Рейтинг",

@@ -87,7 +87,11 @@
     "viewDashboard": "Zobrazit",
     "removeConfirm": "Opravdu odebrat tohoto kamaráda?",
     "viewingFriend": "Sleduješ profil",
-    "backToFriends": "Zpět na přátele"
+    "backToFriends": "Zpět na přátele",
+    "privacyBetsHidden": "Tento uživatel skryl své sázky",
+    "privacyBetsHiddenDesc": "Povolení lze změnit v nastavení účtu.",
+    "privacyProfitHidden": "Tento uživatel skryl svůj zisk",
+    "privacyProfitHiddenDesc": "Povolení lze změnit v nastavení účtu."
   },
   "leaderboard": {
     "title": "Žebříček",
