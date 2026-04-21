@@ -27,6 +27,7 @@ export function useGroupMembers(groupId: string) {
       return (data ?? []) as GroupMember[];
     },
     enabled: !!groupId,
+    retry: false,
   });
 }
 
@@ -40,6 +41,7 @@ export function useGroupLeaderboard(groupId: string) {
       return (data ?? []) as LeaderboardRow[];
     },
     enabled: !!groupId,
+    retry: false,
   });
 }
 

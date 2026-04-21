@@ -33,6 +33,11 @@ export default function SettingsPage() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
       const { data } = await supabase.from('profiles').select('*').eq('id', user.id).single();
+      if (data) {
+        // Ensure privacy fields have defaults if column doesn't exist yet
+        data.show_profit_to_friends = data.show_profit_to_friends ?? true;
+        data.show_bets_to_friends   = data.show_bets_to_friends   ?? true;
+      }
       setProfile(data);
       setLoading(false);
     })();
@@ -48,6 +53,8 @@ export default function SettingsPage() {
         default_currency: profile.default_currency,
         starting_bankroll: profile.starting_bankroll,
         preferred_language: profile.preferred_language,
+        show_profit_to_friends: profile.show_profit_to_friends,
+        show_bets_to_friends: profile.show_bets_to_friends,
       })
       .eq('id', profile.id);
     setSaving(false);
@@ -142,6 +149,55 @@ export default function SettingsPage() {
             </Button>
             <Button variant="outline" onClick={handleLogout}>
               {t('auth.logout')}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Privacy */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base font-medium">{t('settings.privacy')}</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <p className="text-sm text-muted-foreground">{t('settings.privacyDesc')}</p>
+          <label className="flex items-center justify-between gap-4 cursor-pointer">
+            <div>
+              <div className="text-sm font-medium">{t('settings.showProfitToFriends')}</div>
+              <div className="text-xs text-muted-foreground">{t('settings.showProfitToFriendsDesc')}</div>
+            </div>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={profile.show_profit_to_friends}
+              onClick={() => setProfile({ ...profile, show_profit_to_friends: !profile.show_profit_to_friends })}
+              className={`relative inline-flex h-6 w-11 shrink-0 rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${profile.show_profit_to_friends ? 'bg-primary' : 'bg-input'}`}
+            >
+              <span
+                className={`pointer-events-none block h-5 w-5 rounded-full bg-background shadow-lg ring-0 transition-transform ${profile.show_profit_to_friends ? 'translate-x-5' : 'translate-x-0'}`}
+              />
+            </button>
+          </label>
+          <label className="flex items-center justify-between gap-4 cursor-pointer">
+            <div>
+              <div className="text-sm font-medium">{t('settings.showBetsToFriends')}</div>
+              <div className="text-xs text-muted-foreground">{t('settings.showBetsToFriendsDesc')}</div>
+            </div>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={profile.show_bets_to_friends}
+              onClick={() => setProfile({ ...profile, show_bets_to_friends: !profile.show_bets_to_friends })}
+              className={`relative inline-flex h-6 w-11 shrink-0 rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${profile.show_bets_to_friends ? 'bg-primary' : 'bg-input'}`}
+            >
+              <span
+                className={`pointer-events-none block h-5 w-5 rounded-full bg-background shadow-lg ring-0 transition-transform ${profile.show_bets_to_friends ? 'translate-x-5' : 'translate-x-0'}`}
+              />
+            </button>
+          </label>
+          <div className="pt-1">
+            <Button onClick={handleSave} disabled={saving} size="sm">
+              {saving ? t('common.loading') : t('common.save')}
             </Button>
           </div>
         </CardContent>

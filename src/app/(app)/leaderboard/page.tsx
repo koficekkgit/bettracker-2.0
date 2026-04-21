@@ -40,11 +40,13 @@ function LeaderboardContent() {
   const rawRows      = isFriendsTab ? friendsRows    : globalRows;
 
   // Global tab: sort always by ROI (profit hidden); Friends tab: user-chosen sort
-  const sorted = [...rawRows].sort((a, b) =>
-    (!isFriendsTab || sortBy === 'roi')
-      ? Number(b.roi) - Number(a.roi)
-      : Number(b.total_profit) - Number(a.total_profit)
-  );
+  // Treat null (privacy-hidden) as -Infinity so hidden users sink to the bottom
+  const sorted = [...rawRows].sort((a, b) => {
+    if (!isFriendsTab || sortBy === 'roi') {
+      return (b.roi ?? -Infinity) - (a.roi ?? -Infinity);
+    }
+    return (b.total_profit ?? -Infinity) - (a.total_profit ?? -Infinity);
+  });
 
   return (
     <div className="space-y-6">
@@ -209,20 +211,24 @@ function LeaderboardRow({
       {showProfit && (
         <td className={cn(
           'p-3 text-right font-medium',
+          row.total_profit === null ? 'text-muted-foreground' :
           row.total_profit > 0 ? 'text-success' : row.total_profit < 0 ? 'text-danger' : 'text-muted-foreground'
         )}>
-          {row.total_profit > 0 ? '+' : ''}
-          {formatCurrency(Number(row.total_profit), currency)}
+          {row.total_profit === null
+            ? '—'
+            : `${row.total_profit > 0 ? '+' : ''}${formatCurrency(Number(row.total_profit), currency)}`}
         </td>
       )}
 
       {/* ROI */}
       <td className={cn(
         'p-3 text-right font-semibold',
+        row.roi === null ? 'text-muted-foreground' :
         row.roi > 0 ? 'text-success' : 'text-danger'
       )}>
-        {row.roi > 0 ? '+' : ''}
-        {formatNumber(Number(row.roi), 1)} %
+        {row.roi === null
+          ? '—'
+          : `${row.roi > 0 ? '+' : ''}${formatNumber(Number(row.roi), 1)} %`}
       </td>
 
       {/* Achievements */}

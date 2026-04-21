@@ -22,6 +22,8 @@ export interface Profile {
   subscription_until: string | null;
   is_admin: boolean;
   created_at: string;
+  show_profit_to_friends: boolean;
+  show_bets_to_friends: boolean;
 }
 
 export type SubscriptionPlan = 'monthly' | 'quarterly' | 'yearly' | 'lifetime';
@@ -146,8 +148,10 @@ export interface LeaderboardRow {
   won_bets: number;
   settled_bets: number;
   total_staked: number;
-  total_profit: number;
-  roi: number;
+  /** null = privacy hidden (user opted out of showing profit to friends) */
+  total_profit: number | null;
+  /** null = privacy hidden */
+  roi: number | null;
   achievements_count: number;
 }
 

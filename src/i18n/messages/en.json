@@ -230,7 +230,13 @@
     "categoryColor": "Color",
     "deleteCategoryConfirm": "Really delete this category? Bets will remain but lose their assignment.",
     "noCategoriesYet": "No categories yet",
-    "saved": "Saved"
+    "saved": "Saved",
+    "privacy": "Privacy",
+    "privacyDesc": "Control what your friends and group members can see in the leaderboard.",
+    "showProfitToFriends": "Show profit to friends",
+    "showProfitToFriendsDesc": "Friends and group members will see your profit and ROI in the leaderboard.",
+    "showBetsToFriends": "Show bet stats to friends",
+    "showBetsToFriendsDesc": "Friends and group members will see your bet count and win rate."
   },
   "payouts": {
     "title": "Payouts",
@@ -494,6 +500,7 @@
     "memberManagement": "Member management",
     "loadingMembers": "Loading...",
     "kickConfirm": "Remove {name} from group?",
-    "kickTitle": "Remove member"
+    "kickTitle": "Remove member",
+    "leaderboardError": "Failed to load leaderboard. Please try again."
   }
 }

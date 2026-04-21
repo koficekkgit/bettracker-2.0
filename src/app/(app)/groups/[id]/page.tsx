@@ -51,7 +51,7 @@ function GroupDetailContent() {
   const { data: myGroups = [] } = useMyGroups();
   const group = myGroups.find((g) => g.id === groupId);
 
-  const { data: leaderboard = [], isLoading: loadingLb } = useGroupLeaderboard(groupId);
+  const { data: leaderboard = [], isLoading: loadingLb, isError: errorLb } = useGroupLeaderboard(groupId);
   const { data: members = [], isLoading: loadingMembers } = useGroupMembers(groupId);
 
   const kickMember = useKickMember();
@@ -64,8 +64,8 @@ function GroupDetailContent() {
 
   const sorted = [...leaderboard].sort((a, b) =>
     sortBy === 'roi'
-      ? Number(b.roi) - Number(a.roi)
-      : Number(b.total_profit) - Number(a.total_profit)
+      ? (b.roi ?? -Infinity) - (a.roi ?? -Infinity)
+      : (b.total_profit ?? -Infinity) - (a.total_profit ?? -Infinity)
   );
 
   if (!group && myGroups.length > 0) {
@@ -162,6 +162,8 @@ function GroupDetailContent() {
         <CardContent className="p-0">
           {loadingLb ? (
             <p className="p-8 text-center text-muted-foreground text-sm">{t('loadingLeaderboard')}</p>
+          ) : errorLb ? (
+            <p className="p-8 text-center text-destructive text-sm">{t('leaderboardError')}</p>
           ) : sorted.length === 0 ? (
             <p className="p-8 text-center text-muted-foreground text-sm">{t('noData')}</p>
           ) : (
@@ -184,7 +186,7 @@ function GroupDetailContent() {
                     const rankInfo = RANK_ICONS[idx];
                     const Icon = rankInfo?.icon;
                     const memberInfo = members.find((m) => m.user_id === row.user_id);
-                    const profit = Number(row.total_profit);
+                    const profit = row.total_profit !== null ? Number(row.total_profit) : null;
                     return (
                       <tr key={row.user_id} className="border-b border-border last:border-0 hover:bg-secondary/50">
                         <td className="p-3">
@@ -211,15 +213,17 @@ function GroupDetailContent() {
                         <td className="p-3 text-right">{formatNumber(winRate, 0)} %</td>
                         <td className={cn(
                           'p-3 text-right font-semibold',
+                          profit === null ? 'text-muted-foreground' :
                           profit > 0 ? 'text-success' : profit < 0 ? 'text-danger' : 'text-muted-foreground'
                         )}>
-                          {profit > 0 ? '+' : ''}{formatCurrency(profit, currency)}
+                          {profit === null ? '—' : `${profit > 0 ? '+' : ''}${formatCurrency(profit, currency)}`}
                         </td>
                         <td className={cn(
                           'p-3 text-right font-semibold',
+                          row.roi === null ? 'text-muted-foreground' :
                           row.roi > 0 ? 'text-success' : 'text-danger'
                         )}>
-                          {row.roi > 0 ? '+' : ''}{formatNumber(Number(row.roi), 1)} %
+                          {row.roi === null ? '—' : `${row.roi > 0 ? '+' : ''}${formatNumber(Number(row.roi), 1)} %`}
                         </td>
                         <td className="p-3 text-right">
                           {row.achievements_count > 0 ? (

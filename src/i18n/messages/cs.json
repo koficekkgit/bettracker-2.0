@@ -230,7 +230,13 @@
     "categoryColor": "Barva",
     "deleteCategoryConfirm": "Opravdu smazat tuto kategorii? Sázky zůstanou, ale ztratí přiřazení.",
     "noCategoriesYet": "Zatím žádné kategorie",
-    "saved": "Uloženo"
+    "saved": "Uloženo",
+    "privacy": "Soukromí",
+    "privacyDesc": "Nastav, co mohou vidět tvoji přátelé a členové skupin ve statistikách.",
+    "showProfitToFriends": "Zobrazit zisk přátelům",
+    "showProfitToFriendsDesc": "Přátelé a skupiny uvidí tvůj zisk a ROI v žebříčku.",
+    "showBetsToFriends": "Zobrazit statistiky sázek přátelům",
+    "showBetsToFriendsDesc": "Přátelé a skupiny uvidí počet a úspěšnost tvých sázek."
   },
   "payouts": {
     "title": "Vyrovnávačky",
@@ -494,6 +500,7 @@
     "memberManagement": "Správa členů",
     "loadingMembers": "Načítám...",
     "kickConfirm": "Odebrat {name} ze skupiny?",
-    "kickTitle": "Odebrat člena"
+    "kickTitle": "Odebrat člena",
+    "leaderboardError": "Nepodařilo se načíst žebříček. Zkus to znovu."
   }
 }
