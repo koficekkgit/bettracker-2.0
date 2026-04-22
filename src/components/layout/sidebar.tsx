@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
@@ -9,7 +9,7 @@ import {
   LayoutDashboard, ListOrdered, BarChart3, CalendarDays,
   Calculator, Users, UsersRound, Trophy, Wallet,
   Medal, Settings, ShieldCheck, LogOut, Moon, Sun, Zap, Crown,
-  UserCircle2, ClipboardList, PackageOpen, Sparkles, ChevronDown,
+  UserCircle2, ClipboardList, PackageOpen, Sparkles, Pin, PinOff,
 } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { createClient } from '@/lib/supabase/client';
@@ -30,8 +30,6 @@ type NavItem = {
 type NavGroup = {
   label?: string;
   items: NavItem[];
-  collapsible?: boolean;
-  defaultOpen?: boolean;
 };
 
 export function Sidebar() {
@@ -45,10 +43,13 @@ export function Sidebar() {
   const { data: profile } = useProfile();
   const sub = useSubscription();
   const { data: pendingRequests = 0 } = usePendingFriendRequestCount();
-  const [mounted, setMounted]       = useState(false);
-  const [collapsed, setCollapsed]   = useState<Record<string, boolean>>({});
+  const [mounted,  setMounted]  = useState(false);
+  const [hovered,  setHovered]  = useState(false);
+  const [pinned,   setPinned]   = useState(false);
 
   useEffect(() => { setMounted(true); }, []);
+
+  const expanded = pinned || hovered;
 
   const groups: NavGroup[] = [
     {
@@ -75,14 +76,12 @@ export function Sidebar() {
     },
     {
       label: 'SM',
-      collapsible: true,
-      defaultOpen: false,
       items: [
-        { href: '/achievements', label: tAch('title'),   icon: Medal,         color: 'text-amber-400' },
-        { href: '/tasks',        label: 'Úkoly',         icon: ClipboardList, color: 'text-amber-400' },
-        { href: '/cases',        label: 'SM Bedny',      icon: PackageOpen,   color: 'text-amber-400' },
-        { href: '/character',    label: 'Postava',       icon: UserCircle2,   color: 'text-violet-400', badge: 'beta' },
-        { href: '/recap',        label: 'Týd. Recap',    icon: Sparkles,      color: 'text-pink-400' },
+        { href: '/achievements', label: tAch('title'),  icon: Medal,         color: 'text-amber-400' },
+        { href: '/tasks',        label: 'Úkoly',        icon: ClipboardList, color: 'text-amber-400' },
+        { href: '/cases',        label: 'SM Bedny',     icon: PackageOpen,   color: 'text-amber-400' },
+        { href: '/character',    label: 'Postava',      icon: UserCircle2,   color: 'text-violet-400', badge: 'beta' },
+        { href: '/recap',        label: 'Týd. Recap',   icon: Sparkles,      color: 'text-pink-400' },
       ],
     },
     ...(profile?.payouts_enabled ? [{
@@ -109,123 +108,142 @@ export function Sidebar() {
   }
 
   return (
-    <aside className="w-full md:w-60 md:h-screen md:flex-shrink-0 border-b md:border-b-0 md:border-r border-border bg-card flex md:flex-col">
-
+    <aside
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      className={cn(
+        // Mobile: full-width horizontal bar at top
+        'w-full border-b border-border bg-card flex md:flex-col',
+        // Desktop: narrow icon rail that expands
+        'md:border-b-0 md:border-r md:h-screen md:flex-shrink-0',
+        'md:transition-[width] md:duration-200 md:ease-out',
+        expanded ? 'md:w-60' : 'md:w-14',
+      )}
+    >
       {/* Logo */}
-      <div className="hidden md:flex items-center gap-3 px-4 py-4 border-b border-border">
-        <Image src="/logo.png" alt="BetTracker" width={34} height={34} className="rounded-md" />
-        <div>
-          <p className="font-bold text-sm leading-tight">BetTracker</p>
-          <p className="text-[10px] text-muted-foreground tracking-wide">v2.0</p>
+      <div className={cn(
+        'hidden md:flex items-center border-b border-border flex-shrink-0 overflow-hidden',
+        expanded ? 'gap-3 px-4 py-4 justify-between' : 'px-0 py-4 justify-center',
+      )}>
+        <div className={cn('flex items-center gap-3', !expanded && 'justify-center w-full')}>
+          <Image src="/logo.png" alt="BetTracker" width={34} height={34} className="rounded-md flex-shrink-0" />
+          {expanded && (
+            <div className="overflow-hidden">
+              <p className="font-bold text-sm leading-tight whitespace-nowrap">BetTracker</p>
+              <p className="text-[10px] text-muted-foreground tracking-wide">v2.0</p>
+            </div>
+          )}
         </div>
+        {/* Pin button */}
+        {expanded && (
+          <button
+            onClick={() => setPinned(p => !p)}
+            className="p-1 rounded-md text-muted-foreground/40 hover:text-muted-foreground hover:bg-secondary transition-colors flex-shrink-0"
+            title={pinned ? 'Odepnout' : 'Připnout'}
+          >
+            {pinned
+              ? <Pin className="w-3.5 h-3.5 fill-current" />
+              : <PinOff className="w-3.5 h-3.5" />
+            }
+          </button>
+        )}
       </div>
 
       {/* Nav */}
-      <nav className="flex md:flex-col flex-1 px-2 py-3 gap-0.5 overflow-x-auto md:overflow-y-auto">
-        {groups.map((group, gi) => {
-          const hasActiveItem = group.items.some(i => pathname.startsWith(i.href));
+      <nav className="flex md:flex-col flex-1 px-2 py-3 gap-0.5 overflow-x-auto md:overflow-y-auto md:overflow-x-hidden">
+        {groups.map((group, gi) => (
+          <div key={gi} className={cn('flex md:flex-col', gi > 0 && 'md:mt-3')}>
 
-          // For collapsible groups: open if user explicitly toggled, or if a child is active
-          const isOpen = group.collapsible
-            ? (collapsed[group.label!] ?? (group.defaultOpen || hasActiveItem))
-            : true;
+            {/* Section label — only when expanded */}
+            {group.label && expanded && (
+              <p className="hidden md:block px-3 mb-1 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/50 select-none whitespace-nowrap overflow-hidden">
+                {group.label}
+              </p>
+            )}
 
-          function toggleGroup() {
-            if (!group.collapsible || !group.label) return;
-            setCollapsed(prev => ({ ...prev, [group.label!]: !isOpen }));
-          }
+            {/* Divider when collapsed */}
+            {group.label && !expanded && gi > 0 && (
+              <div className="hidden md:block mx-auto w-6 h-px bg-border my-1.5" />
+            )}
 
-          return (
-            <div key={gi} className={cn('flex md:flex-col', gi > 0 && 'md:mt-3')}>
-              {/* Section header */}
-              {group.label && (
-                group.collapsible ? (
-                  <button
-                    onClick={toggleGroup}
-                    className="hidden md:flex items-center justify-between px-3 mb-1 w-full group/hdr"
-                  >
-                    <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/50 group-hover/hdr:text-muted-foreground transition-colors select-none">
-                      {group.label}
+            {group.items.map((item) => {
+              const Icon   = item.icon;
+              const active = pathname.startsWith(item.href);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  title={!expanded ? item.label : undefined}
+                  className={cn(
+                    'group relative flex items-center gap-2.5 rounded-lg text-sm font-medium transition-all duration-150 whitespace-nowrap overflow-hidden',
+                    // When collapsed on desktop: center the icon
+                    expanded ? 'px-3 py-2' : 'md:justify-center md:px-0 md:py-2 px-3 py-2',
+                    active
+                      ? 'bg-secondary text-foreground shadow-sm'
+                      : 'text-muted-foreground hover:bg-secondary/60 hover:text-foreground',
+                  )}
+                >
+                  {/* Active bar */}
+                  {active && expanded && (
+                    <span className={cn('absolute left-0 top-1.5 bottom-1.5 w-0.5 rounded-full', item.color.replace('text-', 'bg-'))} />
+                  )}
+
+                  {/* Active dot when collapsed */}
+                  {active && !expanded && (
+                    <span className={cn('absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-4 rounded-full hidden md:block', item.color.replace('text-', 'bg-'))} />
+                  )}
+
+                  <Icon className={cn(
+                    'w-4 h-4 flex-shrink-0 transition-colors',
+                    active ? item.color : 'text-muted-foreground group-hover:' + item.color.replace('text-', 'text-'),
+                  )} />
+
+                  {/* Label — hidden on desktop when collapsed */}
+                  <span className={cn(
+                    'flex-1 transition-all duration-150',
+                    !expanded && 'md:hidden',
+                  )}>
+                    {item.label}
+                  </span>
+
+                  {/* BETA badge */}
+                  {item.badge === 'beta' && expanded && (
+                    <span className="px-1.5 py-0.5 rounded text-[9px] font-bold tracking-wide uppercase bg-violet-500/15 border border-violet-500/25 text-violet-400">
+                      Beta
                     </span>
-                    <ChevronDown className={cn(
-                      'w-3 h-3 text-muted-foreground/40 group-hover/hdr:text-muted-foreground transition-all duration-200',
-                      isOpen ? 'rotate-0' : '-rotate-90',
-                    )} />
-                  </button>
-                ) : (
-                  <p className="hidden md:block px-3 mb-1 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/50 select-none">
-                    {group.label}
-                  </p>
-                )
-              )}
+                  )}
 
-              {/* Items — hidden when collapsed (desktop only) */}
-              <div className={cn(
-                'flex md:flex-col gap-0.5 overflow-hidden transition-all duration-200',
-                group.collapsible && !isOpen && 'md:max-h-0 md:opacity-0 md:pointer-events-none',
-                group.collapsible && isOpen  && 'md:max-h-96 md:opacity-100',
-              )}>
-                {group.items.map((item) => {
-                  const Icon   = item.icon;
-                  const active = pathname.startsWith(item.href);
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className={cn(
-                        'group relative flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-150 whitespace-nowrap',
-                        active
-                          ? 'bg-secondary text-foreground shadow-sm'
-                          : 'text-muted-foreground hover:bg-secondary/60 hover:text-foreground'
-                      )}
-                    >
-                      {active && (
-                        <span className={cn('absolute left-0 top-1.5 bottom-1.5 w-0.5 rounded-full', item.color.replace('text-', 'bg-'))} />
-                      )}
-
-                      <Icon className={cn(
-                        'w-4 h-4 shrink-0 transition-colors',
-                        active ? item.color : 'text-muted-foreground group-hover:' + item.color.replace('text-', 'text-')
-                      )} />
-
-                      <span className="flex-1">{item.label}</span>
-
-                      {item.badge === 'beta' && (
-                        <span className="px-1.5 py-0.5 rounded text-[9px] font-bold tracking-wide uppercase bg-violet-500/15 border border-violet-500/25 text-violet-400">
-                          Beta
-                        </span>
-                      )}
-
-                      {item.href === '/friends' && pendingRequests > 0 && (
-                        <span className="flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white animate-pulse">
-                          {pendingRequests > 9 ? '9+' : pendingRequests}
-                        </span>
-                      )}
-                    </Link>
-                  );
-                })}
-              </div>
-            </div>
-          );
-        })}
+                  {/* Pending requests */}
+                  {item.href === '/friends' && pendingRequests > 0 && (
+                    <span className={cn(
+                      'flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white animate-pulse flex-shrink-0',
+                      !expanded && 'md:absolute md:top-0.5 md:right-0.5 md:h-3 md:w-3',
+                    )}>
+                      {!expanded ? '' : pendingRequests > 9 ? '9+' : pendingRequests}
+                    </span>
+                  )}
+                </Link>
+              );
+            })}
+          </div>
+        ))}
       </nav>
 
       {/* Bottom widgets */}
-      <div className="hidden md:flex flex-col gap-1.5 p-3 border-t border-border">
+      <div className="hidden md:flex flex-col gap-1.5 p-3 border-t border-border overflow-hidden">
 
-        {/* Subscription widget */}
-        {!sub.loading && (
+        {/* Subscription — only when expanded */}
+        {expanded && !sub.loading && (
           <div className="mb-1">
             {sub.isPro && sub.plan === 'lifetime' && (
               <div className="rounded-lg bg-amber-500/10 border border-amber-500/20 px-3 py-2 flex items-center gap-2">
                 <Crown className="w-3.5 h-3.5 text-amber-500 shrink-0" />
                 <div>
-                  <p className="text-xs font-semibold text-amber-500">Pro Lifetime</p>
+                  <p className="text-xs font-semibold text-amber-500 whitespace-nowrap">Pro Lifetime</p>
                   <p className="text-[10px] text-muted-foreground">Neomezený přístup</p>
                 </div>
               </div>
             )}
-
             {sub.isPro && !sub.isTrial && sub.plan !== 'lifetime' && (
               <div className="rounded-lg bg-amber-500/10 border border-amber-500/20 px-3 py-2 space-y-1.5">
                 <div className="flex items-center justify-between">
@@ -236,83 +254,82 @@ export function Sidebar() {
                   <span className="text-[10px] text-muted-foreground">{sub.daysLeft} dní</span>
                 </div>
                 <div className="h-1 rounded-full bg-border overflow-hidden">
-                  <div
-                    className="h-full rounded-full bg-amber-500 transition-all"
-                    style={{ width: `${Math.min(100, ((sub.daysLeft ?? 0) / 365) * 100)}%` }}
-                  />
+                  <div className="h-full rounded-full bg-amber-500 transition-all" style={{ width: `${Math.min(100, ((sub.daysLeft ?? 0) / 365) * 100)}%` }} />
                 </div>
-                <Link href="/subscription" className="text-[10px] text-muted-foreground hover:text-foreground transition-colors">
-                  Prodloužit →
-                </Link>
+                <Link href="/subscription" className="text-[10px] text-muted-foreground hover:text-foreground transition-colors">Prodloužit →</Link>
               </div>
             )}
-
             {sub.isTrial && (
               <div className="rounded-lg border border-border px-3 py-2 space-y-1.5">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-medium">Trial</span>
-                  <span className="text-[10px] text-muted-foreground">{sub.daysLeft} dní zbývá</span>
+                  <span className="text-[10px] text-muted-foreground">{sub.daysLeft} dní</span>
                 </div>
                 <div className="h-1 rounded-full bg-border overflow-hidden">
-                  <div
-                    className="h-full rounded-full bg-primary transition-all"
-                    style={{ width: `${Math.min(100, ((sub.daysLeft ?? 0) / 7) * 100)}%` }}
-                  />
+                  <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${Math.min(100, ((sub.daysLeft ?? 0) / 7) * 100)}%` }} />
                 </div>
-                <Link
-                  href="/subscription"
-                  className="flex items-center justify-center gap-1.5 w-full mt-1 py-1.5 rounded-md text-xs font-semibold bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:from-amber-400 hover:to-orange-400 transition-all"
-                >
-                  <Zap className="w-3 h-3" />
-                  Aktivovat Pro
+                <Link href="/subscription" className="flex items-center justify-center gap-1.5 w-full mt-1 py-1.5 rounded-md text-xs font-semibold bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:from-amber-400 hover:to-orange-400 transition-all">
+                  <Zap className="w-3 h-3" /> Aktivovat Pro
                 </Link>
               </div>
             )}
-
             {sub.isFree && (
               <div className="rounded-lg border border-border px-3 py-2">
-                <Link
-                  href="/subscription"
-                  className="flex items-center justify-center gap-1.5 w-full py-1.5 rounded-md text-xs font-semibold bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:from-amber-400 hover:to-orange-400 transition-all"
-                >
-                  <Zap className="w-3 h-3" />
-                  Aktivovat Pro
+                <Link href="/subscription" className="flex items-center justify-center gap-1.5 w-full py-1.5 rounded-md text-xs font-semibold bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:from-amber-400 hover:to-orange-400 transition-all">
+                  <Zap className="w-3 h-3" /> Aktivovat Pro
                 </Link>
               </div>
             )}
           </div>
         )}
 
-        {/* Theme + Logout */}
-        <Button
-          variant="ghost"
-          size="sm"
-          className="justify-start text-muted-foreground hover:text-foreground"
+        {/* Pro icon when collapsed */}
+        {!expanded && sub.isPro && (
+          <div className="flex justify-center mb-1">
+            <Crown className="w-4 h-4 text-amber-500" />
+          </div>
+        )}
+
+        {/* Theme toggle */}
+        <button
           onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+          title={expanded ? undefined : theme === 'dark' ? 'Světlý režim' : 'Tmavý režim'}
           suppressHydrationWarning
-        >
-          {mounted ? (
-            <>
-              {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-              <span>{theme === 'dark' ? 'Světlý' : 'Tmavý'} režim</span>
-            </>
-          ) : (
-            <><Moon className="w-4 h-4" /><span className="opacity-0">Theme</span></>
+          className={cn(
+            'flex items-center gap-2 rounded-lg px-2 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-secondary/60 transition-all',
+            !expanded && 'justify-center',
           )}
-        </Button>
+        >
+          {mounted
+            ? theme === 'dark' ? <Sun className="w-4 h-4 flex-shrink-0" /> : <Moon className="w-4 h-4 flex-shrink-0" />
+            : <Moon className="w-4 h-4 flex-shrink-0" />
+          }
+          {expanded && mounted && <span className="whitespace-nowrap">{theme === 'dark' ? 'Světlý' : 'Tmavý'} režim</span>}
+        </button>
 
-        <Button variant="ghost" size="sm" className="justify-start text-muted-foreground hover:text-foreground" onClick={handleLogout}>
-          <LogOut className="w-4 h-4" />
-          Odhlásit se
-        </Button>
+        {/* Logout */}
+        <button
+          onClick={handleLogout}
+          title={expanded ? undefined : 'Odhlásit se'}
+          className={cn(
+            'flex items-center gap-2 rounded-lg px-2 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-secondary/60 transition-all',
+            !expanded && 'justify-center',
+          )}
+        >
+          <LogOut className="w-4 h-4 flex-shrink-0" />
+          {expanded && <span className="whitespace-nowrap">Odhlásit se</span>}
+        </button>
 
-        <div className="flex gap-2 flex-wrap pt-1.5 border-t border-border mt-0.5">
-          <Link href="/podminky" className="text-[10px] text-muted-foreground hover:text-foreground transition-colors">Podmínky</Link>
-          <span className="text-[10px] text-muted-foreground">·</span>
-          <Link href="/gdpr"      className="text-[10px] text-muted-foreground hover:text-foreground transition-colors">GDPR</Link>
-          <span className="text-[10px] text-muted-foreground">·</span>
-          <Link href="/cookies"   className="text-[10px] text-muted-foreground hover:text-foreground transition-colors">Cookies</Link>
-        </div>
+        {/* Legal links — only expanded */}
+        {expanded && (
+          <div className="flex gap-2 flex-wrap pt-1.5 border-t border-border mt-0.5">
+            <Link href="/podminky" className="text-[10px] text-muted-foreground hover:text-foreground transition-colors">Podmínky</Link>
+            <span className="text-[10px] text-muted-foreground">·</span>
+            <Link href="/gdpr"      className="text-[10px] text-muted-foreground hover:text-foreground transition-colors">GDPR</Link>
+            <span className="text-[10px] text-muted-foreground">·</span>
+            <Link href="/cookies"   className="text-[10px] text-muted-foreground hover:text-foreground transition-colors">Cookies</Link>
+          </div>
+        )}
       </div>
     </aside>
   );
