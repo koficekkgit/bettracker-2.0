@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useTransition } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { Coins, Check, Lock, Sparkles, ShoppingBag } from 'lucide-react';
+import { Coins, Check, Lock, Sparkles, ShoppingBag, PackageOpen } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { useProfile } from '@/hooks/use-profile';
 import { CharacterAvatar } from '@/components/character/character-avatar';
@@ -12,7 +12,9 @@ import {
   FREE_ITEM_IDS, DEFAULT_CHARACTER, RARITY_CFG,
   type CharacterConfig, type ShopItem, type ItemSlot,
 } from '@/lib/character';
+import CasesPage from '@/app/(app)/cases/page';
 
+type TopTab = 'character' | 'cases';
 type Tab = ItemSlot;
 
 const TABS: { id: Tab; label: string; emoji: string }[] = [
@@ -35,6 +37,7 @@ export default function CharacterPage() {
   const { data: profile, isLoading } = useProfile();
   const queryClient = useQueryClient();
   const [, startTransition] = useTransition();
+  const [topTab, setTopTab] = useState<TopTab>('character');
 
   const [ownedIds, setOwnedIds]         = useState<Set<string>>(FREE_ITEM_IDS);
   const [equipped, setEquipped]         = useState<CharacterConfig>(DEFAULT_CHARACTER);
@@ -138,6 +141,38 @@ export default function CharacterPage() {
 
   return (
     <div className="max-w-5xl space-y-5">
+      {/* Top tab switcher */}
+      <div className="flex gap-1 p-1 bg-zinc-900 border border-zinc-800 rounded-xl w-fit">
+        <button
+          onClick={() => setTopTab('character')}
+          className={cn(
+            'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all',
+            topTab === 'character'
+              ? 'bg-violet-600 text-white shadow-sm'
+              : 'text-zinc-500 hover:text-zinc-300'
+          )}
+        >
+          <Sparkles className="w-3.5 h-3.5" /> Postava
+        </button>
+        <button
+          onClick={() => setTopTab('cases')}
+          className={cn(
+            'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all',
+            topTab === 'cases'
+              ? 'bg-amber-500 text-black shadow-sm'
+              : 'text-zinc-500 hover:text-zinc-300'
+          )}
+        >
+          <PackageOpen className="w-3.5 h-3.5" /> SM Bedny
+        </button>
+      </div>
+
+      {/* Cases tab */}
+      {topTab === 'cases' && <CasesPage />}
+
+      {/* Character tab */}
+      {topTab === 'character' && <>
+
       {/* Header */}
       <div className="flex items-center justify-between gap-4">
         <div>
@@ -370,6 +405,7 @@ export default function CharacterPage() {
           {toast}
         </div>
       )}
+      </>}
     </div>
   );
 }

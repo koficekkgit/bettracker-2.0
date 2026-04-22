@@ -105,8 +105,15 @@ export default function StatsPage() {
 
   return (
     <div className="space-y-6">
-      <div>
+      <div className="flex items-center justify-between gap-4">
         <h1 className="text-2xl font-semibold">{t('stats.title')}</h1>
+        <a
+          href="/recap"
+          className="flex items-center gap-2 px-4 py-2 rounded-xl border border-pink-500/30 bg-pink-500/8 text-pink-400 text-sm font-semibold hover:bg-pink-500/15 transition-colors flex-shrink-0"
+        >
+          <span>✨</span>
+          Týdenní Recap
+        </a>
       </div>
 
       <PeriodSelector

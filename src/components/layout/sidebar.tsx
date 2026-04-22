@@ -9,7 +9,7 @@ import {
   LayoutDashboard, ListOrdered, BarChart3, CalendarDays,
   Calculator, Users, UsersRound, Trophy, Wallet,
   Medal, Settings, ShieldCheck, LogOut, Moon, Sun, Zap, Crown,
-  UserCircle2, ClipboardList, PackageOpen, Sparkles, Pin, PinOff,
+  UserCircle2, ClipboardList, Sparkles, Pin, PinOff,
 } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { createClient } from '@/lib/supabase/client';
@@ -29,6 +29,7 @@ type NavItem = {
 
 type NavGroup = {
   label?: string;
+  accent?: string; // tailwind bg + text classes for the section label dot
   items: NavItem[];
 };
 
@@ -59,6 +60,7 @@ export function Sidebar() {
     },
     {
       label: 'Sázky',
+      accent: 'bg-blue-500',
       items: [
         { href: '/bets',     label: t('bets'),     icon: ListOrdered,  color: 'text-blue-400' },
         { href: '/stats',    label: t('stats'),    icon: BarChart3,    color: 'text-violet-400' },
@@ -68,6 +70,7 @@ export function Sidebar() {
     },
     {
       label: 'Komunita',
+      accent: 'bg-emerald-500',
       items: [
         { href: '/friends',     label: t('friends'),     icon: Users,      color: 'text-emerald-400' },
         { href: '/groups',      label: t('groups'),      icon: UsersRound, color: 'text-emerald-400', badge: 'beta' },
@@ -76,12 +79,11 @@ export function Sidebar() {
     },
     {
       label: 'SM',
+      accent: 'bg-amber-500',
       items: [
         { href: '/achievements', label: tAch('title'),  icon: Medal,         color: 'text-amber-400' },
         { href: '/tasks',        label: 'Úkoly',        icon: ClipboardList, color: 'text-amber-400' },
-        { href: '/cases',        label: 'SM Bedny',     icon: PackageOpen,   color: 'text-amber-400' },
-        { href: '/character',    label: 'Postava',      icon: UserCircle2,   color: 'text-violet-400', badge: 'beta' },
-        { href: '/recap',        label: 'Týd. Recap',   icon: Sparkles,      color: 'text-pink-400' },
+        { href: '/character',    label: 'Postava & Bedny', icon: UserCircle2, color: 'text-violet-400' },
       ],
     },
     ...(profile?.payouts_enabled ? [{
@@ -156,9 +158,14 @@ export function Sidebar() {
 
             {/* Section label — only when expanded */}
             {group.label && expanded && (
-              <p className="hidden md:block px-3 mb-1 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/50 select-none whitespace-nowrap overflow-hidden">
-                {group.label}
-              </p>
+              <div className="hidden md:flex items-center gap-2 px-3 mb-1">
+                {group.accent && (
+                  <span className={cn('w-1.5 h-1.5 rounded-full flex-shrink-0', group.accent)} />
+                )}
+                <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/50 select-none whitespace-nowrap overflow-hidden">
+                  {group.label}
+                </p>
+              </div>
             )}
 
             {/* Divider when collapsed */}
