@@ -3,6 +3,7 @@ import { TrialBanner } from '@/components/subscription/trial-banner';
 import { UsernameOnboardingDialog } from '@/components/auth/username-onboarding-dialog';
 import { AuthCacheReset } from '@/components/auth/auth-cache-reset';
 import { AchievementsSync } from '@/components/auth/achievements-sync';
+import { CoinsSync } from '@/components/auth/coins-sync';
 import { GlobalPaywall } from '@/components/subscription/global-paywall';
 import { SubscriptionOnboardingDialog } from '@/components/subscription/subscription-onboarding-dialog';
 
@@ -20,6 +21,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <SubscriptionOnboardingDialog />
       <AuthCacheReset />
       <AchievementsSync />
+      <CoinsSync />
     </div>
   );
 }

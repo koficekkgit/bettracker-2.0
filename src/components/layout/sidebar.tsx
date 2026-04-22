@@ -9,6 +9,7 @@ import {
   LayoutDashboard, ListOrdered, BarChart3, CalendarDays,
   Calculator, Users, UsersRound, Trophy, CreditCard, Wallet,
   Medal, Settings, ShieldCheck, LogOut, Moon, Sun, Zap, Crown,
+  Coins, UserCircle2,
 } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { createClient } from '@/lib/supabase/client';
@@ -67,8 +68,9 @@ export function Sidebar() {
       items: [
         { href: '/friends',      label: t('friends'),       icon: Users,      color: 'text-emerald-400' },
         { href: '/groups',       label: t('groups'),        icon: UsersRound, color: 'text-emerald-400', badge: 'beta' },
-        { href: '/leaderboard',  label: t('leaderboard'),   icon: Trophy,     color: 'text-amber-400' },
-        { href: '/achievements', label: tAch('title'),      icon: Medal,      color: 'text-amber-400' },
+        { href: '/leaderboard',  label: t('leaderboard'),   icon: Trophy,        color: 'text-amber-400' },
+        { href: '/achievements', label: tAch('title'),      icon: Medal,         color: 'text-amber-400' },
+        { href: '/character',    label: 'Postava',          icon: UserCircle2,   color: 'text-violet-400' },
       ],
     },
     {
@@ -166,6 +168,20 @@ export function Sidebar() {
 
       {/* Bottom widgets */}
       <div className="hidden md:flex flex-col gap-1.5 p-3 border-t border-border">
+
+        {/* Coins widget */}
+        {(profile?.coins ?? 0) > 0 && (
+          <Link
+            href="/character"
+            className="flex items-center gap-2.5 px-3 py-2 rounded-lg bg-amber-500/8 border border-amber-500/15 hover:bg-amber-500/12 transition-colors mb-1"
+          >
+            <Coins className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
+            <span className="text-xs font-bold text-amber-400 tabular-nums">
+              {(profile?.coins ?? 0).toLocaleString()}
+            </span>
+            <span className="text-[10px] text-zinc-500 ml-auto">SM coinů</span>
+          </Link>
+        )}
 
         {/* Subscription widget */}
         {!sub.loading && (

@@ -26,6 +26,13 @@ export interface Profile {
   show_bets_to_friends: boolean;
   payouts_enabled?: boolean;
   bankroll_onboarded_at?: string | null;
+  coins?: number;
+  coins_synced?: number;
+  character_skin?: string;
+  character_hair?: string;
+  character_hair_color?: string;
+  character_outfit?: string;
+  character_accessory?: string;
 }
 
 export type SubscriptionPlan = 'monthly' | 'quarterly' | 'yearly' | 'lifetime';
