@@ -33,7 +33,7 @@ export function rollCaseItem(caseDef: CaseDef): ShopItem {
 export const CASES: CaseDef[] = [
   {
     id: 'starter',
-    name: 'Starter Case',
+    name: 'Starter Bedna',
     description: 'Common & rare itemy pro nováčky',
     price: 300,
     emoji: '📦',
@@ -57,7 +57,7 @@ export const CASES: CaseDef[] = [
   },
   {
     id: 'pro',
-    name: 'Pro Case',
+    name: 'Pro Bedna',
     description: 'Rare & epic kousky pro profíky',
     price: 700,
     emoji: '💼',
@@ -81,7 +81,7 @@ export const CASES: CaseDef[] = [
   },
   {
     id: 'legend',
-    name: 'Legend Case',
+    name: 'Legend Bedna',
     description: 'Nejlepší legendary itemy v celé hře',
     price: 1500,
     emoji: '👑',
