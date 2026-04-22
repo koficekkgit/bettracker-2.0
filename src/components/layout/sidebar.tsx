@@ -70,7 +70,7 @@ export function Sidebar() {
         { href: '/groups',       label: t('groups'),        icon: UsersRound, color: 'text-emerald-400', badge: 'beta' },
         { href: '/leaderboard',  label: t('leaderboard'),   icon: Trophy,        color: 'text-amber-400' },
         { href: '/achievements', label: tAch('title'),      icon: Medal,         color: 'text-amber-400' },
-        { href: '/character',    label: 'Postava',          icon: UserCircle2,   color: 'text-violet-400' },
+        { href: '/character',    label: 'Postava',          icon: UserCircle2,   color: 'text-violet-400', badge: 'beta' },
       ],
     },
     {
