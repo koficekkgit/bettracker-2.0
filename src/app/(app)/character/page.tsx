@@ -94,7 +94,9 @@ export default function CharacterPage() {
     setSelectedId(null);
     startTransition(() => {
       const supabase = createClient();
-      void supabase.rpc('equip_item', { p_slot: item.slot, p_item_id: item.id });
+      void supabase.rpc('equip_item', { p_slot: item.slot, p_item_id: item.id }).then(() => {
+        queryClient.invalidateQueries({ queryKey: ['profile'] });
+      });
     });
   }
 

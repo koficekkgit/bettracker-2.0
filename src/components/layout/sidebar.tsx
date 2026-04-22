@@ -9,7 +9,7 @@ import {
   LayoutDashboard, ListOrdered, BarChart3, CalendarDays,
   Calculator, Users, UsersRound, Trophy, Wallet,
   Medal, Settings, ShieldCheck, LogOut, Moon, Sun, Zap, Crown,
-  UserCircle2, ClipboardList, PackageOpen,
+  UserCircle2, ClipboardList, PackageOpen, Sparkles,
 } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { createClient } from '@/lib/supabase/client';
@@ -69,6 +69,7 @@ export function Sidebar() {
         { href: '/groups',       label: t('groups'),        icon: UsersRound, color: 'text-emerald-400', badge: 'beta' },
         { href: '/leaderboard',  label: t('leaderboard'),   icon: Trophy,        color: 'text-amber-400' },
         { href: '/achievements', label: tAch('title'),      icon: Medal,         color: 'text-amber-400' },
+        { href: '/recap',        label: 'Týdenní Recap',    icon: Sparkles,      color: 'text-pink-400' },
         { href: '/tasks',        label: 'Úkoly',            icon: ClipboardList, color: 'text-amber-400' },
         { href: '/cases',        label: 'SM Bedny',         icon: PackageOpen,   color: 'text-amber-400' },
         { href: '/character',    label: 'Postava',          icon: UserCircle2,   color: 'text-violet-400', badge: 'beta' },

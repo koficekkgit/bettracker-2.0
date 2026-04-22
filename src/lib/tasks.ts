@@ -30,7 +30,6 @@ export function getPeriodKey(period: TaskPeriod): string {
   return period === 'daily' ? getDailyKey() : getWeeklyKey();
 }
 
-// Next reset times for countdown display
 export function getNextDailyReset(): Date {
   const d = new Date();
   d.setDate(d.getDate() + 1);
@@ -67,91 +66,193 @@ function isWon(b: Bet): boolean {
   return b.status === 'won' || b.status === 'half_won';
 }
 
+function isLost(b: Bet): boolean {
+  return b.status === 'lost' || b.status === 'half_lost';
+}
+
 // ── Task definitions ────────────────────────────────────────
 
 export const TASKS: TaskDef[] = [
-  // ── Daily ──────────────────────────────────────────────────
+
+  // ╔══════════════════════════════════════════════════════════╗
+  // ║  DAILY                                                   ║
+  // ╚══════════════════════════════════════════════════════════╝
+
   {
-    id: 'd_first_bet',
+    id: 'd_five_bets',
     period: 'daily',
     emoji: '📋',
-    name: 'První sázka dne',
-    description: 'Přidej alespoň 1 sázku dnes',
-    coins: 15,
-    target: 1,
-    getProgress: (bets, key) => Math.min(betsInDay(bets, key).length, 1),
+    name: 'Denní dávka',
+    description: 'Přidej 5 sázek dnes',
+    coins: 40,
+    target: 5,
+    getProgress: (bets, key) => Math.min(betsInDay(bets, key).length, 5),
   },
   {
-    id: 'd_win',
+    id: 'd_three_wins',
     period: 'daily',
     emoji: '🏆',
-    name: 'Denní výhra',
-    description: 'Vyhraj alespoň 1 sázku dnes',
-    coins: 25,
-    target: 1,
-    getProgress: (bets, key) => Math.min(betsInDay(bets, key).filter(isWon).length, 1),
-  },
-  {
-    id: 'd_triple',
-    period: 'daily',
-    emoji: '🔥',
-    name: 'Tripl',
-    description: 'Přidej 3 sázky dnes',
-    coins: 45,
+    name: 'Hat-trick',
+    description: 'Vyhraj 3 sázky dnes',
+    coins: 55,
     target: 3,
-    getProgress: (bets, key) => Math.min(betsInDay(bets, key).length, 3),
+    getProgress: (bets, key) => Math.min(betsInDay(bets, key).filter(isWon).length, 3),
   },
   {
-    id: 'd_double_win',
+    id: 'd_accumulator',
+    period: 'daily',
+    emoji: '🎰',
+    name: 'Kombinátor',
+    description: 'Přidej akumulátor dnes',
+    coins: 35,
+    target: 1,
+    getProgress: (bets, key) =>
+      Math.min(betsInDay(bets, key).filter((b) => b.bet_type === 'accumulator').length, 1),
+  },
+  {
+    id: 'd_big_odds_win',
+    period: 'daily',
+    emoji: '💥',
+    name: 'Risk taker',
+    description: 'Vyhraj sázku s kurzem ≥ 2.5',
+    coins: 50,
+    target: 1,
+    getProgress: (bets, key) =>
+      Math.min(betsInDay(bets, key).filter((b) => isWon(b) && b.odds >= 2.5).length, 1),
+  },
+  {
+    id: 'd_five_wins',
     period: 'daily',
     emoji: '⚡',
-    name: 'Dvojitá výhra',
-    description: 'Vyhraj 2 sázky dnes',
-    coins: 50,
-    target: 2,
-    getProgress: (bets, key) => Math.min(betsInDay(bets, key).filter(isWon).length, 2),
+    name: 'Výherní série',
+    description: 'Vyhraj 5 sázek dnes',
+    coins: 80,
+    target: 5,
+    getProgress: (bets, key) => Math.min(betsInDay(bets, key).filter(isWon).length, 5),
+  },
+  {
+    id: 'd_perfect_day',
+    period: 'daily',
+    emoji: '✨',
+    name: 'Perfektní den',
+    description: 'Přidej 3 sázky dnes a neprohraj ani jednu',
+    coins: 70,
+    target: 3,
+    getProgress: (bets, key) => {
+      const day = betsInDay(bets, key);
+      // Any loss resets progress to 0
+      if (day.some(isLost)) return 0;
+      return Math.min(day.length, 3);
+    },
+  },
+  {
+    id: 'd_eight_bets',
+    period: 'daily',
+    emoji: '🔥',
+    name: 'Denní grind',
+    description: 'Přidej 8 sázek dnes',
+    coins: 65,
+    target: 8,
+    getProgress: (bets, key) => Math.min(betsInDay(bets, key).length, 8),
+  },
+  {
+    id: 'd_high_odds_trio',
+    period: 'daily',
+    emoji: '🎯',
+    name: 'Vysoké kurzy',
+    description: 'Přidej 3 sázky s kurzem ≥ 2.0 dnes',
+    coins: 45,
+    target: 3,
+    getProgress: (bets, key) =>
+      Math.min(betsInDay(bets, key).filter((b) => b.odds >= 2.0).length, 3),
+  },
+  {
+    id: 'd_accumulator_win',
+    period: 'daily',
+    emoji: '🚀',
+    name: 'Jackpot',
+    description: 'Vyhraj akumulátor dnes',
+    coins: 90,
+    target: 1,
+    getProgress: (bets, key) =>
+      Math.min(betsInDay(bets, key).filter((b) => b.bet_type === 'accumulator' && isWon(b)).length, 1),
+  },
+  {
+    id: 'd_seven_wins',
+    period: 'daily',
+    emoji: '👑',
+    name: 'Denní král',
+    description: 'Vyhraj 7 sázek dnes',
+    coins: 110,
+    target: 7,
+    getProgress: (bets, key) => Math.min(betsInDay(bets, key).filter(isWon).length, 7),
   },
 
-  // ── Weekly ─────────────────────────────────────────────────
+  // ╔══════════════════════════════════════════════════════════╗
+  // ║  WEEKLY                                                  ║
+  // ╚══════════════════════════════════════════════════════════╝
+
   {
-    id: 'w_five_bets',
+    id: 'w_fifteen_bets',
     period: 'weekly',
     emoji: '📊',
     name: 'Aktivní týden',
-    description: 'Přidej 5 sázek tento týden',
-    coins: 80,
-    target: 5,
-    getProgress: (bets, key) => Math.min(betsInWeek(bets, key).length, 5),
+    description: 'Přidej 15 sázek tento týden',
+    coins: 100,
+    target: 15,
+    getProgress: (bets, key) => Math.min(betsInWeek(bets, key).length, 15),
   },
   {
-    id: 'w_three_wins',
+    id: 'w_seven_wins',
     period: 'weekly',
     emoji: '🎯',
     name: 'Týdenní střelec',
-    description: 'Vyhraj 3 sázky tento týden',
-    coins: 100,
-    target: 3,
-    getProgress: (bets, key) => Math.min(betsInWeek(bets, key).filter(isWon).length, 3),
+    description: 'Vyhraj 7 sázek tento týden',
+    coins: 140,
+    target: 7,
+    getProgress: (bets, key) => Math.min(betsInWeek(bets, key).filter(isWon).length, 7),
   },
   {
-    id: 'w_ten_bets',
+    id: 'w_accumulator_wins',
+    period: 'weekly',
+    emoji: '🎰',
+    name: 'Parlay master',
+    description: 'Vyhraj 2 akumulátory tento týden',
+    coins: 160,
+    target: 2,
+    getProgress: (bets, key) =>
+      Math.min(betsInWeek(bets, key).filter((b) => b.bet_type === 'accumulator' && isWon(b)).length, 2),
+  },
+  {
+    id: 'w_high_odds_wins',
+    period: 'weekly',
+    emoji: '💥',
+    name: 'Kurzy nahoru',
+    description: 'Vyhraj 5 sázek s kurzem ≥ 2.0 tento týden',
+    coins: 170,
+    target: 5,
+    getProgress: (bets, key) =>
+      Math.min(betsInWeek(bets, key).filter((b) => isWon(b) && b.odds >= 2.0).length, 5),
+  },
+  {
+    id: 'w_twenty_five_bets',
     period: 'weekly',
     emoji: '💪',
     name: 'Grind týden',
-    description: 'Přidej 10 sázek tento týden',
-    coins: 150,
-    target: 10,
-    getProgress: (bets, key) => Math.min(betsInWeek(bets, key).length, 10),
+    description: 'Přidej 25 sázek tento týden',
+    coins: 200,
+    target: 25,
+    getProgress: (bets, key) => Math.min(betsInWeek(bets, key).length, 25),
   },
   {
-    id: 'w_five_wins',
+    id: 'w_ten_wins',
     period: 'weekly',
     emoji: '👑',
-    name: 'Týdenní král',
-    description: 'Vyhraj 5 sázek tento týden',
-    coins: 130,
-    target: 5,
-    getProgress: (bets, key) => Math.min(betsInWeek(bets, key).filter(isWon).length, 5),
+    name: 'Týdenní legenda',
+    description: 'Vyhraj 10 sázek tento týden',
+    coins: 190,
+    target: 10,
+    getProgress: (bets, key) => Math.min(betsInWeek(bets, key).filter(isWon).length, 10),
   },
 ];
 
