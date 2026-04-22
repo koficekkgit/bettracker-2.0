@@ -25,7 +25,9 @@
       "PowerShell(Get-Item \"C:\\\\Users\\\\kofic\\\\Desktop\\\\bettracker-new\\\\public\\\\bookmakers\\\\sazkabet.png\" | Select-Object Name, Length; $bytes = [System.IO.File]::ReadAllBytes\\(\"C:\\\\Users\\\\kofic\\\\Desktop\\\\bettracker-new\\\\public\\\\bookmakers\\\\sazkabet.png\"\\); \"Size: $\\($bytes.Length\\) bytes\"; \"Magic: \" + \\($bytes[0..7] | ForEach-Object { $_.ToString\\(\"X2\"\\) } | Join-String \" \"\\))",
       "Bash(node -e \"const icons = require\\('lucide-react'\\); console.log\\('Dice5:', !!icons.Dice5, 'Dice3:', !!icons.Dice3, 'Crosshair:', !!icons.Crosshair, 'Banknote:', !!icons.Banknote, 'Coins:', !!icons.Coins, 'Gem:', !!icons.Gem\\)\")",
       "Bash(node -e \"const pkg = require\\('./package.json'\\); console.log\\('next-intl:', pkg.dependencies['next-intl'], 'next:', pkg.dependencies['next'], 'lucide-react:', pkg.dependencies['lucide-react']\\)\")",
-      "mcp__Claude_in_Chrome__tabs_context_mcp"
+      "mcp__Claude_in_Chrome__tabs_context_mcp",
+      "mcp__Claude_in_Chrome__navigate",
+      "mcp__Claude_in_Chrome__computer"
     ]
   }
 }

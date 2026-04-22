@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
@@ -9,7 +9,7 @@ import {
   LayoutDashboard, ListOrdered, BarChart3, CalendarDays,
   Calculator, Users, UsersRound, Trophy, Wallet,
   Medal, Settings, ShieldCheck, LogOut, Moon, Sun, Zap, Crown,
-  UserCircle2, ClipboardList, PackageOpen, Sparkles,
+  UserCircle2, ClipboardList, PackageOpen, Sparkles, ChevronDown,
 } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { createClient } from '@/lib/supabase/client';
@@ -30,6 +30,8 @@ type NavItem = {
 type NavGroup = {
   label?: string;
   items: NavItem[];
+  collapsible?: boolean;
+  defaultOpen?: boolean;
 };
 
 export function Sidebar() {
@@ -43,7 +45,8 @@ export function Sidebar() {
   const { data: profile } = useProfile();
   const sub = useSubscription();
   const { data: pendingRequests = 0 } = usePendingFriendRequestCount();
-  const [mounted, setMounted] = useState(false);
+  const [mounted, setMounted]       = useState(false);
+  const [collapsed, setCollapsed]   = useState<Record<string, boolean>>({});
 
   useEffect(() => { setMounted(true); }, []);
 
@@ -65,14 +68,21 @@ export function Sidebar() {
     {
       label: 'Komunita',
       items: [
-        { href: '/friends',      label: t('friends'),       icon: Users,      color: 'text-emerald-400' },
-        { href: '/groups',       label: t('groups'),        icon: UsersRound, color: 'text-emerald-400', badge: 'beta' },
-        { href: '/leaderboard',  label: t('leaderboard'),   icon: Trophy,        color: 'text-amber-400' },
-        { href: '/achievements', label: tAch('title'),      icon: Medal,         color: 'text-amber-400' },
-        { href: '/recap',        label: 'Týdenní Recap',    icon: Sparkles,      color: 'text-pink-400' },
-        { href: '/tasks',        label: 'Úkoly',            icon: ClipboardList, color: 'text-amber-400' },
-        { href: '/cases',        label: 'SM Bedny',         icon: PackageOpen,   color: 'text-amber-400' },
-        { href: '/character',    label: 'Postava',          icon: UserCircle2,   color: 'text-violet-400', badge: 'beta' },
+        { href: '/friends',     label: t('friends'),     icon: Users,      color: 'text-emerald-400' },
+        { href: '/groups',      label: t('groups'),      icon: UsersRound, color: 'text-emerald-400', badge: 'beta' },
+        { href: '/leaderboard', label: t('leaderboard'), icon: Trophy,     color: 'text-amber-400' },
+      ],
+    },
+    {
+      label: 'SM',
+      collapsible: true,
+      defaultOpen: false,
+      items: [
+        { href: '/achievements', label: tAch('title'),   icon: Medal,         color: 'text-amber-400' },
+        { href: '/tasks',        label: 'Úkoly',         icon: ClipboardList, color: 'text-amber-400' },
+        { href: '/cases',        label: 'SM Bedny',      icon: PackageOpen,   color: 'text-amber-400' },
+        { href: '/character',    label: 'Postava',       icon: UserCircle2,   color: 'text-violet-400', badge: 'beta' },
+        { href: '/recap',        label: 'Týd. Recap',    icon: Sparkles,      color: 'text-pink-400' },
       ],
     },
     ...(profile?.payouts_enabled ? [{
@@ -112,57 +122,92 @@ export function Sidebar() {
 
       {/* Nav */}
       <nav className="flex md:flex-col flex-1 px-2 py-3 gap-0.5 overflow-x-auto md:overflow-y-auto">
-        {groups.map((group, gi) => (
-          <div key={gi} className={cn('flex md:flex-col', gi > 0 && 'md:mt-3')}>
-            {group.label && (
-              <p className="hidden md:block px-3 mb-1 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/50 select-none">
-                {group.label}
-              </p>
-            )}
-            {group.items.map((item) => {
-              const Icon   = item.icon;
-              const active = pathname.startsWith(item.href);
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={cn(
-                    'group relative flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-150 whitespace-nowrap',
-                    active
-                      ? 'bg-secondary text-foreground shadow-sm'
-                      : 'text-muted-foreground hover:bg-secondary/60 hover:text-foreground'
-                  )}
-                >
-                  {/* Colored left bar on active */}
-                  {active && (
-                    <span className={cn('absolute left-0 top-1.5 bottom-1.5 w-0.5 rounded-full', item.color.replace('text-', 'bg-'))} />
-                  )}
+        {groups.map((group, gi) => {
+          const hasActiveItem = group.items.some(i => pathname.startsWith(i.href));
 
-                  <Icon className={cn(
-                    'w-4 h-4 shrink-0 transition-colors',
-                    active ? item.color : 'text-muted-foreground group-hover:' + item.color.replace('text-', 'text-')
-                  )} />
+          // For collapsible groups: open if user explicitly toggled, or if a child is active
+          const isOpen = group.collapsible
+            ? (collapsed[group.label!] ?? (group.defaultOpen || hasActiveItem))
+            : true;
 
-                  <span className="flex-1">{item.label}</span>
+          function toggleGroup() {
+            if (!group.collapsible || !group.label) return;
+            setCollapsed(prev => ({ ...prev, [group.label!]: !isOpen }));
+          }
 
-                  {/* BETA badge */}
-                  {item.badge === 'beta' && (
-                    <span className="px-1.5 py-0.5 rounded text-[9px] font-bold tracking-wide uppercase bg-violet-500/15 border border-violet-500/25 text-violet-400">
-                      Beta
+          return (
+            <div key={gi} className={cn('flex md:flex-col', gi > 0 && 'md:mt-3')}>
+              {/* Section header */}
+              {group.label && (
+                group.collapsible ? (
+                  <button
+                    onClick={toggleGroup}
+                    className="hidden md:flex items-center justify-between px-3 mb-1 w-full group/hdr"
+                  >
+                    <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/50 group-hover/hdr:text-muted-foreground transition-colors select-none">
+                      {group.label}
                     </span>
-                  )}
+                    <ChevronDown className={cn(
+                      'w-3 h-3 text-muted-foreground/40 group-hover/hdr:text-muted-foreground transition-all duration-200',
+                      isOpen ? 'rotate-0' : '-rotate-90',
+                    )} />
+                  </button>
+                ) : (
+                  <p className="hidden md:block px-3 mb-1 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/50 select-none">
+                    {group.label}
+                  </p>
+                )
+              )}
 
-                  {/* Pending friend requests badge */}
-                  {item.href === '/friends' && pendingRequests > 0 && (
-                    <span className="flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white animate-pulse">
-                      {pendingRequests > 9 ? '9+' : pendingRequests}
-                    </span>
-                  )}
-                </Link>
-              );
-            })}
-          </div>
-        ))}
+              {/* Items — hidden when collapsed (desktop only) */}
+              <div className={cn(
+                'flex md:flex-col gap-0.5 overflow-hidden transition-all duration-200',
+                group.collapsible && !isOpen && 'md:max-h-0 md:opacity-0 md:pointer-events-none',
+                group.collapsible && isOpen  && 'md:max-h-96 md:opacity-100',
+              )}>
+                {group.items.map((item) => {
+                  const Icon   = item.icon;
+                  const active = pathname.startsWith(item.href);
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className={cn(
+                        'group relative flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-150 whitespace-nowrap',
+                        active
+                          ? 'bg-secondary text-foreground shadow-sm'
+                          : 'text-muted-foreground hover:bg-secondary/60 hover:text-foreground'
+                      )}
+                    >
+                      {active && (
+                        <span className={cn('absolute left-0 top-1.5 bottom-1.5 w-0.5 rounded-full', item.color.replace('text-', 'bg-'))} />
+                      )}
+
+                      <Icon className={cn(
+                        'w-4 h-4 shrink-0 transition-colors',
+                        active ? item.color : 'text-muted-foreground group-hover:' + item.color.replace('text-', 'text-')
+                      )} />
+
+                      <span className="flex-1">{item.label}</span>
+
+                      {item.badge === 'beta' && (
+                        <span className="px-1.5 py-0.5 rounded text-[9px] font-bold tracking-wide uppercase bg-violet-500/15 border border-violet-500/25 text-violet-400">
+                          Beta
+                        </span>
+                      )}
+
+                      {item.href === '/friends' && pendingRequests > 0 && (
+                        <span className="flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white animate-pulse">
+                          {pendingRequests > 9 ? '9+' : pendingRequests}
+                        </span>
+                      )}
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })}
       </nav>
 
       {/* Bottom widgets */}
