@@ -93,6 +93,13 @@ export function Sidebar() {
       ],
     }] : []),
     {
+      label: 'Předplatné',
+      accent: 'bg-amber-500',
+      items: [
+        { href: '/subscription', label: 'Předplatné', icon: Crown, color: 'text-amber-400' },
+      ],
+    },
+    {
       label: 'Účet',
       items: [
         { href: '/settings', label: t('settings'), icon: Settings,    color: 'text-slate-400' },
