@@ -139,9 +139,19 @@ export function BadgeGrid({ ctx, earnedIds }: { ctx: AchievementContext; earnedI
               </div>
             </div>
 
-            {/* Cards */}
+            {/* Cards — earned first, then by progress %, then locked */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-              {items.map((a) => (
+              {[...items].sort((a, b) => {
+                const aE = earnedIds.has(a.id), bE = earnedIds.has(b.id);
+                if (aE !== bE) return aE ? -1 : 1;
+                if (!aE && !bE) {
+                  const ap = a.progress?.(ctx), bp = b.progress?.(ctx);
+                  const apct = ap ? ap.current / ap.target : 0;
+                  const bpct = bp ? bp.current / bp.target : 0;
+                  return bpct - apct;
+                }
+                return 0;
+              }).map((a) => (
                 <BadgeCard
                   key={a.id}
                   achievement={a}

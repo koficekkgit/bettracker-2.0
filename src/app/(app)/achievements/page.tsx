@@ -2,7 +2,7 @@
 
 import { useMemo, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
-import { Trophy, Crown, Sword, Shield, Star, Zap, Swords, ChevronRight } from 'lucide-react';
+import { Crown, Shield, Star, Zap, Swords, ArrowRight } from 'lucide-react';
 import { ProGate } from '@/components/subscription/pro-gate';
 import { useBets } from '@/hooks/use-bets';
 import {
@@ -44,20 +44,6 @@ const RANKS: Rank[] = [
 function getRank(n: number) { return [...RANKS].reverse().find((r) => n >= r.min) ?? RANKS[0]; }
 function getNextRank(n: number) { return RANKS.find((r) => r.min > n) ?? null; }
 
-function Ring({ pct, stroke, glow }: { pct: number; stroke: string; glow: string }) {
-  const r = 40, circ = 2 * Math.PI * r;
-  return (
-    <svg width="100" height="100" style={{ transform: 'rotate(-90deg)' }}>
-      <circle cx="50" cy="50" r={r} stroke="rgba(255,255,255,0.06)" strokeWidth="6" fill="none" />
-      <circle cx="50" cy="50" r={r} stroke={stroke} strokeWidth="6" fill="none"
-        strokeLinecap="round"
-        strokeDasharray={circ}
-        strokeDashoffset={circ - (pct / 100) * circ}
-        style={{ transition: 'stroke-dashoffset 1s ease', filter: `drop-shadow(0 0 5px ${glow})` }}
-      />
-    </svg>
-  );
-}
 
 function Content() {
   const t = useTranslations();
@@ -109,79 +95,81 @@ function Content() {
       </div>
 
       {/* Hero */}
-      <div className={cn(
-        'relative rounded-2xl overflow-hidden border border-zinc-800 bg-zinc-900',
-      )}>
-        {/* Subtle radial glow behind rank icon area */}
+      <div className="rounded-2xl bg-zinc-900 border border-zinc-800 overflow-hidden">
+        {/* Rank accent stripe */}
         <div
-          className="absolute left-0 inset-y-0 w-64 pointer-events-none"
-          style={{ background: `radial-gradient(ellipse at left, ${rank.glow} 0%, transparent 70%)` }}
+          className="h-[3px] w-full"
+          style={{ background: `linear-gradient(90deg, ${rank.stroke}, ${rank.stroke}00)` }}
         />
 
-        <div className="relative flex flex-wrap items-center gap-8 p-6 lg:p-8">
-          {/* Progress ring */}
-          <div className="relative flex-shrink-0">
-            <Ring pct={pct} stroke={rank.stroke} glow={rank.glow} />
-            <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <Trophy className={cn('w-5 h-5', rank.color)} />
-              <span className="text-lg font-black text-white leading-none mt-0.5">{earned}</span>
-              <span className="text-[11px] text-zinc-600">/{total}</span>
+        <div className="p-6 lg:p-7">
+          {/* Top row: rank icon + name | completion % */}
+          <div className="flex items-start justify-between gap-4 mb-5">
+            <div className="flex items-center gap-4">
+              <div
+                className="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0"
+                style={{ background: `${rank.stroke}18`, boxShadow: `0 0 20px ${rank.glow}` }}
+              >
+                <RankIcon className={cn('w-7 h-7', rank.color)} />
+              </div>
+              <div>
+                <div className="flex items-baseline gap-2 flex-wrap">
+                  <span className={cn('text-3xl font-black tracking-tight', rank.color)}>{rank.label}</span>
+                  <span className="text-xl font-semibold text-zinc-500">{rank.sublabel}</span>
+                </div>
+                <p className="text-sm text-zinc-500 mt-0.5">
+                  <span className="text-white font-semibold">{earned}</span> / {total} badges
+                </p>
+              </div>
+            </div>
+
+            {/* Big % number */}
+            <div className="text-right flex-shrink-0">
+              <div className="text-4xl font-black text-white leading-none">
+                {pct}<span className="text-2xl text-zinc-600">%</span>
+              </div>
+              <div className="text-[11px] text-zinc-600 uppercase tracking-widest mt-1">dokončeno</div>
             </div>
           </div>
 
-          {/* Rank + progress */}
-          <div className="flex-1 min-w-[200px]">
-            <div className="flex items-center gap-2.5 mb-1">
-              <RankIcon className={cn('w-5 h-5', rank.color)} />
-              <span className={cn('text-2xl font-black tracking-tight', rank.color)}>{rank.label}</span>
-              <span className="text-xl font-semibold text-zinc-500">{rank.sublabel}</span>
+          {/* Progress to next rank */}
+          {nextRank ? (
+            <div>
+              <div className="flex items-center justify-between text-xs mb-2">
+                <span className="flex items-center gap-1.5 text-zinc-500">
+                  <ArrowRight className="w-3 h-3" />
+                  Postup na <span className={cn('font-semibold', nextRank.color)}>{nextRank.label} {nextRank.sublabel}</span>
+                </span>
+                <span className="text-zinc-600">{nextRank.min - earned} {nextRank.min - earned === 1 ? 'badge' : 'badges'} chybí</span>
+              </div>
+              <div className="h-2 rounded-full bg-zinc-800 overflow-hidden">
+                <div
+                  className="h-full rounded-full transition-all duration-700"
+                  style={{ width: `${rankPct}%`, background: `linear-gradient(90deg, ${rank.stroke}55, ${rank.stroke})` }}
+                />
+              </div>
             </div>
+          ) : (
+            <div className={cn('flex items-center gap-2 text-sm font-bold', rank.color)}>
+              <Crown className="w-4 h-4" />
+              Maximální rank dosažen — jsi legenda!
+            </div>
+          )}
+        </div>
 
-            <p className="text-sm text-zinc-400 mb-4">
-              <span className="text-white font-semibold">{earned}</span>
-              <span className="text-zinc-600"> / {total} badges • </span>
-              <span className="text-white font-semibold">{pct}%</span>
-              <span className="text-zinc-600"> dokončeno</span>
-            </p>
-
-            {nextRank ? (
-              <div className="max-w-xs">
-                <div className="flex justify-between text-xs text-zinc-600 mb-1.5">
-                  <span className="flex items-center gap-1">
-                    <ChevronRight className="w-3 h-3" />
-                    <span className={nextRank.color}>{nextRank.label} {nextRank.sublabel}</span>
-                  </span>
-                  <span>{nextRank.min - earned} badges chybí</span>
-                </div>
-                <div className="h-2 rounded-full bg-zinc-800 overflow-hidden">
-                  <div
-                    className="h-full rounded-full transition-all duration-700"
-                    style={{ width: `${rankPct}%`, background: `linear-gradient(90deg, ${rank.stroke}66, ${rank.stroke})` }}
-                  />
-                </div>
-              </div>
-            ) : (
-              <div className={cn('flex items-center gap-2 text-sm font-bold', rank.color)}>
-                <Crown className="w-4 h-4" />
-                Maximální rank — jsi legenda!
-              </div>
-            )}
-          </div>
-
-          {/* Stats */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-zinc-800 rounded-xl overflow-hidden flex-shrink-0">
-            {[
-              { label: 'Nejdelší série', value: ctx.longestWinStreak },
-              { label: 'Aktuální série', value: ctx.currentWinStreak },
-              { label: 'Sázek celkem',   value: ctx.totalBets.toLocaleString() },
-              { label: 'Winrate',        value: `${Math.round(ctx.winRate)}%` },
-            ].map((s) => (
-              <div key={s.label} className="bg-zinc-900 px-5 py-3.5 text-center">
-                <div className="text-xl font-black text-white tabular-nums">{s.value}</div>
-                <div className="text-[11px] text-zinc-500 uppercase tracking-wide mt-0.5 whitespace-nowrap">{s.label}</div>
-              </div>
-            ))}
-          </div>
+        {/* Stats row — separated by top border */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 border-t border-zinc-800 divide-x divide-zinc-800">
+          {[
+            { label: 'Nejdelší série', value: ctx.longestWinStreak },
+            { label: 'Aktuální série', value: ctx.currentWinStreak },
+            { label: 'Sázek celkem',   value: ctx.totalBets.toLocaleString() },
+            { label: 'Winrate',        value: `${Math.round(ctx.winRate)}%` },
+          ].map((s) => (
+            <div key={s.label} className="py-4 text-center">
+              <div className="text-2xl font-black text-white tabular-nums">{s.value}</div>
+              <div className="text-[11px] text-zinc-500 uppercase tracking-wider mt-1">{s.label}</div>
+            </div>
+          ))}
         </div>
       </div>
 
