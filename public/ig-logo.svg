@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" width="1000" height="1000">
+  <defs>
+    <!-- Background -->
+    <radialGradient id="bgGrad" cx="50%" cy="45%" r="65%">
+      <stop offset="0%" stop-color="#180f35"/>
+      <stop offset="100%" stop-color="#07070d"/>
+    </radialGradient>
+
+    <!-- Bar gradients -->
+    <linearGradient id="g1" x1="0" y1="1" x2="0" y2="0" gradientUnits="objectBoundingBox">
+      <stop offset="0%" stop-color="#312e81"/>
+      <stop offset="100%" stop-color="#6366f1"/>
+    </linearGradient>
+    <linearGradient id="g2" x1="0" y1="1" x2="0" y2="0" gradientUnits="objectBoundingBox">
+      <stop offset="0%" stop-color="#4c1d95"/>
+      <stop offset="100%" stop-color="#a78bfa"/>
+    </linearGradient>
+    <linearGradient id="g3" x1="0" y1="1" x2="0" y2="0" gradientUnits="objectBoundingBox">
+      <stop offset="0%" stop-color="#92400e"/>
+      <stop offset="100%" stop-color="#fbbf24"/>
+    </linearGradient>
+
+    <!-- Shine overlay (glassy top reflection) -->
+    <linearGradient id="shine" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.18"/>
+      <stop offset="50%" stop-color="#ffffff" stop-opacity="0.04"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- Glow filters -->
+    <filter id="glowSm" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="6" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glowMd" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="14" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glowLg" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="28" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+
+    <!-- Soft ambient glow behind bars -->
+    <filter id="ambient" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="45"/>
+    </filter>
+  </defs>
+
+  <!-- ── Background ── -->
+  <rect width="1000" height="1000" fill="url(#bgGrad)"/>
+
+  <!-- Ambient light blobs behind bars -->
+  <ellipse cx="300" cy="620" rx="90" ry="60" fill="#4f46e5" opacity="0.18" filter="url(#ambient)"/>
+  <ellipse cx="500" cy="560" rx="90" ry="60" fill="#7c3aed" opacity="0.22" filter="url(#ambient)"/>
+  <ellipse cx="700" cy="480" rx="100" ry="70" fill="#d97706" opacity="0.28" filter="url(#ambient)"/>
+
+  <!-- ── Subtle grid lines ── -->
+  <g stroke="#ffffff" stroke-opacity="0.04" stroke-width="1.5">
+    <line x1="160" y1="300" x2="840" y2="300"/>
+    <line x1="160" y1="400" x2="840" y2="400"/>
+    <line x1="160" y1="500" x2="840" y2="500"/>
+    <line x1="160" y1="600" x2="840" y2="600"/>
+    <line x1="160" y1="700" x2="840" y2="700"/>
+  </g>
+
+  <!-- Baseline -->
+  <line x1="190" y1="748" x2="810" y2="748" stroke="#ffffff" stroke-opacity="0.12" stroke-width="2"/>
+
+  <!-- ── Bar 1 (indigo) ── -->
+  <!-- Glow shadow -->
+  <rect x="240" y="548" width="128" height="200" rx="18" fill="#4f46e5" opacity="0.5" filter="url(#ambient)"/>
+  <!-- Bar body -->
+  <rect x="240" y="548" width="128" height="200" rx="18" fill="url(#g1)" filter="url(#glowSm)"/>
+  <!-- Shine -->
+  <rect x="240" y="548" width="128" height="100" rx="18" fill="url(#shine)"/>
+
+  <!-- ── Bar 2 (violet) ── -->
+  <rect x="436" y="388" width="128" height="360" rx="18" fill="#7c3aed" opacity="0.5" filter="url(#ambient)"/>
+  <rect x="436" y="388" width="128" height="360" rx="18" fill="url(#g2)" filter="url(#glowSm)"/>
+  <rect x="436" y="388" width="128" height="100" rx="18" fill="url(#shine)"/>
+
+  <!-- ── Bar 3 (amber/gold — tallest) ── -->
+  <rect x="632" y="218" width="128" height="530" rx="18" fill="#d97706" opacity="0.5" filter="url(#ambient)"/>
+  <rect x="632" y="218" width="128" height="530" rx="18" fill="url(#g3)" filter="url(#glowMd)"/>
+  <rect x="632" y="218" width="128" height="100" rx="18" fill="url(#shine)"/>
+
+  <!-- ── Trend line connecting bar tops ── -->
+  <polyline
+    points="304,548 500,388 696,218"
+    fill="none"
+    stroke="#ffffff"
+    stroke-opacity="0.2"
+    stroke-width="3"
+    stroke-dasharray="10 7"
+    stroke-linecap="round"
+  />
+
+  <!-- ── Dots at bar tops ── -->
+  <circle cx="304" cy="548" r="11" fill="#6366f1" filter="url(#glowSm)"/>
+  <circle cx="500" cy="388" r="11" fill="#a78bfa" filter="url(#glowSm)"/>
+  <!-- Gold dot with extra glow -->
+  <circle cx="696" cy="218" r="8" fill="#fbbf24" opacity="0.4" filter="url(#glowLg)"/>
+  <circle cx="696" cy="218" r="13" fill="#fbbf24" filter="url(#glowMd)"/>
+
+  <!-- ── Arrow above gold bar ── -->
+  <g filter="url(#glowSm)">
+    <line x1="696" y1="196" x2="696" y2="152" stroke="#fbbf24" stroke-width="5" stroke-linecap="round"/>
+    <polyline points="675,173 696,149 717,173" fill="none" stroke="#fbbf24" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- ── Wordmark ── -->
+  <text
+    x="500" y="845"
+    text-anchor="middle"
+    font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+    font-size="48"
+    font-weight="800"
+    letter-spacing="10"
+    fill="#ffffff"
+    fill-opacity="0.75"
+  >BETTRACKER</text>
+
+  <!-- Subtle bottom fade so text blends in -->
+  <defs>
+    <linearGradient id="bottomFade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#07070d" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#07070d" stop-opacity="0.55"/>
+    </linearGradient>
+  </defs>
+  <rect y="780" width="1000" height="220" fill="url(#bottomFade)"/>
+</svg>

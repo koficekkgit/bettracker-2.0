@@ -1,0 +1,197 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" width="1080" height="1080">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="0%" r="80%">
+      <stop offset="0%"   stop-color="#1a0e3a"/>
+      <stop offset="100%" stop-color="#06060c"/>
+    </radialGradient>
+    <linearGradient id="violetText" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#c4b5fd"/>
+      <stop offset="100%" stop-color="#818cf8"/>
+    </linearGradient>
+    <linearGradient id="chartFill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#7c3aed" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#7c3aed" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="cardBorder" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#7c3aed" stop-opacity="0.5"/>
+      <stop offset="60%"  stop-color="#4f46e5" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#7c3aed" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="accentLine" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#7c3aed"/>
+      <stop offset="70%"  stop-color="#4f46e5"/>
+      <stop offset="100%" stop-color="#4f46e500"/>
+    </linearGradient>
+    <linearGradient id="greenGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#4ade80"/>
+      <stop offset="100%" stop-color="#22d3ee"/>
+    </linearGradient>
+    <linearGradient id="ctaBg" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#7c3aed"/>
+      <stop offset="100%" stop-color="#4f46e5"/>
+    </linearGradient>
+
+    <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="14" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glowStrong" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="50"/>
+    </filter>
+    <filter id="cardShadow">
+      <feDropShadow dx="0" dy="24" stdDeviation="40" flood-color="#000000" flood-opacity="0.7"/>
+    </filter>
+    <filter id="logoShadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="6" flood-color="#000000" flood-opacity="0.4"/>
+    </filter>
+
+    <clipPath id="chartClip">
+      <rect x="80" y="680" width="920" height="150"/>
+    </clipPath>
+  </defs>
+
+  <!-- ── Background ── -->
+  <rect width="1080" height="1080" fill="url(#bg)"/>
+  <ellipse cx="540" cy="80" rx="500" ry="260" fill="#5b21b6" opacity="0.18" filter="url(#glowStrong)"/>
+  <ellipse cx="160" cy="900" rx="200" ry="140" fill="#4f46e5" opacity="0.1" filter="url(#glowStrong)"/>
+
+  <!-- Decorative corner lines -->
+  <g stroke="#7c3aed" stroke-opacity="0.1" stroke-width="1.5" fill="none">
+    <line x1="900" y1="0"  x2="1080" y2="180"/>
+    <line x1="950" y1="0"  x2="1080" y2="130"/>
+    <line x1="0"   y1="900" x2="180" y2="1080"/>
+    <line x1="0"   y1="950" x2="130" y2="1080"/>
+  </g>
+
+  <!-- ══════════════════════════════════════
+       LOGO
+  ══════════════════════════════════════ -->
+  <!-- Logo background pill -->
+  <rect x="72" y="55" width="216" height="140" rx="18" fill="#1a1a24" filter="url(#cardShadow)"/>
+  <rect x="72" y="55" width="216" height="140" rx="18" fill="none" stroke="#ffffff" stroke-opacity="0.09" stroke-width="1"/>
+
+  <!-- SM — centered, italic bold -->
+  <text x="180" y="145"
+    text-anchor="middle"
+    font-family="-apple-system, BlinkMacSystemFont, 'Arial Black', 'Helvetica Neue', sans-serif"
+    font-size="76" font-weight="900" font-style="italic"
+    fill="#ffffff" filter="url(#logoShadow)">SM</text>
+
+  <!-- BetTracker — centered below SM -->
+  <text x="180" y="174"
+    text-anchor="middle"
+    font-family="-apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif"
+    font-size="21" fill="#ffffff">
+    <tspan font-weight="800">Bet</tspan><tspan font-weight="400">Tracker</tspan>
+  </text>
+
+  <!-- bettracker.cz — top right, subtle -->
+  <text x="1008" y="84"
+    text-anchor="end"
+    font-family="-apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif"
+    font-size="18" font-weight="500" fill="#3f3f46">bettracker.cz</text>
+  <rect x="1008" y="90" width="0" height="0"/>
+  <!-- underline accent -->
+  <rect x="840" y="90" width="168" height="1" rx="0.5" fill="#3f3f46" fill-opacity="0.4"/>
+
+  <!-- ══════════════════════════════════════
+       HEADLINE — 2 lines
+  ══════════════════════════════════════ -->
+
+  <!-- Line 1: white -->
+  <text x="72" y="268"
+    font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Helvetica Neue', sans-serif"
+    font-size="118" font-weight="900" letter-spacing="-4" fill="#f4f4f5">Přestaň hádat.</text>
+
+  <!-- Divider line between the two headline lines -->
+  <rect x="72" y="286" width="580" height="3" rx="1.5" fill="url(#accentLine)"/>
+
+  <!-- Line 2: violet gradient -->
+  <text x="72" y="406"
+    font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Helvetica Neue', sans-serif"
+    font-size="118" font-weight="900" letter-spacing="-4" fill="url(#violetText)">Začni sledovat.</text>
+
+  <!-- Subline -->
+  <text x="72" y="458"
+    font-family="-apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif"
+    font-size="22" font-weight="400" letter-spacing="0.3" fill="#52525b">
+    Profit · ROI · Winrate · Úspěchy · Skupiny
+  </text>
+
+  <!-- ══════════════════════════════════════
+       STATS CARD
+  ══════════════════════════════════════ -->
+  <rect x="72" y="488" width="936" height="330" rx="22" fill="#0c0c18" filter="url(#cardShadow)"/>
+  <rect x="72" y="488" width="936" height="330" rx="22" fill="none" stroke="url(#cardBorder)" stroke-width="1.5"/>
+
+  <!-- Stats row -->
+  <!-- Stat 1 -->
+  <text x="112" y="538"
+    font-family="-apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif"
+    font-size="12" font-weight="600" letter-spacing="2.5" fill="#3f3f46">CELKOVÝ PROFIT</text>
+  <text x="112" y="592"
+    font-family="-apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif"
+    font-size="52" font-weight="800" letter-spacing="-1.5" fill="url(#greenGrad)">+4 820 Kč</text>
+
+  <!-- divider -->
+  <line x1="440" y1="504" x2="440" y2="690" stroke="#ffffff" stroke-opacity="0.05" stroke-width="1"/>
+
+  <!-- Stat 2 -->
+  <text x="478" y="538"
+    font-family="-apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif"
+    font-size="12" font-weight="600" letter-spacing="2.5" fill="#3f3f46">ROI</text>
+  <text x="478" y="592"
+    font-family="-apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif"
+    font-size="52" font-weight="800" letter-spacing="-1.5" fill="#c4b5fd">+18.4 %</text>
+
+  <!-- divider -->
+  <line x1="740" y1="504" x2="740" y2="690" stroke="#ffffff" stroke-opacity="0.05" stroke-width="1"/>
+
+  <!-- Stat 3 -->
+  <text x="778" y="538"
+    font-family="-apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif"
+    font-size="12" font-weight="600" letter-spacing="2.5" fill="#3f3f46">WINRATE</text>
+  <text x="778" y="592"
+    font-family="-apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif"
+    font-size="52" font-weight="800" letter-spacing="-1.5" fill="#c4b5fd">62 %</text>
+
+  <!-- Thin separator above chart -->
+  <line x1="96" y1="618" x2="984" y2="618" stroke="#ffffff" stroke-opacity="0.04" stroke-width="1"/>
+
+  <!-- Profit chart -->
+  <path
+    d="M96,790 L96,755 C140,750 170,762 220,738 C270,714 300,728 355,704 C410,680 440,695 495,668 C550,641 580,655 635,628 C678,606 710,616 762,592 C805,572 845,580 900,555 C935,538 960,544 984,528 L984,790 Z"
+    fill="url(#chartFill)"
+    clip-path="url(#chartClip)"
+  />
+  <path
+    d="M96,755 C140,750 170,762 220,738 C270,714 300,728 355,704 C410,680 440,695 495,668 C550,641 580,655 635,628 C678,606 710,616 762,592 C805,572 845,580 900,555 C935,538 960,544 984,528"
+    fill="none" stroke="#7c3aed" stroke-width="2.5"
+    stroke-linecap="round" stroke-linejoin="round"
+    clip-path="url(#chartClip)"
+  />
+  <!-- End dot -->
+  <circle cx="984" cy="528" r="5" fill="#a78bfa" filter="url(#glow)"/>
+
+  <!-- ══════════════════════════════════════
+       CTA BUTTON — full width, prominent
+  ══════════════════════════════════════ -->
+  <rect x="72" y="850" width="936" height="80" rx="20" fill="url(#ctaBg)" filter="url(#glow)"/>
+  <!-- shine on button -->
+  <rect x="72" y="850" width="936" height="38" rx="20" fill="#ffffff" fill-opacity="0.07"/>
+
+  <text x="540" y="901"
+    text-anchor="middle"
+    font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Helvetica Neue', sans-serif"
+    font-size="30" font-weight="700" letter-spacing="-0.5" fill="#ffffff">
+    Začni zdarma tady  →  bettracker.cz
+  </text>
+
+  <!-- Bottom micro text -->
+  <text x="540" y="1048"
+    text-anchor="middle"
+    font-family="-apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif"
+    font-size="16" font-weight="400" fill="#27272a">
+    Bez kreditní karty · Funguje v prohlížeči
+  </text>
+</svg>
