@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useTransition } from 'react';
+import { useState, useEffect, useRef, useTransition } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { Coins, Check, Lock, Sparkles, ShoppingBag } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
@@ -38,15 +38,17 @@ export default function CharacterPage() {
 
   const [ownedIds, setOwnedIds]         = useState<Set<string>>(FREE_ITEM_IDS);
   const [equipped, setEquipped]         = useState<CharacterConfig>(DEFAULT_CHARACTER);
+  const equippedInitialized             = useRef(false);
   const [hoveredId, setHoveredId]       = useState<string | null>(null);
   const [selectedId, setSelectedId]     = useState<string | null>(null);
   const [activeTab, setActiveTab]       = useState<Tab>('outfit');
   const [buying, setBuying]             = useState<string | null>(null);
   const [toast, setToast]               = useState<string | null>(null);
 
-  // Sync profile → equipped once loaded
+  // Sync profile → equipped only on first load (not on subsequent invalidations)
   useEffect(() => {
-    if (!profile) return;
+    if (!profile || equippedInitialized.current) return;
+    equippedInitialized.current = true;
     setEquipped({
       skin:       (profile as any).character_skin       || DEFAULT_CHARACTER.skin,
       hair:       (profile as any).character_hair       || DEFAULT_CHARACTER.hair,

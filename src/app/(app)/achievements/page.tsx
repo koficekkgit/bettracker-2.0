@@ -2,7 +2,7 @@
 
 import { useMemo, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
-import { Crown, Shield, Star, Zap, Swords, ArrowRight } from 'lucide-react';
+import { Crown, Shield, Star, Zap, Swords } from 'lucide-react';
 import { ProGate } from '@/components/subscription/pro-gate';
 import { useBets } from '@/hooks/use-bets';
 import {
@@ -95,70 +95,99 @@ function Content() {
       </div>
 
       {/* Hero */}
-      <div className="rounded-2xl bg-zinc-900 border border-zinc-800 overflow-hidden">
-        {/* Rank accent stripe */}
+      <div
+        className="rounded-2xl border border-zinc-800 overflow-hidden relative"
+        style={{ background: `radial-gradient(ellipse 80% 120% at 10% 50%, ${rank.stroke}14 0%, transparent 60%), #18181b` }}
+      >
+        {/* Decorative glow blob */}
         <div
-          className="h-[3px] w-full"
-          style={{ background: `linear-gradient(90deg, ${rank.stroke}, ${rank.stroke}00)` }}
+          className="absolute -left-10 top-1/2 -translate-y-1/2 w-48 h-48 rounded-full blur-3xl pointer-events-none"
+          style={{ background: `${rank.stroke}18` }}
         />
 
-        <div className="p-6 lg:p-7">
-          {/* Top row: rank icon + name | completion % */}
-          <div className="flex items-start justify-between gap-4 mb-5">
-            <div className="flex items-center gap-4">
-              <div
-                className="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0"
-                style={{ background: `${rank.stroke}18`, boxShadow: `0 0 20px ${rank.glow}` }}
-              >
-                <RankIcon className={cn('w-7 h-7', rank.color)} />
-              </div>
-              <div>
-                <div className="flex items-baseline gap-2 flex-wrap">
-                  <span className={cn('text-3xl font-black tracking-tight', rank.color)}>{rank.label}</span>
-                  <span className="text-xl font-semibold text-zinc-500">{rank.sublabel}</span>
-                </div>
-                <p className="text-sm text-zinc-500 mt-0.5">
-                  <span className="text-white font-semibold">{earned}</span> / {total} badges
-                </p>
-              </div>
+        <div className="relative p-5 lg:p-7 flex flex-col sm:flex-row gap-6">
+          {/* Left: rank emblem */}
+          <div className="flex items-center gap-5 flex-shrink-0">
+            <div
+              className="w-20 h-20 rounded-2xl flex items-center justify-center flex-shrink-0"
+              style={{ background: `${rank.stroke}20`, boxShadow: `0 0 0 1px ${rank.stroke}30, 0 0 32px ${rank.glow}` }}
+            >
+              <RankIcon style={{ width: 40, height: 40, color: rank.stroke }} />
             </div>
-
-            {/* Big % number */}
-            <div className="text-right flex-shrink-0">
-              <div className="text-4xl font-black text-white leading-none">
-                {pct}<span className="text-2xl text-zinc-600">%</span>
-              </div>
-              <div className="text-[11px] text-zinc-600 uppercase tracking-widest mt-1">dokončeno</div>
+            <div>
+              <p className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-0.5">Aktuální rank</p>
+              <p className="text-4xl font-black leading-none" style={{ color: rank.stroke }}>{rank.label}</p>
+              <p className="text-lg font-semibold text-zinc-400 mt-0.5">{rank.sublabel}</p>
             </div>
           </div>
 
-          {/* Progress to next rank */}
-          {nextRank ? (
-            <div>
-              <div className="flex items-center justify-between text-xs mb-2">
-                <span className="flex items-center gap-1.5 text-zinc-500">
-                  <ArrowRight className="w-3 h-3" />
-                  Postup na <span className={cn('font-semibold', nextRank.color)}>{nextRank.label} {nextRank.sublabel}</span>
+          {/* Divider */}
+          <div className="hidden sm:block w-px self-stretch bg-zinc-800 mx-1" />
+
+          {/* Center: progress to next rank */}
+          <div className="flex-1 flex flex-col justify-center gap-3">
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-zinc-400 font-semibold">
+                <span className="text-white text-sm font-black">{earned}</span>
+                <span className="text-zinc-600"> / {total} badges</span>
+              </span>
+              {nextRank ? (
+                <span className={cn('font-semibold', nextRank.color)}>
+                  {nextRank.min - earned} do {nextRank.label}
                 </span>
-                <span className="text-zinc-600">{nextRank.min - earned} {nextRank.min - earned === 1 ? 'badge' : 'badges'} chybí</span>
-              </div>
-              <div className="h-2 rounded-full bg-zinc-800 overflow-hidden">
-                <div
-                  className="h-full rounded-full transition-all duration-700"
-                  style={{ width: `${rankPct}%`, background: `linear-gradient(90deg, ${rank.stroke}55, ${rank.stroke})` }}
-                />
-              </div>
+              ) : (
+                <span className={cn('font-bold', rank.color)}>Max rank!</span>
+              )}
             </div>
-          ) : (
-            <div className={cn('flex items-center gap-2 text-sm font-bold', rank.color)}>
-              <Crown className="w-4 h-4" />
-              Maximální rank dosažen — jsi legenda!
+
+            {/* Multi-rank segmented bar */}
+            <div className="flex gap-1 h-3">
+              {RANKS.map((r, i) => {
+                const segMin  = r.min;
+                const segMax  = RANKS[i + 1]?.min ?? total;
+                const filled  = Math.min(Math.max(earned - segMin, 0), segMax - segMin);
+                const segPct  = Math.round((filled / (segMax - segMin)) * 100);
+                const isPast  = earned >= segMax;
+                const isCurr  = r.label === rank.label;
+                return (
+                  <div key={r.label} className="flex-1 rounded-full bg-zinc-800 overflow-hidden relative">
+                    <div
+                      className="h-full rounded-full transition-all duration-700"
+                      style={{
+                        width: isPast ? '100%' : isCurr ? `${segPct}%` : '0%',
+                        background: isPast ? r.stroke : `linear-gradient(90deg, ${r.stroke}80, ${r.stroke})`,
+                      }}
+                    />
+                  </div>
+                );
+              })}
             </div>
-          )}
+
+            {/* Rank labels under bar */}
+            <div className="flex">
+              {RANKS.map((r) => (
+                <div key={r.label} className="flex-1 text-center">
+                  <span className={cn(
+                    'text-[9px] font-bold uppercase tracking-wide',
+                    r.label === rank.label ? '' : earned >= r.min ? 'text-zinc-600' : 'text-zinc-700',
+                  )} style={r.label === rank.label ? { color: r.stroke } : {}}>
+                    {r.label}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Right: big % */}
+          <div className="hidden lg:flex flex-col items-center justify-center flex-shrink-0 w-24">
+            <div className="text-5xl font-black tabular-nums leading-none text-white">{pct}</div>
+            <div className="text-lg font-black text-zinc-600 leading-none">%</div>
+            <div className="text-[10px] text-zinc-600 uppercase tracking-widest mt-1">hotovo</div>
+          </div>
         </div>
 
-        {/* Stats row — separated by top border */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 border-t border-zinc-800 divide-x divide-zinc-800">
+        {/* Stats row */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 border-t border-zinc-800/80 divide-x divide-zinc-800">
           {[
             { label: 'Nejdelší série', value: ctx.longestWinStreak },
             { label: 'Aktuální série', value: ctx.currentWinStreak },
@@ -167,7 +196,7 @@ function Content() {
           ].map((s) => (
             <div key={s.label} className="py-4 text-center">
               <div className="text-2xl font-black text-white tabular-nums">{s.value}</div>
-              <div className="text-[11px] text-zinc-500 uppercase tracking-wider mt-1">{s.label}</div>
+              <div className="text-[11px] text-zinc-500 uppercase tracking-wider mt-0.5">{s.label}</div>
             </div>
           ))}
         </div>

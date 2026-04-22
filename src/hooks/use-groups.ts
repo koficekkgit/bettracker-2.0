@@ -37,20 +37,28 @@ export function useGroupMembers(groupId: string) {
 
       const { data: profileRows, error: profileError } = await supabase
         .from('profiles')
-        .select('id, username, display_name')
+        .select('id, username, display_name, character_skin, character_hair, character_hair_color, character_outfit, character_accessory')
         .in('id', userIds);
 
       if (profileError) throw profileError;
 
       const profileMap = new Map((profileRows ?? []).map((p) => [p.id as string, p]));
 
-      return memberRows.map((m) => ({
-        user_id: m.user_id as string,
-        role: (m.role as 'owner' | 'member'),
-        joined_at: m.joined_at as string,
-        username: profileMap.get(m.user_id as string)?.username ?? null,
-        display_name: profileMap.get(m.user_id as string)?.display_name ?? null,
-      }));
+      return memberRows.map((m) => {
+        const p = profileMap.get(m.user_id as string);
+        return {
+          user_id: m.user_id as string,
+          role: (m.role as 'owner' | 'member'),
+          joined_at: m.joined_at as string,
+          username: p?.username ?? null,
+          display_name: p?.display_name ?? null,
+          character_skin: p?.character_skin ?? null,
+          character_hair: p?.character_hair ?? null,
+          character_hair_color: p?.character_hair_color ?? null,
+          character_outfit: p?.character_outfit ?? null,
+          character_accessory: p?.character_accessory ?? null,
+        };
+      });
     },
     enabled: !!groupId,
     retry: false,

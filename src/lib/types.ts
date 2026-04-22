@@ -180,4 +180,9 @@ export interface GroupMember {
   display_name: string | null;
   role: 'owner' | 'member';
   joined_at: string;
+  character_skin?: string | null;
+  character_hair?: string | null;
+  character_hair_color?: string | null;
+  character_outfit?: string | null;
+  character_accessory?: string | null;
 }

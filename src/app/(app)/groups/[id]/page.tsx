@@ -17,6 +17,9 @@ import {
   useKickMember, useLeaveGroup, useDeleteGroup,
 } from '@/hooks/use-groups';
 import { formatCurrency, formatNumber, cn } from '@/lib/utils';
+import { CharacterAvatar } from '@/components/character/character-avatar';
+import { DEFAULT_CHARACTER } from '@/lib/character';
+import type { CharacterConfig } from '@/lib/character';
 import { toast } from 'sonner';
 
 const RANK_ICONS = [
@@ -29,6 +32,16 @@ function memberLabel(count: number, t: ReturnType<typeof useTranslations<'groups
   if (count === 1) return `1 ${t('memberCount_one')}`;
   if (count < 5) return `${count} ${t('memberCount_few')}`;
   return `${count} ${t('memberCount_many')}`;
+}
+
+function memberCharacter(m: { character_skin?: string | null; character_hair?: string | null; character_hair_color?: string | null; character_outfit?: string | null; character_accessory?: string | null }): CharacterConfig {
+  return {
+    skin:       m.character_skin       || DEFAULT_CHARACTER.skin,
+    hair:       m.character_hair       || DEFAULT_CHARACTER.hair,
+    hair_color: m.character_hair_color || DEFAULT_CHARACTER.hair_color,
+    outfit:     m.character_outfit     || DEFAULT_CHARACTER.outfit,
+    accessory:  m.character_accessory  || DEFAULT_CHARACTER.accessory,
+  };
 }
 
 export default function GroupDetailPage() {
@@ -197,7 +210,12 @@ function GroupDetailContent() {
                           )}
                         </td>
                         <td className="p-3">
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-2.5">
+                            {memberInfo && (
+                              <div className="shrink-0 w-9 h-9 rounded-lg bg-zinc-800 overflow-hidden flex items-end justify-center">
+                                <CharacterAvatar config={memberCharacter(memberInfo)} size={36} />
+                              </div>
+                            )}
                             <div>
                               <div className="font-medium flex items-center gap-1.5">
                                 {row.display_name ?? row.username ?? '—'}
@@ -261,6 +279,9 @@ function GroupDetailContent() {
               <div>
                 {members.map((m) => (
                   <div key={m.user_id} className="flex items-center gap-3 px-4 py-2.5 border-b border-border last:border-0">
+                    <div className="shrink-0 w-9 h-9 rounded-lg bg-zinc-800 overflow-hidden flex items-end justify-center">
+                      <CharacterAvatar config={memberCharacter(m)} size={36} />
+                    </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
                         <span className="font-medium text-sm truncate">{m.display_name ?? m.username ?? '—'}</span>
