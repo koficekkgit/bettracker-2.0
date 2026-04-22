@@ -434,6 +434,78 @@
     "consistent": {
       "name": "Consistent",
       "desc": "3 profitable months in a row"
+    },
+    "highRoller": {
+      "name": "High Roller",
+      "desc": "Win a bet with odds ≥ 10.0"
+    },
+    "underdog10": {
+      "name": "Underdog Hunter",
+      "desc": "10 wins at odds ≥ 5.0"
+    },
+    "consistent5": {
+      "name": "Iron Discipline",
+      "desc": "5 profitable months in a row"
+    },
+    "marathon": {
+      "name": "Marathon",
+      "desc": "Place 2,000 bets"
+    },
+    "hundredK": {
+      "name": "100K Club",
+      "desc": "Reach +100,000 profit"
+    },
+    "twoHundredK": {
+      "name": "200K Legend",
+      "desc": "Reach +200,000 profit"
+    },
+    "firstBet": {
+      "name": "First step",
+      "desc": "Place your first bet"
+    },
+    "grinder": {
+      "name": "Grinder",
+      "desc": "Place 5,000 bets"
+    },
+    "fiftyWins": {
+      "name": "50 wins",
+      "desc": "Win a total of 50 bets"
+    },
+    "twoHundredWins": {
+      "name": "200 wins",
+      "desc": "Win a total of 200 bets"
+    },
+    "fiveHundredWins": {
+      "name": "500 wins",
+      "desc": "Win a total of 500 bets"
+    },
+    "inTheGreen": {
+      "name": "In the green",
+      "desc": "Hold positive total profit after 10+ bets"
+    },
+    "winStreak7": {
+      "name": "Relentless",
+      "desc": "7 wins in a row"
+    },
+    "comebackKid": {
+      "name": "Comeback King",
+      "desc": "Win after 3+ consecutive losses"
+    },
+    "profitableMonth": {
+      "name": "Green month",
+      "desc": "Finish at least one month in profit"
+    },
+    "winrate55": {
+      "name": "Sharpshooter",
+      "desc": "Winrate ≥ 55% from min 20 bets"
+    },
+    "highRoller5": {
+      "name": "Adrenaline Junkie",
+      "desc": "5 wins at odds ≥ 10.0"
+    },
+    "bigJackpot": {
+      "name": "Mega Jackpot",
+      "desc": "Single win over 50,000"
     }
   },
   "insights": {

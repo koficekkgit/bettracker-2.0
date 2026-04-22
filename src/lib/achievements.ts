@@ -252,18 +252,213 @@ export const ACHIEVEMENTS: Achievement[] = [
     nameKey: 'achievements.consistent.name',
     descKey: 'achievements.consistent.desc',
     check: (c) => {
-      // 3 ziskové měsíce v řadě
       let streak = 0, max = 0;
       for (const m of c.monthlyProfits) {
-        if (m.profit > 0) {
-          streak++;
-          if (streak > max) max = streak;
-        } else {
-          streak = 0;
-        }
+        if (m.profit > 0) { streak++; if (streak > max) max = streak; }
+        else streak = 0;
       }
       return max >= 3;
     },
+  },
+  {
+    id: 'high_roller',
+    category: 'skill',
+    icon: 'Rocket',
+    nameKey: 'achievements.highRoller.name',
+    descKey: 'achievements.highRoller.desc',
+    check: (c) => c.wonBets.filter((b) => Number(b.odds) >= 10).length >= 1,
+    progress: (c) => ({
+      current: Math.min(c.wonBets.filter((b) => Number(b.odds) >= 10).length, 1),
+      target: 1,
+    }),
+  },
+  {
+    id: 'underdog_10',
+    category: 'skill',
+    icon: 'Dice5',
+    nameKey: 'achievements.underdog10.name',
+    descKey: 'achievements.underdog10.desc',
+    check: (c) => c.wonBets.filter((b) => Number(b.odds) >= 5).length >= 10,
+    progress: (c) => ({
+      current: Math.min(c.wonBets.filter((b) => Number(b.odds) >= 5).length, 10),
+      target: 10,
+    }),
+  },
+  {
+    id: 'consistent_5',
+    category: 'skill',
+    icon: 'BarChart3',
+    nameKey: 'achievements.consistent5.name',
+    descKey: 'achievements.consistent5.desc',
+    check: (c) => {
+      let streak = 0, max = 0;
+      for (const m of c.monthlyProfits) {
+        if (m.profit > 0) { streak++; if (streak > max) max = streak; }
+        else streak = 0;
+      }
+      return max >= 5;
+    },
+  },
+
+  // ===== VOLUME (extra) =====
+  {
+    id: 'first_bet',
+    category: 'volume',
+    icon: 'PlusCircle',
+    nameKey: 'achievements.firstBet.name',
+    descKey: 'achievements.firstBet.desc',
+    check: (c) => c.totalBets >= 1,
+    progress: (c) => ({ current: Math.min(c.totalBets, 1), target: 1 }),
+  },
+  {
+    id: 'marathon',
+    category: 'volume',
+    icon: 'Infinity',
+    nameKey: 'achievements.marathon.name',
+    descKey: 'achievements.marathon.desc',
+    check: (c) => c.totalBets >= 2000,
+    progress: (c) => ({ current: Math.min(c.totalBets, 2000), target: 2000 }),
+  },
+  {
+    id: 'grinder',
+    category: 'volume',
+    icon: 'Cpu',
+    nameKey: 'achievements.grinder.name',
+    descKey: 'achievements.grinder.desc',
+    check: (c) => c.totalBets >= 5000,
+    progress: (c) => ({ current: Math.min(c.totalBets, 5000), target: 5000 }),
+  },
+  {
+    id: 'fifty_wins',
+    category: 'volume',
+    icon: 'CheckCheck',
+    nameKey: 'achievements.fiftyWins.name',
+    descKey: 'achievements.fiftyWins.desc',
+    check: (c) => c.wonBets.length >= 50,
+    progress: (c) => ({ current: Math.min(c.wonBets.length, 50), target: 50 }),
+  },
+  {
+    id: 'two_hundred_wins',
+    category: 'volume',
+    icon: 'Award',
+    nameKey: 'achievements.twoHundredWins.name',
+    descKey: 'achievements.twoHundredWins.desc',
+    check: (c) => c.wonBets.length >= 200,
+    progress: (c) => ({ current: Math.min(c.wonBets.length, 200), target: 200 }),
+  },
+  {
+    id: 'five_hundred_wins',
+    category: 'volume',
+    icon: 'BadgeCheck',
+    nameKey: 'achievements.fiveHundredWins.name',
+    descKey: 'achievements.fiveHundredWins.desc',
+    check: (c) => c.wonBets.length >= 500,
+    progress: (c) => ({ current: Math.min(c.wonBets.length, 500), target: 500 }),
+  },
+
+  // ===== PROFIT (extra) =====
+  {
+    id: 'in_the_green',
+    category: 'profit',
+    icon: 'TrendingUp',
+    nameKey: 'achievements.inTheGreen.name',
+    descKey: 'achievements.inTheGreen.desc',
+    check: (c) => {
+      const settled = c.wonBets.length + c.lostBets.length;
+      return settled >= 10 && c.totalProfit > 0;
+    },
+  },
+  {
+    id: 'hundred_k',
+    category: 'profit',
+    icon: 'Crown',
+    nameKey: 'achievements.hundredK.name',
+    descKey: 'achievements.hundredK.desc',
+    check: (c) => c.totalProfit >= 100000,
+    progress: (c) => ({ current: Math.max(0, Math.min(c.totalProfit, 100000)), target: 100000 }),
+  },
+  {
+    id: 'two_hundred_k',
+    category: 'profit',
+    icon: 'Gem',
+    nameKey: 'achievements.twoHundredK.name',
+    descKey: 'achievements.twoHundredK.desc',
+    check: (c) => c.totalProfit >= 200000,
+    progress: (c) => ({ current: Math.max(0, Math.min(c.totalProfit, 200000)), target: 200000 }),
+  },
+
+  // ===== STREAKS (extra) =====
+  {
+    id: 'win_streak_7',
+    category: 'streaks',
+    icon: 'Flame',
+    nameKey: 'achievements.winStreak7.name',
+    descKey: 'achievements.winStreak7.desc',
+    check: (c) => c.longestWinStreak >= 7,
+    progress: (c) => ({ current: Math.min(c.longestWinStreak, 7), target: 7 }),
+  },
+  {
+    id: 'comeback_kid',
+    category: 'streaks',
+    icon: 'RefreshCw',
+    nameKey: 'achievements.comebackKid.name',
+    descKey: 'achievements.comebackKid.desc',
+    check: (c) => {
+      const settled = c.bets
+        .filter((b) => b.status !== 'pending')
+        .slice()
+        .reverse();
+      let lossStreak = 0;
+      for (const b of settled) {
+        const isLoss = b.status === 'lost' || b.status === 'half_lost';
+        const isWin = b.status === 'won' || b.status === 'half_won';
+        if (isLoss) { lossStreak++; }
+        else if (isWin) { if (lossStreak >= 3) return true; lossStreak = 0; }
+      }
+      return false;
+    },
+  },
+
+  // ===== SKILL (extra) =====
+  {
+    id: 'profitable_month',
+    category: 'skill',
+    icon: 'CalendarCheck',
+    nameKey: 'achievements.profitableMonth.name',
+    descKey: 'achievements.profitableMonth.desc',
+    check: (c) => c.monthlyProfits.some((m) => m.profit > 0),
+  },
+  {
+    id: 'winrate_55',
+    category: 'skill',
+    icon: 'Percent',
+    nameKey: 'achievements.winrate55.name',
+    descKey: 'achievements.winrate55.desc',
+    check: (c) => {
+      const settled = c.wonBets.length + c.lostBets.length;
+      return settled >= 20 && c.winRate >= 55;
+    },
+  },
+  {
+    id: 'high_roller_5',
+    category: 'skill',
+    icon: 'Rocket',
+    nameKey: 'achievements.highRoller5.name',
+    descKey: 'achievements.highRoller5.desc',
+    check: (c) => c.wonBets.filter((b) => Number(b.odds) >= 10).length >= 5,
+    progress: (c) => ({
+      current: Math.min(c.wonBets.filter((b) => Number(b.odds) >= 10).length, 5),
+      target: 5,
+    }),
+  },
+  {
+    id: 'big_jackpot',
+    category: 'skill',
+    icon: 'Sparkles',
+    nameKey: 'achievements.bigJackpot.name',
+    descKey: 'achievements.bigJackpot.desc',
+    check: (c) => c.bestWin >= 50000,
+    progress: (c) => ({ current: Math.min(c.bestWin, 50000), target: 50000 }),
   },
 ];
 

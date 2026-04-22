@@ -434,6 +434,78 @@
     "consistent": {
       "name": "Konzistentní",
       "desc": "3 ziskové měsíce v řadě"
+    },
+    "highRoller": {
+      "name": "High Roller",
+      "desc": "Vyhraj sázku s kurzem ≥ 10.0"
+    },
+    "underdog10": {
+      "name": "Lovec outsiderů",
+      "desc": "10 výher s kurzem ≥ 5.0"
+    },
+    "consistent5": {
+      "name": "Železná konstanta",
+      "desc": "5 ziskových měsíců v řadě"
+    },
+    "marathon": {
+      "name": "Maratónec",
+      "desc": "Zadej 2 000 sázek"
+    },
+    "hundredK": {
+      "name": "Stotisícař",
+      "desc": "Dosáhni profitu +100 000 Kč"
+    },
+    "twoHundredK": {
+      "name": "Dvojnásobný milionář",
+      "desc": "Dosáhni profitu +200 000 Kč"
+    },
+    "firstBet": {
+      "name": "První krok",
+      "desc": "Zadej svou první sázku"
+    },
+    "grinder": {
+      "name": "Grinder",
+      "desc": "Zadej 5 000 sázek"
+    },
+    "fiftyWins": {
+      "name": "50 výher",
+      "desc": "Vyhraj celkem 50 sázek"
+    },
+    "twoHundredWins": {
+      "name": "200 výher",
+      "desc": "Vyhraj celkem 200 sázek"
+    },
+    "fiveHundredWins": {
+      "name": "500 výher",
+      "desc": "Vyhraj celkem 500 sázek"
+    },
+    "inTheGreen": {
+      "name": "V plusu",
+      "desc": "Drž kladný celkový profit po min. 10 sázkách"
+    },
+    "winStreak7": {
+      "name": "Neudržitelný",
+      "desc": "7 výher v řadě"
+    },
+    "comebackKid": {
+      "name": "Comeback King",
+      "desc": "Vyhraj po 3 a více prohrách v řadě"
+    },
+    "profitableMonth": {
+      "name": "Zelený měsíc",
+      "desc": "Ukonči alespoň jeden měsíc v zisku"
+    },
+    "winrate55": {
+      "name": "Ostrý střelec",
+      "desc": "Winrate ≥ 55% z min. 20 sázek"
+    },
+    "highRoller5": {
+      "name": "Adrenalin Junkie",
+      "desc": "5 výher s kurzem ≥ 10.0"
+    },
+    "bigJackpot": {
+      "name": "Mega Jackpot",
+      "desc": "Jedna výhra nad 50 000 Kč"
     }
   },
   "insights": {
