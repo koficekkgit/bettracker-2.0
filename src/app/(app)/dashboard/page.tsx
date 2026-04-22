@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { Plus } from 'lucide-react';
+import { useCountUp } from '@/hooks/use-count-up';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { StatCard } from '@/components/stats/stat-card';
@@ -27,6 +28,11 @@ export default function DashboardPage() {
   const recent = useMemo(() => bets.slice(0, 5), [bets]);
   const currency = profile?.default_currency ?? bets[0]?.currency ?? 'CZK';
 
+  const animProfit  = useCountUp(stats.totalProfit,  900,   0);
+  const animRoi     = useCountUp(stats.roi,           900,  80);
+  const animWinRate = useCountUp(stats.winRate,       900, 160);
+  const animOdds    = useCountUp(stats.avgOdds,       900, 240);
+
   if (isLoading) {
     return <div className="text-muted-foreground">{t('common.loading')}</div>;
   }
@@ -49,23 +55,24 @@ export default function DashboardPage() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <StatCard
           label={t('dashboard.profit')}
-          value={formatCurrency(stats.totalProfit, currency)}
+          value={formatCurrency(animProfit, currency)}
           hint={`${stats.totalBets} ${t('dashboard.totalBets').toLowerCase()}`}
           hintColor={stats.totalProfit >= 0 ? 'success' : 'danger'}
         />
         <StatCard
           label={t('dashboard.roi')}
-          value={`${formatNumber(stats.roi, 1)} %`}
+          value={`${formatNumber(animRoi, 1)} %`}
           hint={`${formatCurrency(stats.totalStaked, currency)} ${t('stats.totalStaked').toLowerCase()}`}
+          hintColor={stats.roi >= 0 ? 'success' : 'danger'}
         />
         <StatCard
           label={t('dashboard.winRate')}
-          value={`${formatNumber(stats.winRate, 0)} %`}
+          value={`${formatNumber(animWinRate, 0)} %`}
           hint={`${stats.wonBets} / ${stats.settledBets}`}
         />
         <StatCard
           label={t('dashboard.avgOdds')}
-          value={formatNumber(stats.avgOdds, 2)}
+          value={formatNumber(animOdds, 2)}
           hint={t('dashboard.avgOdds')}
         />
       </div>

@@ -19,6 +19,8 @@ import {
 } from '@/lib/stats';
 import { formatCurrency, formatNumber, BOOKMAKERS } from '@/lib/utils';
 import { InsightsPanel } from '@/components/stats/insights-panel';
+import { BetHeatmap } from '@/components/stats/bet-heatmap';
+import { useCountUp } from '@/hooks/use-count-up';
 
 export default function StatsPage() {
   const t = useTranslations();
@@ -88,6 +90,13 @@ export default function StatsPage() {
     return Array.from(map.values()).sort((a, b) => b.profit - a.profit);
   }, [bets]);
 
+  const animStaked  = useCountUp(stats.totalStaked,  900,   0);
+  const animProfit  = useCountUp(stats.totalProfit,  900,  80);
+  const animRoi     = useCountUp(stats.roi,           900, 160);
+  const animWinRate = useCountUp(stats.winRate,       900, 240);
+  const animBestWin = useCountUp(stats.bestWin,       900, 320);
+  const animWorst   = useCountUp(stats.worstLoss,     900, 400);
+
   if (isLoading) {
     return <div className="text-muted-foreground">{t('common.loading')}</div>;
   }
@@ -118,32 +127,32 @@ export default function StatsPage() {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
             <StatCard
               label={t('stats.totalStaked')}
-              value={formatCurrency(stats.totalStaked, currency)}
+              value={formatCurrency(animStaked, currency)}
               hint={`${stats.totalBets} ${t('dashboard.totalBets').toLowerCase()}`}
             />
             <StatCard
               label={t('dashboard.profit')}
-              value={formatCurrency(stats.totalProfit, currency)}
+              value={formatCurrency(animProfit, currency)}
               hintColor={stats.totalProfit >= 0 ? 'success' : 'danger'}
             />
             <StatCard
               label={t('dashboard.roi')}
-              value={`${formatNumber(stats.roi, 1)} %`}
+              value={`${formatNumber(animRoi, 1)} %`}
               hintColor={stats.roi >= 0 ? 'success' : 'danger'}
             />
             <StatCard
               label={t('dashboard.winRate')}
-              value={`${formatNumber(stats.winRate, 0)} %`}
+              value={`${formatNumber(animWinRate, 0)} %`}
               hint={`${stats.wonBets} / ${stats.settledBets}`}
             />
             <StatCard
               label={t('stats.bestWin')}
-              value={formatCurrency(stats.bestWin, currency)}
+              value={formatCurrency(animBestWin, currency)}
               hintColor="success"
             />
             <StatCard
               label={t('stats.worstLoss')}
-              value={formatCurrency(stats.worstLoss, currency)}
+              value={formatCurrency(animWorst, currency)}
               hintColor="danger"
             />
             <StatCard
@@ -155,6 +164,8 @@ export default function StatsPage() {
               value={String(stats.longestLossStreak)}
             />
           </div>
+
+          <BetHeatmap bets={allBets} currency={currency} />
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
