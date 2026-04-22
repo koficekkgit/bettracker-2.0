@@ -24,6 +24,8 @@ export interface Profile {
   created_at: string;
   show_profit_to_friends: boolean;
   show_bets_to_friends: boolean;
+  payouts_enabled?: boolean;
+  bankroll_onboarded_at?: string | null;
 }
 
 export type SubscriptionPlan = 'monthly' | 'quarterly' | 'yearly' | 'lifetime';

@@ -19,7 +19,10 @@
       "PowerShell(Select-String -Path \"C:\\\\Users\\\\kofic\\\\Desktop\\\\bettracker-new\\\\src\\\\components\\\\marketing\\\\landing-page.tsx\" -Pattern \"footer|Footer|podmink|GDPR|gdpr|legal\" -CaseSensitive:$false)",
       "PowerShell(Select-String -Path \"C:\\\\Users\\\\kofic\\\\Desktop\\\\bettracker-new\\\\src\\\\components\\\\marketing\\\\landing-page.tsx\" -Pattern \"feature|pricing|section|id=\" -CaseSensitive:$false)",
       "PowerShell(head -40)",
-      "PowerShell(Select-String -Path \"C:\\\\Users\\\\kofic\\\\Desktop\\\\bettracker-new\\\\src\\\\components\\\\marketing\\\\landing-page.tsx\" -Pattern \"<section\" -CaseSensitive:$false)"
+      "PowerShell(Select-String -Path \"C:\\\\Users\\\\kofic\\\\Desktop\\\\bettracker-new\\\\src\\\\components\\\\marketing\\\\landing-page.tsx\" -Pattern \"<section\" -CaseSensitive:$false)",
+      "Read(//mnt/c/Users/kofic/Desktop/bettracker-new/public/**)",
+      "Read(//mnt/c/Users/kofic/Desktop/bettracker-new/public/bookmakers/**)",
+      "PowerShell(Get-Item \"C:\\\\Users\\\\kofic\\\\Desktop\\\\bettracker-new\\\\public\\\\bookmakers\\\\sazkabet.png\" | Select-Object Name, Length; $bytes = [System.IO.File]::ReadAllBytes\\(\"C:\\\\Users\\\\kofic\\\\Desktop\\\\bettracker-new\\\\public\\\\bookmakers\\\\sazkabet.png\"\\); \"Size: $\\($bytes.Length\\) bytes\"; \"Magic: \" + \\($bytes[0..7] | ForEach-Object { $_.ToString\\(\"X2\"\\) } | Join-String \" \"\\))"
     ]
   }
 }

@@ -156,15 +156,19 @@ export default function BetsPage() {
                       <tr key={bet.id} className="border-b border-border last:border-0 hover:bg-secondary/50">
                         <td className="p-3 whitespace-nowrap">{formatDate(bet.placed_at)}</td>
                         <td className="p-3">
-                          <div className="font-medium">{bet.description}</div>
+                          <div className="flex items-center gap-2">
+                            <div className="font-medium">{bet.description}</div>
+                            {bet.bookmaker && (() => {
+                              const bm = BOOKMAKERS.find((b) => b.id === bet.bookmaker);
+                              if (!bm) return null;
+                              return bm.logo ? (
+                                <BookmakerLogo logo={bm.logo} name={bm.name} />
+                              ) : (
+                                <span className="text-[10px] text-muted-foreground bg-secondary px-1 py-0.5 rounded shrink-0">{bm.name}</span>
+                              );
+                            })()}
+                          </div>
                           {bet.pick && <div className="text-xs text-muted-foreground">{bet.pick}</div>}
-                          {bet.bookmaker && (() => {
-                            const bm = BOOKMAKERS.find((b) => b.id === bet.bookmaker);
-                            const label = bm?.name ?? bet.bookmaker;
-                            return (
-                              <span className="text-[10px] text-muted-foreground bg-secondary px-1.5 py-0.5 rounded mt-0.5 inline-block">{label}</span>
-                            );
-                          })()}
                           {bet.bet_type === 'surebet' && (() => {
                             const legs = parseSurebetLegs(bet.notes);
                             if (!legs) return null;
@@ -230,5 +234,26 @@ export default function BetsPage() {
 
       <BetFormDialog open={formOpen} onClose={() => setFormOpen(false)} initial={editing} mode={formMode} />
     </div>
+  );
+}
+
+/** Bookmaker logo — falls back to text badge if image fails to load */
+function BookmakerLogo({ logo, name }: { logo: string; name: string }) {
+  const [failed, setFailed] = useState(false);
+  if (failed) {
+    return (
+      <span className="text-[10px] text-muted-foreground bg-secondary px-1 py-0.5 rounded shrink-0">
+        {name}
+      </span>
+    );
+  }
+  return (
+    <img
+      src={logo}
+      alt={name}
+      title={name}
+      className="w-4 h-4 rounded object-cover shrink-0"
+      onError={() => setFailed(true)}
+    />
   );
 }
