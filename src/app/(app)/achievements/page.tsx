@@ -95,108 +95,73 @@ function Content() {
       </div>
 
       {/* Hero */}
-      <div
-        className="rounded-2xl border border-zinc-800 overflow-hidden relative"
-        style={{ background: `radial-gradient(ellipse 80% 120% at 10% 50%, ${rank.stroke}14 0%, transparent 60%), #18181b` }}
-      >
-        {/* Decorative glow blob */}
-        <div
-          className="absolute -left-10 top-1/2 -translate-y-1/2 w-48 h-48 rounded-full blur-3xl pointer-events-none"
-          style={{ background: `${rank.stroke}18` }}
-        />
+      <div className="rounded-2xl bg-zinc-900 border border-zinc-800 overflow-hidden">
+        <div className="p-6 lg:p-8 flex items-center gap-6">
 
-        <div className="relative p-5 lg:p-7 flex flex-col sm:flex-row gap-6">
-          {/* Left: rank emblem */}
-          <div className="flex items-center gap-5 flex-shrink-0">
-            <div
-              className="w-20 h-20 rounded-2xl flex items-center justify-center flex-shrink-0"
-              style={{ background: `${rank.stroke}20`, boxShadow: `0 0 0 1px ${rank.stroke}30, 0 0 32px ${rank.glow}` }}
-            >
-              <RankIcon style={{ width: 40, height: 40, color: rank.stroke }} />
-            </div>
-            <div>
-              <p className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-0.5">Aktuální rank</p>
-              <p className="text-4xl font-black leading-none" style={{ color: rank.stroke }}>{rank.label}</p>
-              <p className="text-lg font-semibold text-zinc-400 mt-0.5">{rank.sublabel}</p>
-            </div>
+          {/* Rank badge circle */}
+          <div
+            className="shrink-0 w-[72px] h-[72px] rounded-full flex items-center justify-center"
+            style={{ background: `${rank.stroke}18`, boxShadow: `0 0 0 2px ${rank.stroke}35, 0 0 28px ${rank.glow}` }}
+          >
+            <RankIcon style={{ width: 32, height: 32, color: rank.stroke }} />
           </div>
 
-          {/* Divider */}
-          <div className="hidden sm:block w-px self-stretch bg-zinc-800 mx-1" />
-
-          {/* Center: progress to next rank */}
-          <div className="flex-1 flex flex-col justify-center gap-3">
-            <div className="flex items-center justify-between text-xs">
-              <span className="text-zinc-400 font-semibold">
-                <span className="text-white text-sm font-black">{earned}</span>
-                <span className="text-zinc-600"> / {total} badges</span>
+          {/* Name + progress */}
+          <div className="flex-1 min-w-0 space-y-3">
+            <div className="flex items-baseline gap-2.5 flex-wrap">
+              <span className="text-5xl font-black leading-none tracking-tight" style={{ color: rank.stroke }}>
+                {rank.label}
               </span>
-              {nextRank ? (
-                <span className={cn('font-semibold', nextRank.color)}>
-                  {nextRank.min - earned} do {nextRank.label}
-                </span>
-              ) : (
-                <span className={cn('font-bold', rank.color)}>Max rank!</span>
-              )}
+              <span className="text-xl font-semibold text-zinc-500 leading-none">{rank.sublabel}</span>
+              <span className="text-sm text-zinc-600 leading-none ml-auto tabular-nums">
+                <span className="text-white font-bold">{earned}</span> / {total} badges
+              </span>
             </div>
 
-            {/* Multi-rank segmented bar */}
-            <div className="flex gap-1 h-3">
-              {RANKS.map((r, i) => {
-                const segMin  = r.min;
-                const segMax  = RANKS[i + 1]?.min ?? total;
-                const filled  = Math.min(Math.max(earned - segMin, 0), segMax - segMin);
-                const segPct  = Math.round((filled / (segMax - segMin)) * 100);
-                const isPast  = earned >= segMax;
-                const isCurr  = r.label === rank.label;
-                return (
-                  <div key={r.label} className="flex-1 rounded-full bg-zinc-800 overflow-hidden relative">
-                    <div
-                      className="h-full rounded-full transition-all duration-700"
-                      style={{
-                        width: isPast ? '100%' : isCurr ? `${segPct}%` : '0%',
-                        background: isPast ? r.stroke : `linear-gradient(90deg, ${r.stroke}80, ${r.stroke})`,
-                      }}
-                    />
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Rank labels under bar */}
-            <div className="flex">
-              {RANKS.map((r) => (
-                <div key={r.label} className="flex-1 text-center">
-                  <span className={cn(
-                    'text-[9px] font-bold uppercase tracking-wide',
-                    r.label === rank.label ? '' : earned >= r.min ? 'text-zinc-600' : 'text-zinc-700',
-                  )} style={r.label === rank.label ? { color: r.stroke } : {}}>
-                    {r.label}
+            {nextRank ? (
+              <div className="space-y-1.5">
+                <div className="h-[5px] rounded-full bg-zinc-800 overflow-hidden">
+                  <div
+                    className="h-full rounded-full transition-all duration-700"
+                    style={{ width: `${rankPct}%`, background: `linear-gradient(90deg, ${rank.stroke}70, ${rank.stroke})` }}
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-semibold" style={{ color: rank.stroke }}>{rank.label}</span>
+                  <span className="text-xs text-zinc-500">
+                    ještě <span className={cn('font-bold', nextRank.color)}>{nextRank.min - earned}</span> do {nextRank.label}
                   </span>
                 </div>
-              ))}
-            </div>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2 text-sm font-bold" style={{ color: rank.stroke }}>
+                <Crown className="w-4 h-4" />
+                Maximální rank — jsi legenda!
+              </div>
+            )}
           </div>
 
-          {/* Right: big % */}
-          <div className="hidden lg:flex flex-col items-center justify-center flex-shrink-0 w-24">
-            <div className="text-5xl font-black tabular-nums leading-none text-white">{pct}</div>
-            <div className="text-lg font-black text-zinc-600 leading-none">%</div>
-            <div className="text-[10px] text-zinc-600 uppercase tracking-widest mt-1">hotovo</div>
+          {/* Completion % */}
+          <div className="shrink-0 text-right hidden sm:block">
+            <div className="text-6xl font-black leading-none tabular-nums" style={{ color: rank.stroke }}>
+              {pct}
+              <span className="text-3xl text-zinc-700">%</span>
+            </div>
+            <div className="text-[11px] text-zinc-600 uppercase tracking-widest mt-1.5">dokončeno</div>
           </div>
         </div>
 
-        {/* Stats row */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 border-t border-zinc-800/80 divide-x divide-zinc-800">
+        {/* Stats */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 border-t border-zinc-800">
           {[
             { label: 'Nejdelší série', value: ctx.longestWinStreak },
             { label: 'Aktuální série', value: ctx.currentWinStreak },
             { label: 'Sázek celkem',   value: ctx.totalBets.toLocaleString() },
             { label: 'Winrate',        value: `${Math.round(ctx.winRate)}%` },
           ].map((s) => (
-            <div key={s.label} className="py-4 text-center">
-              <div className="text-2xl font-black text-white tabular-nums">{s.value}</div>
-              <div className="text-[11px] text-zinc-500 uppercase tracking-wider mt-0.5">{s.label}</div>
+            <div key={s.label} className="py-5 text-center">
+              <div className="text-3xl font-black text-white tabular-nums">{s.value}</div>
+              <div className="text-[11px] text-zinc-500 uppercase tracking-wider mt-1">{s.label}</div>
             </div>
           ))}
         </div>
