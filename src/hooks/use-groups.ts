@@ -22,9 +22,35 @@ export function useGroupMembers(groupId: string) {
   return useQuery({
     queryKey: ['group-members', groupId],
     queryFn: async (): Promise<GroupMember[]> => {
-      const { data, error } = await supabase.rpc('get_group_members', { p_group_id: groupId });
-      if (error) throw error;
-      return (data ?? []) as GroupMember[];
+      // Query group_members table directly — RLS allows members to see their group's members.
+      // Avoid relying on the get_group_members RPC which may be broken.
+      const { data: memberRows, error: memberError } = await supabase
+        .from('group_members')
+        .select('user_id, role, joined_at')
+        .eq('group_id', groupId)
+        .order('joined_at', { ascending: true });
+
+      if (memberError) throw memberError;
+      if (!memberRows?.length) return [];
+
+      const userIds = memberRows.map((m) => m.user_id as string);
+
+      const { data: profileRows, error: profileError } = await supabase
+        .from('profiles')
+        .select('id, username, display_name')
+        .in('id', userIds);
+
+      if (profileError) throw profileError;
+
+      const profileMap = new Map((profileRows ?? []).map((p) => [p.id as string, p]));
+
+      return memberRows.map((m) => ({
+        user_id: m.user_id as string,
+        role: (m.role as 'owner' | 'member'),
+        joined_at: m.joined_at as string,
+        username: profileMap.get(m.user_id as string)?.username ?? null,
+        display_name: profileMap.get(m.user_id as string)?.display_name ?? null,
+      }));
     },
     enabled: !!groupId,
     retry: false,

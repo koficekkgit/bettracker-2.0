@@ -38,9 +38,12 @@ function Content() {
   useEffect(() => {
     if (!ctx) return;
     const supabase = createClient();
-    supabase.rpc('sync_achievements_count', { p_count: earned }).catch((err) => {
-      console.error('[achievements] sync failed:', err);
-    });
+    // supabase.rpc() vrátí PostgrestFilterBuilder (thenable, ne plný Promise)
+    // — nelze volat .catch() přímo, použij async/await
+    void (async () => {
+      const { error } = await supabase.rpc('sync_achievements_count', { p_count: earned });
+      if (error) console.error('[achievements] sync failed:', error);
+    })();
   }, [ctx, earned]);
 
   if (isLoading || !ctx) {

@@ -139,7 +139,7 @@ function GroupDetailContent() {
       {/* Sort */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <p className="text-sm text-muted-foreground">
-          {memberLabel(members.length, t)} · {t('statsLast30')}
+          {memberLabel(group?.member_count ?? members.length, t)} · {t('statsLast30')}
         </p>
         <div className="flex rounded-md border border-border overflow-hidden text-sm">
           <button
