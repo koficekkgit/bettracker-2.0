@@ -34,7 +34,22 @@ export default function DashboardPage() {
   const animOdds    = useCountUp(stats.avgOdds,       900, 240);
 
   if (isLoading) {
-    return <div className="text-muted-foreground">{t('common.loading')}</div>;
+    return (
+      <div className="space-y-6 animate-pulse">
+        <div className="flex items-center justify-between gap-4">
+          <div className="h-8 w-44 bg-zinc-800 rounded-lg" />
+          <div className="h-9 w-32 bg-zinc-800 rounded-lg" />
+        </div>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="h-24 bg-zinc-800/50 rounded-xl" />
+          ))}
+        </div>
+        <div className="h-20 bg-zinc-800/40 rounded-xl" />
+        <div className="h-56 bg-zinc-800/30 rounded-xl" />
+        <div className="h-48 bg-zinc-800/30 rounded-xl" />
+      </div>
+    );
   }
 
   return (

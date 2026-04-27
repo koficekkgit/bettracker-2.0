@@ -12,6 +12,7 @@ import {
 } from '@/lib/achievements';
 import { BadgeGrid } from '@/components/achievements/badge-grid';
 import { createClient } from '@/lib/supabase/client';
+import { markAchievementsSeen } from '@/hooks/use-new-achievements-count';
 import { cn } from '@/lib/utils';
 
 export default function AchievementsPage() {
@@ -59,6 +60,8 @@ function Content() {
 
   useEffect(() => {
     if (!ctx) return;
+    // Mark achievements as seen — clears sidebar badge
+    markAchievementsSeen(earned);
     const supabase = createClient();
     void (async () => {
       const { error } = await supabase.rpc('sync_achievements_count', { p_count: earned });

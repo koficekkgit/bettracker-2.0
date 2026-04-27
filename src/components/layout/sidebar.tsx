@@ -16,6 +16,8 @@ import { createClient } from '@/lib/supabase/client';
 import { useProfile } from '@/hooks/use-profile';
 import { useSubscription } from '@/hooks/use-subscription';
 import { usePendingFriendRequestCount } from '@/hooks/use-friends';
+import { useClaimableTasksCount } from '@/hooks/use-claimable-tasks-count';
+import { useNewAchievementsCount } from '@/hooks/use-new-achievements-count';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 
@@ -44,6 +46,8 @@ export function Sidebar() {
   const { data: profile } = useProfile();
   const sub = useSubscription();
   const { data: pendingRequests = 0 } = usePendingFriendRequestCount();
+  const claimableTasks    = useClaimableTasksCount();
+  const newAchievements   = useNewAchievementsCount();
   const [mounted,  setMounted]  = useState(false);
   const [hovered,  setHovered]  = useState(false);
   const [pinned,   setPinned]   = useState(false);
@@ -227,13 +231,33 @@ export function Sidebar() {
                     </span>
                   )}
 
-                  {/* Pending requests */}
+                  {/* Pending friend requests */}
                   {item.href === '/friends' && pendingRequests > 0 && (
                     <span className={cn(
                       'flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white animate-pulse flex-shrink-0',
                       !expanded && 'md:absolute md:top-0.5 md:right-0.5 md:h-3 md:w-3',
                     )}>
                       {!expanded ? '' : pendingRequests > 9 ? '9+' : pendingRequests}
+                    </span>
+                  )}
+
+                  {/* Claimable tasks badge */}
+                  {item.href === '/tasks' && claimableTasks > 0 && (
+                    <span className={cn(
+                      'flex h-4 w-4 items-center justify-center rounded-full bg-amber-500 text-[10px] font-bold text-black flex-shrink-0',
+                      !expanded && 'md:absolute md:top-0.5 md:right-0.5 md:h-3 md:w-3',
+                    )}>
+                      {!expanded ? '' : claimableTasks > 9 ? '9+' : claimableTasks}
+                    </span>
+                  )}
+
+                  {/* New achievements badge */}
+                  {item.href === '/achievements' && newAchievements > 0 && (
+                    <span className={cn(
+                      'flex h-4 w-4 items-center justify-center rounded-full bg-violet-500 text-[10px] font-bold text-white flex-shrink-0',
+                      !expanded && 'md:absolute md:top-0.5 md:right-0.5 md:h-3 md:w-3',
+                    )}>
+                      {!expanded ? '' : newAchievements > 9 ? '9+' : newAchievements}
                     </span>
                   )}
                 </Link>
