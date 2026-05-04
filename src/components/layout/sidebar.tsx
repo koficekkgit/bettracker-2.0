@@ -18,6 +18,7 @@ import { useSubscription } from '@/hooks/use-subscription';
 import { usePendingFriendRequestCount } from '@/hooks/use-friends';
 import { useClaimableTasksCount } from '@/hooks/use-claimable-tasks-count';
 import { useNewAchievementsCount } from '@/hooks/use-new-achievements-count';
+import { useUnreadFeedbackCount } from '@/hooks/use-feedback';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 
@@ -48,6 +49,7 @@ export function Sidebar() {
   const { data: pendingRequests = 0 } = usePendingFriendRequestCount();
   const claimableTasks    = useClaimableTasksCount();
   const newAchievements   = useNewAchievementsCount();
+  const unreadFeedback    = useUnreadFeedbackCount();
   const [mounted,  setMounted]  = useState(false);
   const [hovered,  setHovered]  = useState(false);
   const [pinned,   setPinned]   = useState(false);
@@ -258,6 +260,16 @@ export function Sidebar() {
                       !expanded && 'md:absolute md:top-0.5 md:right-0.5 md:h-3 md:w-3',
                     )}>
                       {!expanded ? '' : newAchievements > 9 ? '9+' : newAchievements}
+                    </span>
+                  )}
+
+                  {/* Unread feedback badge (admin only) */}
+                  {item.href === '/admin' && profile?.is_admin && unreadFeedback > 0 && (
+                    <span className={cn(
+                      'flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white animate-pulse flex-shrink-0',
+                      !expanded && 'md:absolute md:top-0.5 md:right-0.5 md:h-3 md:w-3',
+                    )}>
+                      {!expanded ? '' : unreadFeedback > 9 ? '9+' : unreadFeedback}
                     </span>
                   )}
                 </Link>

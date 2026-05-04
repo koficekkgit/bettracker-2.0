@@ -6,6 +6,7 @@ import { AchievementsSync } from '@/components/auth/achievements-sync';
 import { CoinsSync } from '@/components/auth/coins-sync';
 import { GlobalPaywall } from '@/components/subscription/global-paywall';
 import { SubscriptionOnboardingDialog } from '@/components/subscription/subscription-onboarding-dialog';
+import { FeedbackWidget } from '@/components/feedback/feedback-widget';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -22,6 +23,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <AuthCacheReset />
       <AchievementsSync />
       <CoinsSync />
+      <FeedbackWidget />
     </div>
   );
 }

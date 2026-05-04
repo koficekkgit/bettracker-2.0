@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Plus, Copy, Trash2, Check, ShieldAlert, Wallet, Gift, Ban } from 'lucide-react';
+import { Plus, Copy, Trash2, Check, ShieldAlert, Wallet, Gift, Ban, MessageSquare, Bug, Lightbulb, HelpCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -21,7 +21,9 @@ import {
   useAllReferralUses,
   useMarkReferralPaidOut,
 } from '@/hooks/use-referrals';
+import { useAdminFeedback, useUpdateFeedbackStatus, type FeedbackStatus } from '@/hooks/use-feedback';
 import type { SubscriptionPlan } from '@/lib/types';
+import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 
 const PLAN_LABELS: Record<SubscriptionPlan, string> = {
@@ -54,6 +56,12 @@ export default function AdminPage() {
   const [refOwnerInput, setRefOwnerInput] = useState('');
   const [refDiscountPct, setRefDiscountPct] = useState(10);
   const [refRewardPct, setRefRewardPct] = useState(10);
+
+  // Feedback inbox
+  const { data: feedbackList = [], isLoading: feedbackLoading } = useAdminFeedback();
+  const updateFeedbackStatus = useUpdateFeedbackStatus();
+  const [feedbackFilter, setFeedbackFilter] = useState<FeedbackStatus | 'all'>('all');
+  const unreadFeedbackCount = feedbackList.filter((f) => f.status === 'new').length;
 
   if (profileLoading) {
     return <div className="text-muted-foreground">Načítání...</div>;
@@ -457,6 +465,132 @@ export default function AdminPage() {
                 </table>
               </div>
             </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Feedback inbox */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between flex-wrap gap-3">
+            <CardTitle className="text-base font-medium flex items-center gap-2">
+              <MessageSquare className="w-4 h-4" />
+              Zpětná vazba
+              {unreadFeedbackCount > 0 && (
+                <span className="inline-flex items-center justify-center h-5 min-w-5 px-1 rounded-full bg-red-500 text-[11px] font-bold text-white">
+                  {unreadFeedbackCount}
+                </span>
+              )}
+            </CardTitle>
+            {/* Filter tabs */}
+            <div className="flex gap-1">
+              {(['all', 'new', 'read', 'resolved'] as const).map((f) => (
+                <button
+                  key={f}
+                  onClick={() => setFeedbackFilter(f)}
+                  className={cn(
+                    'px-2.5 py-1 rounded-lg text-xs font-medium transition-colors',
+                    feedbackFilter === f
+                      ? 'bg-secondary text-foreground'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-secondary/60',
+                  )}
+                >
+                  {f === 'all' ? 'Vše' : f === 'new' ? 'Nové' : f === 'read' ? 'Přečtené' : 'Vyřešené'}
+                </button>
+              ))}
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="p-0">
+          {feedbackLoading ? (
+            <p className="p-6 text-sm text-muted-foreground text-center">Načítání…</p>
+          ) : feedbackList.length === 0 ? (
+            <p className="p-6 text-sm text-muted-foreground text-center">Žádná zpětná vazba</p>
+          ) : (
+            (() => {
+              const filtered = feedbackFilter === 'all'
+                ? feedbackList
+                : feedbackList.filter((f) => f.status === feedbackFilter);
+              if (filtered.length === 0) {
+                return <p className="p-6 text-sm text-muted-foreground text-center">Žádné záznamy v tomto filtru</p>;
+              }
+              return (
+                <div className="divide-y divide-border">
+                  {filtered.map((item) => (
+                    <div key={item.id} className={cn(
+                      'px-4 py-3 flex gap-3 items-start transition-colors',
+                      item.status === 'new' && 'bg-red-500/5',
+                    )}>
+                      {/* Type icon */}
+                      <div className={cn(
+                        'mt-0.5 flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center',
+                        item.type === 'bug'        && 'bg-red-500/10 text-red-400',
+                        item.type === 'suggestion' && 'bg-amber-500/10 text-amber-400',
+                        item.type === 'other'      && 'bg-slate-500/10 text-slate-400',
+                      )}>
+                        {item.type === 'bug'        && <Bug        className="w-3.5 h-3.5" />}
+                        {item.type === 'suggestion' && <Lightbulb  className="w-3.5 h-3.5" />}
+                        {item.type === 'other'      && <HelpCircle className="w-3.5 h-3.5" />}
+                      </div>
+
+                      {/* Content */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap mb-0.5">
+                          <span className="text-xs font-semibold">{item.username ?? 'Anon'}</span>
+                          <span className="text-[10px] text-muted-foreground">
+                            {new Date(item.created_at).toLocaleString('cs-CZ', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                          </span>
+                          {item.status === 'new' && (
+                            <span className="px-1.5 py-0.5 rounded-full text-[10px] font-semibold bg-red-500/15 text-red-400">Nové</span>
+                          )}
+                          {item.status === 'resolved' && (
+                            <span className="px-1.5 py-0.5 rounded-full text-[10px] font-semibold bg-success/15 text-success">Vyřešeno</span>
+                          )}
+                        </div>
+                        <p className="text-sm text-foreground/90 whitespace-pre-wrap break-words">{item.message}</p>
+                      </div>
+
+                      {/* Status actions */}
+                      <div className="flex gap-1 flex-shrink-0">
+                        {item.status !== 'read' && item.status !== 'resolved' && (
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-7 text-xs text-muted-foreground"
+                            onClick={() => updateFeedbackStatus.mutate({ id: item.id, status: 'read' })}
+                            disabled={updateFeedbackStatus.isPending}
+                          >
+                            Přečteno
+                          </Button>
+                        )}
+                        {item.status !== 'resolved' && (
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-7 text-xs text-success"
+                            onClick={() => updateFeedbackStatus.mutate({ id: item.id, status: 'resolved' })}
+                            disabled={updateFeedbackStatus.isPending}
+                          >
+                            Vyřešit
+                          </Button>
+                        )}
+                        {item.status === 'resolved' && (
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-7 text-xs text-muted-foreground"
+                            onClick={() => updateFeedbackStatus.mutate({ id: item.id, status: 'new' })}
+                            disabled={updateFeedbackStatus.isPending}
+                          >
+                            Znovu otevřít
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              );
+            })()
           )}
         </CardContent>
       </Card>
