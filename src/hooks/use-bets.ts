@@ -168,9 +168,12 @@ export function useCreateBet() {
       if (error) throw error;
       return data as Bet;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       qc.invalidateQueries({ queryKey: ['bets'] });
       toast.success('Saved');
+      if (data.status === 'won' || data.status === 'half_won') {
+        import('@/lib/sound').then(({ playWinSound }) => playWinSound());
+      }
     },
     onError: (e: Error) => {
       if (e.message === 'FREE_LIMIT_REACHED') {
@@ -196,9 +199,12 @@ export function useUpdateBet() {
       if (error) throw error;
       return data as Bet;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       qc.invalidateQueries({ queryKey: ['bets'] });
       toast.success('Updated');
+      if (data.status === 'won' || data.status === 'half_won') {
+        import('@/lib/sound').then(({ playWinSound }) => playWinSound());
+      }
     },
     onError: (e: Error) => toast.error(e.message),
   });

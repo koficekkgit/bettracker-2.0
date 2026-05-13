@@ -6,7 +6,7 @@ import Image from 'next/image';
 import {
   BarChart3, CalendarDays, Calculator, Users, Trophy,
   Medal, Sparkles, Check, ChevronLeft, ChevronRight,
-  Zap, Globe, ListOrdered, Mail,
+  Zap, Globe, ListOrdered, Mail, X,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -58,6 +58,22 @@ const T = {
     proPeriod: '/měsíc',
     proFeatures: ['Neomezené sázky', 'Statistiky & všechna období', 'Kalendář, Surebet, Přátelé', 'Úspěchy & Bankroll', 'AI analýza screenshotů'],
     proCta: 'Koupit Pro',
+    painTitle: 'Ztrácíš přehled o svých sázkách?',
+    solutionTitle: 'BetTracker to vyřeší',
+    painPoints: [
+      { title: 'Sázky roztroušené po všech sázkových kancelářích', desc: 'Spravovat výsledky z Tipsportu, Fortuny a Betana zároveň je noční můra.' },
+      { title: 'Neznáš své skutečné ROI a výsledky', desc: 'Bez evidence nevíš, jestli opravdu vyděláváš, nebo jen máš štěstí.' },
+      { title: 'Rozhoduješ se od oka, ne podle dat', desc: 'Bez přehledu statistik hraješ na pocit místo na základě faktů.' },
+    ],
+    solutionPoints: [
+      { title: 'Vše na jednom místě', desc: 'Eviduj sázky ze všech sázkovek v jednom přehledném dashboardu.' },
+      { title: 'Jasná analytika a statistiky', desc: 'Vidíš profit, ROI a vývoj výkonnosti na první pohled.' },
+      { title: 'Data-driven přístup k sázení', desc: 'Rozhoduj se na základě skutečné historie, ne pocitů.' },
+    ],
+    proofUsers: 'registrovaných uživatelů',
+    proofBets: 'zaznamenaných sázek',
+    proofBookmakers: 'podporovaných sázkovek',
+    proofRoi: 'průměrné ROI uživatelů',
     features: [
       { title: 'Evidence sázek', subtitle: 'Vše na jednom místě', desc: 'Přidávej sázky s kurzem, vkladem, sázkovnou a kategorií. Přehledný seznam s filtry a vyhledáváním. Podporuje přes 8 sázkovek.' },
       { title: 'Statistiky & ROI', subtitle: 'Víš, kde vyděláváš?', desc: 'Sleduj svůj profit, ROI, strike rate a formu za libovolné období. Grafy ukazují vývoj zisku v čase a výkonnost podle kategorie.' },
@@ -108,6 +124,22 @@ const T = {
     proPeriod: '/month',
     proFeatures: ['Unlimited bets', 'Statistics & all periods', 'Calendar, Surebet, Friends', 'Achievements & Bankroll', 'AI screenshot analysis'],
     proCta: 'Buy Pro',
+    painTitle: 'Losing track of your bets?',
+    solutionTitle: 'BetTracker has you covered',
+    painPoints: [
+      { title: 'Bets scattered across multiple bookmakers', desc: 'Managing results from different platforms makes it impossible to see the full picture.' },
+      { title: 'No clear view of your actual ROI', desc: 'Without tracking, you never know if you are truly profitable or just lucky.' },
+      { title: 'Guessing instead of using data', desc: 'Without stats, decisions are based on gut feeling rather than real results.' },
+    ],
+    solutionPoints: [
+      { title: 'One place for all your bets', desc: 'Track bets from all bookmakers in a single, unified dashboard.' },
+      { title: 'Clear analytics and insights', desc: 'See your profit, ROI, and performance trends at a glance.' },
+      { title: 'Data-driven betting approach', desc: 'Make decisions based on your actual betting history, not guesswork.' },
+    ],
+    proofUsers: 'registered users',
+    proofBets: 'bets tracked',
+    proofBookmakers: 'bookmakers supported',
+    proofRoi: 'avg. user ROI',
     features: [
       { title: 'Bet Tracking', subtitle: 'Everything in one place', desc: 'Add bets with odds, stake, bookmaker and category. Clean list with filters and search. Supports over 8 bookmakers.' },
       { title: 'Statistics & ROI', subtitle: 'Know where you profit?', desc: 'Track your profit, ROI, strike rate and form over any period. Charts show profit development over time and performance by category.' },
@@ -158,6 +190,22 @@ const T = {
     proPeriod: '/месяц',
     proFeatures: ['Неограниченные ставки', 'Статистика и все периоды', 'Календарь, Surebet, Друзья', 'Достижения и Банкролл', 'AI-анализ скриншотов'],
     proCta: 'Купить Pro',
+    painTitle: 'Теряешь контроль над своими ставками?',
+    solutionTitle: 'BetTracker решает это',
+    painPoints: [
+      { title: 'Ставки разбросаны по разным букмекерам', desc: 'Управлять результатами из нескольких контор одновременно — настоящий кошмар.' },
+      { title: 'Нет понимания реального ROI', desc: 'Без учёта невозможно понять — ты в плюсе или просто везёт.' },
+      { title: 'Решения принимаются на ощущениях, а не на данных', desc: 'Без статистики ты играешь вслепую, а не на основе фактов.' },
+    ],
+    solutionPoints: [
+      { title: 'Все ставки в одном месте', desc: 'Учитывай ставки со всех букмекеров в едином удобном дашборде.' },
+      { title: 'Чёткая аналитика и инсайты', desc: 'Смотри прибыль, ROI и динамику с первого взгляда.' },
+      { title: 'Дата-ориентированный беттинг', desc: 'Принимай решения на основе реальной истории, а не интуиции.' },
+    ],
+    proofUsers: 'зарегистрированных пользователей',
+    proofBets: 'ставок записано',
+    proofBookmakers: 'поддерживаемых букмекеров',
+    proofRoi: 'средний ROI пользователей',
     features: [
       { title: 'Учёт ставок', subtitle: 'Всё в одном месте', desc: 'Добавляй ставки с коэффициентом, суммой, букмекером и категорией. Удобный список с фильтрами и поиском. Поддерживает более 8 букмекеров.' },
       { title: 'Статистика & ROI', subtitle: 'Знаешь, где зарабатываешь?', desc: 'Отслеживай прибыль, ROI, процент побед и форму за любой период. Графики показывают динамику прибыли и эффективность по категориям.' },
@@ -388,6 +436,68 @@ export function LandingPage() {
         </div>
       </section>
 
+      {/* Pain / Solution */}
+      <section className="border-t border-border bg-secondary/10">
+        <div className="max-w-6xl mx-auto px-4 py-16">
+          <div className="grid md:grid-cols-2 gap-10 md:gap-16">
+            {/* Pain — left */}
+            <div>
+              <h2 className="text-2xl md:text-3xl font-black tracking-tight mb-7">
+                {t.painTitle}
+              </h2>
+              <ul className="space-y-5">
+                {t.painPoints.map((p) => (
+                  <li key={p.title} className="flex gap-3">
+                    <span className="mt-0.5 flex-shrink-0 w-5 h-5 rounded-full bg-red-500/15 border border-red-500/30 flex items-center justify-center">
+                      <X className="w-3 h-3 text-red-500" />
+                    </span>
+                    <div>
+                      <p className="text-sm font-semibold leading-snug">{p.title}</p>
+                      <p className="text-sm text-muted-foreground mt-0.5">{p.desc}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            {/* Solution — right */}
+            <div>
+              <h2 className="text-2xl md:text-3xl font-black tracking-tight mb-7">
+                {t.solutionTitle}
+              </h2>
+              <ul className="space-y-5">
+                {t.solutionPoints.map((s) => (
+                  <li key={s.title} className="flex gap-3">
+                    <span className="mt-0.5 flex-shrink-0 w-5 h-5 rounded-full bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center">
+                      <Check className="w-3 h-3 text-emerald-500" />
+                    </span>
+                    <div>
+                      <p className="text-sm font-semibold leading-snug">{s.title}</p>
+                      <p className="text-sm text-muted-foreground mt-0.5">{s.desc}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Social proof counters */}
+      <section className="border-t border-border">
+        <div className="max-w-6xl mx-auto px-4 py-12">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {[
+              { value: 500,  suffix: '+', label: t.proofUsers },
+              { value: 25000, suffix: '+', label: t.proofBets },
+              { value: 8,    suffix: '+', label: t.proofBookmakers },
+              { value: 12,   suffix: ' %', label: t.proofRoi },
+            ].map((s) => (
+              <SocialProofCounter key={s.label} value={s.value} suffix={s.suffix} label={s.label} />
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Features carousel */}
       <section id="features" className="max-w-6xl mx-auto px-4 pb-20">
         <div className="text-center mb-10">
@@ -606,6 +716,56 @@ export function LandingPage() {
           </div>
         </div>
       </footer>
+    </div>
+  );
+}
+
+// ─── Social proof counter ─────────────────────────────────────────────────────
+
+function SocialProofCounter({ value, suffix, label }: { value: number; suffix: string; label: string }) {
+  const [count, setCount] = useState(0);
+  const ref = useRef<HTMLDivElement>(null);
+  const started = useRef(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !started.current) {
+          started.current = true;
+          const duration = 1600;
+          const steps = 50;
+          const increment = value / steps;
+          let current = 0;
+          const timer = setInterval(() => {
+            current += increment;
+            if (current >= value) {
+              setCount(value);
+              clearInterval(timer);
+            } else {
+              setCount(Math.floor(current));
+            }
+          }, duration / steps);
+        }
+      },
+      { threshold: 0.4 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [value]);
+
+  const display = value >= 1000
+    ? (count >= 1000 ? `${(count / 1000).toFixed(count >= 10000 ? 0 : 1)}k` : count.toString())
+    : count.toString();
+
+  return (
+    <div ref={ref} className="text-center">
+      <p className="text-4xl md:text-5xl font-black tracking-tight text-foreground tabular-nums">
+        {display}
+        <span className="text-amber-500">{suffix}</span>
+      </p>
+      <p className="text-xs font-medium text-muted-foreground mt-2 uppercase tracking-wider leading-tight">{label}</p>
     </div>
   );
 }
