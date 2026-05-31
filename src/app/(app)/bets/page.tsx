@@ -36,6 +36,9 @@ export default function BetsPage() {
   const [bulkTagOpen, setBulkTagOpen]   = useState(false);
   const [bulkWorking, setBulkWorking]   = useState(false);
 
+  const [page, setPage] = useState(0);
+  const PAGE_SIZE = 50;
+
   const allTags = useMemo(() => {
     const set = new Set<string>();
     bets.forEach((b) => (b.tags ?? []).forEach((t) => set.add(t)));
@@ -61,6 +64,26 @@ export default function BetsPage() {
       return true;
     });
   }, [bets, search, statusFilter, tagFilter]);
+
+  // Reset to page 0 whenever filters change
+  const filteredKey = `${search}|${statusFilter}|${tagFilter}`;
+  useMemo(() => { setPage(0); }, [filteredKey]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const paginated  = useMemo(
+    () => filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE),
+    [filtered, page],
+  );
+
+  // Pre-compute profit + bookmaker for current page only (avoids inline calc in render)
+  const pageRows = useMemo(() =>
+    paginated.map((bet) => ({
+      bet,
+      profit:    calculateBetProfit(bet),
+      bookmaker: bet.bookmaker ? BOOKMAKERS.find((b) => b.id === bet.bookmaker) ?? null : null,
+      legs:      bet.bet_type === 'surebet' ? parseSurebetLegs(bet.notes) : null,
+    })),
+  [paginated]);
 
   function handleEdit(bet: Bet) {
     setEditing(bet); setFormMode('edit'); setFormOpen(true);
@@ -266,8 +289,7 @@ export default function BetsPage() {
         <>
           {/* ── Mobile: card list ── */}
           <div className="md:hidden space-y-2">
-            {filtered.map((bet) => {
-              const profit = calculateBetProfit(bet);
+            {pageRows.map(({ bet, profit }) => {
               const selected = selectedIds.has(bet.id);
               return (
                 <div
@@ -361,8 +383,7 @@ export default function BetsPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {filtered.map((bet) => {
-                      const profit = calculateBetProfit(bet);
+                    {pageRows.map(({ bet, profit, bookmaker, legs }) => {
                       const selected = selectedIds.has(bet.id);
                       return (
                         <tr
@@ -387,13 +408,11 @@ export default function BetsPage() {
                           <td className="p-3">
                             <div className="flex items-center gap-2">
                               <div className="font-medium">{bet.description}</div>
-                              {bet.bookmaker && (() => {
-                                const bm = BOOKMAKERS.find((b) => b.id === bet.bookmaker);
-                                if (!bm) return null;
-                                return bm.logo
-                                  ? <BookmakerLogo logo={bm.logo} name={bm.name} />
-                                  : <span className="text-[10px] text-muted-foreground bg-secondary px-1 py-0.5 rounded shrink-0">{bm.name}</span>;
-                              })()}
+                              {bookmaker && (
+                                bookmaker.logo
+                                  ? <BookmakerLogo logo={bookmaker.logo} name={bookmaker.name} />
+                                  : <span className="text-[10px] text-muted-foreground bg-secondary px-1 py-0.5 rounded shrink-0">{bookmaker.name}</span>
+                              )}
                             </div>
                             {bet.pick && <div className="text-xs text-muted-foreground">{bet.pick}</div>}
                             {bet.tags && bet.tags.length > 0 && (
@@ -405,31 +424,27 @@ export default function BetsPage() {
                                 ))}
                               </div>
                             )}
-                            {bet.bet_type === 'surebet' && (() => {
-                              const legs = parseSurebetLegs(bet.notes);
-                              if (!legs) return null;
-                              return (
-                                <div className="mt-1 space-y-0.5">
-                                  {legs.map((leg, i) => {
-                                    const bm = BOOKMAKERS.find((b) => b.id === leg.bookmaker);
-                                    return (
-                                      <div key={i} className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                                        <span>{bm?.name ?? (leg.bookmaker || '—')}</span>
-                                        <span className="opacity-50">·</span>
-                                        <span>{formatNumber(leg.odds, 2)}x</span>
-                                        <span className="opacity-50">·</span>
-                                        <span>{formatCurrency(leg.stake, bet.currency)}</span>
-                                        {leg.status !== 'pending' && (
-                                          <span className={leg.status === 'won' ? 'text-success' : 'text-danger'}>
-                                            · {leg.status === 'won' ? t('bets.statusWon') : t('bets.statusLost')}
-                                          </span>
-                                        )}
-                                      </div>
-                                    );
-                                  })}
-                                </div>
-                              );
-                            })()}
+                            {legs && (
+                              <div className="mt-1 space-y-0.5">
+                                {legs.map((leg, i) => {
+                                  const bm = BOOKMAKERS.find((b) => b.id === leg.bookmaker);
+                                  return (
+                                    <div key={i} className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                                      <span>{bm?.name ?? (leg.bookmaker || '—')}</span>
+                                      <span className="opacity-50">·</span>
+                                      <span>{formatNumber(leg.odds, 2)}x</span>
+                                      <span className="opacity-50">·</span>
+                                      <span>{formatCurrency(leg.stake, bet.currency)}</span>
+                                      {leg.status !== 'pending' && (
+                                        <span className={leg.status === 'won' ? 'text-success' : 'text-danger'}>
+                                          · {leg.status === 'won' ? t('bets.statusWon') : t('bets.statusLost')}
+                                        </span>
+                                      )}
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            )}
                           </td>
                           <td className="p-3 text-xs text-muted-foreground">
                             {bet.bet_type === 'accumulator'
@@ -468,6 +483,73 @@ export default function BetsPage() {
               </div>
             </CardContent>
           </Card>
+
+          {/* ── Pagination ── */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between gap-4 text-sm">
+              <span className="text-muted-foreground">
+                {filtered.length} sázek · strana {page + 1} / {totalPages}
+              </span>
+              <div className="flex items-center gap-1">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPage(0)}
+                  disabled={page === 0}
+                >
+                  «
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPage((p) => Math.max(0, p - 1))}
+                  disabled={page === 0}
+                >
+                  ‹
+                </Button>
+                {/* Page number pills — show window of 5 around current */}
+                {Array.from({ length: totalPages }, (_, i) => i)
+                  .filter((i) => i === 0 || i === totalPages - 1 || Math.abs(i - page) <= 2)
+                  .reduce<(number | '...')[]>((acc, i, idx, arr) => {
+                    if (idx > 0 && i - (arr[idx - 1] as number) > 1) acc.push('...');
+                    acc.push(i);
+                    return acc;
+                  }, [])
+                  .map((item, idx) =>
+                    item === '...'
+                      ? <span key={`ellipsis-${idx}`} className="px-1 text-muted-foreground">…</span>
+                      : (
+                        <Button
+                          key={item}
+                          variant={item === page ? 'default' : 'outline'}
+                          size="sm"
+                          onClick={() => setPage(item as number)}
+                          className="min-w-[32px]"
+                        >
+                          {(item as number) + 1}
+                        </Button>
+                      )
+                  )
+                }
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+                  disabled={page === totalPages - 1}
+                >
+                  ›
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPage(totalPages - 1)}
+                  disabled={page === totalPages - 1}
+                >
+                  »
+                </Button>
+              </div>
+            </div>
+          )}
         </>
       )}
 
