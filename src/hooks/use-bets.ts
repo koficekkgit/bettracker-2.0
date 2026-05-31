@@ -21,6 +21,8 @@ export function useBets() {
       if (error) throw error;
       return data as Bet[];
     },
+    staleTime: 2 * 60 * 1000,  // 2 min – po mutaci se invaliduje automaticky
+    gcTime:    5 * 60 * 1000,  // drž v cache 5 min po unmount
   });
 }
 
@@ -39,6 +41,8 @@ export function useCategories() {
       if (error) throw error;
       return data as Category[];
     },
+    staleTime: 5 * 60 * 1000,  // kategorie se skoro nemění
+    gcTime:    10 * 60 * 1000,
   });
 }
 

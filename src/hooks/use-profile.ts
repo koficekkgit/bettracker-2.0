@@ -19,5 +19,7 @@ export function useProfile() {
       if (error) throw error;
       return data;
     },
+    staleTime: 5 * 60 * 1000,   // 5 min – profil se mění zřídka
+    gcTime:    10 * 60 * 1000,  // drž v cache 10 min
   });
 }

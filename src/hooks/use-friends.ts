@@ -20,7 +20,8 @@ export function usePendingFriendRequestCount() {
         .eq('status', 'pending');
       return count ?? 0;
     },
-    refetchInterval: 30_000,
+    staleTime:       60_000,   // 1 min cache
+    refetchInterval: 90_000,   // poll každých 90s místo 30s
   });
 }
 
